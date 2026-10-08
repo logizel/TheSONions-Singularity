@@ -12,7 +12,7 @@ From an empty repo to a working network inventory balancer in five track-owned h
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Data Layer + Frozen Contracts** - Stock/usage/load entry, CSV upload, Excel export, Neon schema; freezes shared contracts (Track P2)
+- [x] **Phase 1: Data Layer + Frozen Contracts** - Stock/usage/load entry, CSV upload, Excel export, Neon schema; freezes shared contracts (Track P2)
 - [ ] **Phase 2: Forecast & Decision Engine** - Forecast, outbreak, stock-out, waste, moves, priority as pure TS functions (Track P3)
 - [ ] **Phase 3: API, Chat & Access** - ResultsJSON APIs, rule-based quote-only chatbot + validator, role-based auth (Track P4)
 - [ ] **Phase 4: Dashboard UI** - One-screen dashboard with drill-in and chat panel (Track P1)
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Layer + Frozen Contracts | 0/TBD | Not started | - |
+| 1. Data Layer + Frozen Contracts | 3/3 | Complete | 2026-10-08 |
 | 2. Forecast & Decision Engine | 0/TBD | Not started | - |
 | 3. API, Chat & Access | 0/TBD | Not started | - |
 | 4. Dashboard UI | 0/TBD | Not started | - |
