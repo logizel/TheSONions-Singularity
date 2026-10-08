@@ -149,8 +149,8 @@ export function buildMoveDetail(
 /**
  * One move row with transit days, shelf-life-on-arrival check, sender
  * rationale, and an optional display-only action affordance (role-gated by
- * the caller; true enforcement belongs to Phase 3 middleware — see
- * components/roles.tsx, T-4-06).
+ * the caller; true enforcement belongs to the Phase 3 server-side auth
+ * layer — see components/roles.tsx, T-4-06).
  */
 export function MoveRow({
   detail,

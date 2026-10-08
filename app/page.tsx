@@ -33,6 +33,12 @@ import {
 import { SkeletonCard } from "@/components/cards/ui";
 import { HospitalPanel } from "@/components/panel/HospitalPanel";
 import { ChatPanel } from "@/components/chat/ChatPanel";
+import {
+  PROTOTYPE_DEFAULT_ROLE,
+  PROTOTYPE_OWN_HOSPITAL_ID,
+  RoleSwitcher,
+  type Role,
+} from "@/components/roles";
 import { colors, layout, spacing } from "@/theme/tokens";
 
 const fixture = fixtureJson as ResultsFixture;
@@ -78,6 +84,13 @@ function Dashboard() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
+  // Prototype role stub (D-26): defaults to network_admin; flipping to
+  // hospital_admin scopes move/order actions to the prototype own hospital.
+  // Display-only — real enforcement belongs to the Phase 3 server-side
+  // auth layer with final wiring in Phase 5.
+  const [role, setRole] = useState<Role>(PROTOTYPE_DEFAULT_ROLE);
+  const ownHospitalId =
+    role === "hospital_admin" ? PROTOTYPE_OWN_HOSPITAL_ID : null;
 
   useEffect(() => {
     setMounted(true);
@@ -273,6 +286,15 @@ function Dashboard() {
         generatedAt={fixture.generatedAt}
         onRefresh={() => window.location.reload()}
       />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: spacing.md,
+        }}
+      >
+        <RoleSwitcher role={role} onChange={setRole} />
+      </div>
       {selectedId && selectedHospital ? (
         <div
           data-testid="filter-banner"
@@ -339,6 +361,8 @@ function Dashboard() {
               transfers={transferRows}
               orders={orderRows}
               onSelectHospital={selectHospital}
+              role={role}
+              ownHospitalId={ownHospitalId}
             />,
             <PrioritiesCard
               key="priorities"
@@ -353,6 +377,8 @@ function Dashboard() {
         hospitalName={selectedHospital?.name}
         onClose={() => selectHospital(null)}
         onSelectHospital={selectHospital}
+        role={role}
+        ownHospitalId={ownHospitalId}
       />
       <ChatPanel contextHospitalId={selectedId} />
     </main>
