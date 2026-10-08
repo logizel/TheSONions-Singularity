@@ -1,8 +1,15 @@
 /**
- * Forecast card — base demand numbers with MAPE badge and advisory tag.
- * Days 15-30 grey treatment arrives in Plan 03; this card consumes the
- * fixture MAPE/advisory fields only (D-05).
+ * Forecast card — demand outlook with advisory horizon and outbreak
+ * signaling (D-05, D-08).
+ *
+ * Days 1-14 are the actionable window (per-row forecast line). Days 15-30
+ * render as a greyed band carrying the envelope advisory tag — never
+ * presented as actionable (T-4-12). The MAPE badge beside the forecast
+ * quotes the envelope MAPE verbatim. Outbreak-flagged hospitals show the
+ * red OutbreakBanner chip plus a trend-mode note; non-flagged hospitals
+ * show neither.
  */
+import { OutbreakBanner } from "../OutbreakBanner";
 import { Badge, Card, Sparkline } from "./ui";
 
 export interface ForecastCardRow {
@@ -12,6 +19,8 @@ export interface ForecastCardRow {
   mode: "base" | "trend";
   next7: number[];
   avgDaily: number;
+  /** Envelope outbreak flag for this row's hospital (T-4-12). */
+  outbreak: boolean;
 }
 
 export function ForecastCard({
@@ -50,15 +59,40 @@ export function ForecastCard({
                   <span style={nameStyle}>
                     {row.medicineName} · {row.hospitalName}
                   </span>
+                  {row.outbreak ? (
+                    <span style={chipRowStyle}>
+                      <OutbreakBanner hospitalName={row.hospitalName} />
+                    </span>
+                  ) : null}
                   <span style={subStyle}>
-                    avg {row.avgDaily}/day · days 15–30{" "}
-                    <Badge level="advisory">{advisoryLabel}</Badge>
+                    avg {row.avgDaily}/day · days 1–14 actionable
+                  </span>
+                  <span style={sparkRowStyle}>
+                    <Sparkline values={row.next7} />
+                  </span>
+                  {/* Greyed advisory band (D-05): days 15-30 are not
+                      actionable, whatever the forecast line says. */}
+                  <span
+                    data-testid={`forecast-advisory-${row.hospitalId}`}
+                    title="Days 15 to 30, advisory only"
+                    style={advisoryBandStyle}
+                  >
+                    days 15–30 <Badge level="advisory">{advisoryLabel}</Badge>
+                  </span>
+                  <span style={subStyle}>
+                    <Badge
+                      level={row.mode === "trend" ? "critical" : "neutral"}
+                    >
+                      {row.mode === "trend" ? "trend mode" : "base"}
+                    </Badge>
+                    {row.outbreak ? (
+                      <span style={trendNoteStyle}>
+                        {" "}
+                        trend mode while outbreak flagged
+                      </span>
+                    ) : null}
                   </span>
                 </span>
-                <Sparkline values={row.next7} />
-                <Badge level={row.mode === "trend" ? "critical" : "neutral"}>
-                  {row.mode === "trend" ? "trend mode" : "base"}
-                </Badge>
               </button>
             </li>
           ))}
@@ -91,4 +125,35 @@ const nameStyle: React.CSSProperties = {
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 };
-const subStyle: React.CSSProperties = { fontSize: 12, color: "#475569" };
+const subStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 12,
+  color: "#475569",
+  marginTop: 2,
+};
+const chipRowStyle: React.CSSProperties = {
+  display: "block",
+  marginTop: 2,
+};
+const sparkRowStyle: React.CSSProperties = {
+  display: "block",
+  marginTop: 4,
+};
+/** Greyed 15-30 day band: muted surface, never actionable (T-4-12). */
+const advisoryBandStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 6,
+  marginTop: 4,
+  background: "#e2e8f0",
+  color: "#64748b",
+  borderRadius: 6,
+  padding: "4px 8px",
+  fontSize: 11,
+  fontWeight: 600,
+};
+const trendNoteStyle: React.CSSProperties = {
+  fontSize: 11,
+  color: "#b91c1c",
+  fontWeight: 600,
+};

@@ -156,6 +156,10 @@ function Dashboard() {
           mode: f.mode,
           next7: f.next7,
           avgDaily: f.avgDaily,
+          // Envelope outbreak flag drives the red chip + trend note (D-08).
+          outbreak:
+            fixture.hospitals.find((h) => h.id === f.hospitalId)?.outbreak ??
+            false,
         })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedId, hospitalNameById, medicineNameById],
@@ -380,7 +384,12 @@ function Dashboard() {
         role={role}
         ownHospitalId={ownHospitalId}
       />
-      <ChatPanel contextHospitalId={selectedId} />
+      {/* Chat dock collapses to a floating button while the drill-in
+          panel is open so the two never collide (D-17). */}
+      <ChatPanel
+        contextHospitalId={selectedId}
+        drillInOpen={selectedId !== null}
+      />
     </main>
   );
 }
