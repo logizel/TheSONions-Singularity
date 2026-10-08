@@ -37,13 +37,13 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Moves & Orders
 
-- [ ] **MOVE-01**: System suggests transfers from safe-surplus to short hospitals passing all 5 checks (arrives before receiver runs out; enough shelf life on arrival; sender keeps buffer; nothing beyond receiver need; waste-first + nearest sender preferred)
-- [ ] **MOVE-02**: System recommends emergency supplier order for remainder when transfers cannot cover need
+- [x] **MOVE-01**: System suggests transfers from safe-surplus to short hospitals passing all 5 checks (arrives before receiver runs out; enough shelf life on arrival; sender keeps buffer; nothing beyond receiver need; waste-first + nearest sender preferred)
+- [x] **MOVE-02**: System recommends emergency supplier order for remainder when transfers cannot cover need
 
 ### Priority
 
-- [ ] **PRIOR-01**: System scores competing hospitals by patient load, emergency demand, soonness of stock-out, and substitute existence
-- [ ] **PRIOR-02**: System shows visible ranking with reasons so it can be justified
+- [x] **PRIOR-01**: System scores competing hospitals by patient load, emergency demand, soonness of stock-out, and substitute existence
+- [x] **PRIOR-02**: System shows visible ranking with reasons so it can be justified
 
 ### Dashboard
 
@@ -110,10 +110,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RISK-02 | Phase 2 | Complete |
 | WASTE-01 | Phase 2 | Complete |
 | WASTE-02 | Phase 2 | Complete |
-| MOVE-01 | Phase 2 | Pending |
-| MOVE-02 | Phase 2 | Pending |
-| PRIOR-01 | Phase 2 | Pending |
-| PRIOR-02 | Phase 2 | Pending |
+| MOVE-01 | Phase 2 | Complete |
+| MOVE-02 | Phase 2 | Complete |
+| PRIOR-01 | Phase 2 | Complete |
+| PRIOR-02 | Phase 2 | Complete |
 | UI-01 | Phase 4 | Pending |
 | UI-02 | Phase 4 | Pending |
 | CHAT-01 | Phase 3 | Pending |
