@@ -3,6 +3,7 @@
 // scripts share these helpers so the two paths can never diverge.
 // Ownership columns always set (D-24); role enforcement hardens in Phase 3.
 import { and, eq, lte } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 
 import { db } from "../db/client";
 import {
@@ -34,18 +35,52 @@ function assertInt(n: number, lo: number, hi: number, name: string) {
   }
 }
 
-let idSeq = 0;
-const nid = (p: string) => `${p}-${Date.now()}-${++idSeq}`;
+const nid = (p: string) => `${p}-${randomUUID()}`;
 
 // D-02: always a NEW batch row, never merge. Expiry mandatory (D-07).
+// D-06 (WR-03): buffer is per hospital+medicine. The schema stores it per batch,
+// so the rule is: a new batch inherits the pair's live buffer; change it pair-wide
+// via setBuffer(). This keeps the frozen contract shape unchanged.
+export async function pairBufferDays(hospitalId: string, medicineId: string): Promise<number> {
+  const live = await db
+    .select({ bufferDays: stockBatches.bufferDays })
+    .from(stockBatches)
+    .where(
+      and(
+        eq(stockBatches.hospitalId, hospitalId),
+        eq(stockBatches.medicineId, medicineId),
+        eq(stockBatches.archived, false),
+      ),
+    )
+    .limit(1);
+  return live.length > 0 ? live[0].bufferDays : 7;
+}
+
+export async function setBuffer(hospitalId: string, medicineId: string, days: number) {
+  await assertHospital(hospitalId);
+  await assertMedicine(medicineId);
+  assertInt(days, 0, 365, "bufferDays");
+  await db
+    .update(stockBatches)
+    .set({ bufferDays: days })
+    .where(
+      and(
+        eq(stockBatches.hospitalId, hospitalId),
+        eq(stockBatches.medicineId, medicineId),
+        eq(stockBatches.archived, false),
+      ),
+    );
+}
+
 export async function addBatch(hospitalId: string, medicineId: string, qty: number, expiryDate: string) {
   await assertHospital(hospitalId);
   await assertMedicine(medicineId);
   assertInt(qty, 1, 1_000_000_000, "qty");
   if (!isIsoDate(expiryDate)) throw new Error(`bad expiryDate "${expiryDate}" (want YYYY-MM-DD, mandatory)`);
+  const bufferDays = await pairBufferDays(hospitalId, medicineId);
   const [row] = await db
     .insert(stockBatches)
-    .values({ id: nid("b"), hospitalId, medicineId, qty, expiryDate, archived: false, bufferDays: 7 })
+    .values({ id: nid("b"), hospitalId, medicineId, qty, expiryDate, archived: false, bufferDays })
     .returning({ id: stockBatches.id });
   return row.id;
 }
@@ -71,8 +106,10 @@ export async function recordUsage(
 }
 
 // D-03: FIFO earliest-expiry first; exhausted/expired batches archive, never delete (D-04).
+// Expired-but-unarchived batches are archived first so they never cover demand (WR-01).
 export async function adjustStockDown(hospitalId: string, medicineId: string, amount: number) {
   assertInt(amount, 1, 1_000_000_000, "amount");
+  await archiveExpired();
   let remaining = amount;
   const batches = await db
     .select()
@@ -157,6 +194,22 @@ async function selfTest() {
   const got = (id: string) => after.find((b) => b.id === id);
   if (got(b2)?.qty !== 0 || got(b2)?.archived !== true) throw new Error("FIFO batch not exhausted+archived");
   if (got(b1)?.qty !== 25) throw new Error("second batch wrong remainder");
+  // WR-01: expired-but-unarchived batches must never cover demand.
+  const bx = await addBatch(H, M, 40, "2020-01-01");
+  await adjustStockDown(H, M, 10); // archives bx first, deducts from b1
+  const afterX = await db.select().from(stockBatches);
+  const gotX = (id: string) => afterX.find((b) => b.id === id);
+  if (gotX(bx)?.archived !== true || gotX(bx)?.qty !== 40) {
+    throw new Error("expired batch must be archived untouched, never deducted");
+  }
+  if (gotX(b1)?.qty !== 15) throw new Error("live batch wrong remainder after expired-skip");
+  // WR-03: new batches inherit the pair buffer; setBuffer changes it pair-wide.
+  await setBuffer(H, M, 14);
+  const b3 = await addBatch(H, M, 5, "2028-06-01");
+  const afterB = await db.select().from(stockBatches);
+  if (afterB.find((b) => b.id === b3)?.bufferDays !== 14) {
+    throw new Error("new batch must inherit pair bufferDays");
+  }
   await recordUsage("2026-10-07", H, M, 10, 50, 15);
   await recordUsage("2026-10-07", H, M, 12, 55, 18); // overwrite
   const dup = await db.select().from(dailyUsage);
