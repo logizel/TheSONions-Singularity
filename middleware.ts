@@ -110,7 +110,17 @@ export default async function middleware(req: NextRequest): Promise<NextResponse
     }
   }
 
-  // network_admin: full access, including moves/orders (D-08, refined in 03-02).
+  // D-08: moves/orders are network_admin-only. Hospital admins get 403
+  // regardless of method; network_admin passes through with full access.
+  if (
+    session.role !== "network_admin" &&
+    (req.nextUrl.pathname.startsWith("/api/moves") ||
+      req.nextUrl.pathname.startsWith("/api/orders"))
+  ) {
+    return forbidden();
+  }
+
+  // network_admin: full access, including moves/orders (D-08).
   return NextResponse.next();
 }
 
