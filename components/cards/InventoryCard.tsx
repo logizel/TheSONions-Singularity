@@ -20,9 +20,12 @@ export interface InventoryCardRow {
 export function InventoryCard({
   rows,
   onSelectHospital,
+  scope,
 }: {
   rows: InventoryCardRow[];
   onSelectHospital: (id: string | null) => void;
+  /** Filtered hospital name, or null when unfiltered (G-04-1: T-4-15). */
+  scope?: string | null;
 }) {
   const networkTotal = rows.reduce((sum, r) => sum + r.totalStock, 0);
   return (
@@ -31,7 +34,9 @@ export function InventoryCard({
       testId="card-inventory"
       action={
         <span style={{ fontSize: 12, color: "#475569" }}>
-          {networkTotal.toLocaleString()} units network-wide
+          {scope
+            ? `${networkTotal.toLocaleString()} units at ${scope}`
+            : `${networkTotal.toLocaleString()} units network-wide`}
         </span>
       }
     >

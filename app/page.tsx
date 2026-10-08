@@ -354,6 +354,7 @@ function Dashboard() {
               key="inventory"
               rows={inventoryRows}
               onSelectHospital={selectHospital}
+              scope={selectedHospital?.name ?? null}
             />,
             <ForecastCard
               key="forecast"
