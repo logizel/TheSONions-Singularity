@@ -2,12 +2,12 @@
  * Stockout tests wired to the forecast output — the history-to-warning slice.
  */
 import { describe, expect, it } from 'vitest';
-import { forecast } from './forecast.js';
-import { stockoutRisk } from './stockout.js';
-import { EngineInputError } from './errors.js';
-import { seeds } from './seeds.js';
-import type { ForecastDay } from './types.js';
-import { FORECAST_DAYS, ZERO_DEMAND_COVER_DAYS } from './types.js';
+import { forecast } from './forecast';
+import { stockoutRisk } from './stockout';
+import { EngineInputError } from './errors';
+import { seeds } from './seeds';
+import type { ForecastDay } from './types';
+import { FORECAST_DAYS, ZERO_DEMAND_COVER_DAYS } from './types';
 
 const flatForecast = (daily: number): ForecastDay[] =>
   Array.from({ length: FORECAST_DAYS }, (_, i) => ({ value: daily, advisory: i + 1 >= 15 }));

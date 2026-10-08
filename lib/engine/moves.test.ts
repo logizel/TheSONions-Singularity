@@ -7,16 +7,16 @@
  * itself never imports stockout.ts or waste.ts (parallel-safe with 02-02).
  */
 import { describe, expect, it } from 'vitest';
-import { EngineInputError } from './errors.js';
-import { forecast } from './forecast.js';
-import { stockoutRisk } from './stockout.js';
-import { wasteRisk } from './waste.js';
-import { seeds } from './seeds.js';
+import { EngineInputError } from './errors';
+import { forecast } from './forecast';
+import { stockoutRisk } from './stockout';
+import { wasteRisk } from './waste';
+import { seeds } from './seeds';
 import {
   suggestMoves,
   type MoveRequest,
   type MoveSender,
-} from './moves.js';
+} from './moves';
 
 const mean = (xs: number[]): number =>
   xs.reduce((a, b) => a + b, 0) / xs.length;

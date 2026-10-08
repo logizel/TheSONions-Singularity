@@ -3,9 +3,9 @@
  *
  * Pure functions, no I/O (D-19). One series = one hospital/medicine (D-08).
  */
-import { EngineInputError } from './errors.js';
-import type { DemandHistory, ForecastDay } from './types.js';
-import { ADVISORY_FROM_DAY, FORECAST_DAYS, HISTORY_DAYS } from './types.js';
+import { EngineInputError } from './errors';
+import type { DemandHistory, ForecastDay } from './types';
+import { ADVISORY_FROM_DAY, FORECAST_DAYS, HISTORY_DAYS } from './types';
 
 export interface OutbreakFlag {
   /** True while the series is in outbreak (entered, not yet cleared). */

@@ -7,11 +7,11 @@
  * no cross-imports of other engine modules (parallel-safe with 02-02).
  */
 import { describe, expect, it } from 'vitest';
-import { EngineInputError } from './errors.js';
+import { EngineInputError } from './errors';
 import {
   rankPriorities,
   type PrioritySignal,
-} from './priorities.js';
+} from './priorities';
 
 const sig = (over: Partial<PrioritySignal>): PrioritySignal => ({
   hospitalId: 'h1',

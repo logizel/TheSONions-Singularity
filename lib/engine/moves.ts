@@ -8,7 +8,7 @@
  * cover/transport/shelf-life days) — this module never imports stockout.ts or
  * waste.ts, so it stays independently unit-testable and parallel-safe.
  */
-import { EngineInputError } from './errors.js';
+import { EngineInputError } from './errors';
 
 /** Sender buffer: a sender must keep this many days of cover (D-09). */
 export const SENDER_BUFFER_DAYS = 7;

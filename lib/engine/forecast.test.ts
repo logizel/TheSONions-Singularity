@@ -2,10 +2,10 @@
  * Forecast tests on deterministic seeds (D-21) — tracer slice.
  */
 import { describe, expect, it } from 'vitest';
-import { forecast, mape, networkMean } from './forecast.js';
-import { EngineInputError } from './errors.js';
-import { allSeedHistories, seeds } from './seeds.js';
-import { ADVISORY_FROM_DAY, FORECAST_DAYS, HISTORY_DAYS } from './types.js';
+import { forecast, mape, networkMean } from './forecast';
+import { EngineInputError } from './errors';
+import { allSeedHistories, seeds } from './seeds';
+import { ADVISORY_FROM_DAY, FORECAST_DAYS, HISTORY_DAYS } from './types';
 
 describe('forecast (D-01: daily 30-day array)', () => {
   it('produces a 30-day daily ForecastDay array on the normal seed', () => {

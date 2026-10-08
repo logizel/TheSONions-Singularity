@@ -5,9 +5,9 @@
  * and quotable for dashboard and chat consumption; rounding happens at
  * consumption (D-02).
  */
-import { EngineInputError } from './errors.js';
-import type { ForecastDay } from './types.js';
-import { FORECAST_DAYS } from './types.js';
+import { EngineInputError } from './errors';
+import type { ForecastDay } from './types';
+import { FORECAST_DAYS } from './types';
 
 export interface WasteRisk {
   /** Units of stock that will expire unused (D-18, WASTE-01). */

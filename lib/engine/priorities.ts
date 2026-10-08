@@ -7,7 +7,7 @@
  * inputs — this module never imports other engine modules, so it stays
  * independently unit-testable and parallel-safe.
  */
-import { EngineInputError } from './errors.js';
+import { EngineInputError } from './errors';
 
 /** Precomputed risk signal for one hospital/medicine (quotable numbers only). */
 export interface PrioritySignal {

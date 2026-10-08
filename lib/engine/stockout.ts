@@ -3,9 +3,9 @@
  *
  * Pure function, no I/O (D-19).
  */
-import { EngineInputError } from './errors.js';
-import type { ForecastDay } from './types.js';
-import { FORECAST_DAYS, ZERO_DEMAND_COVER_DAYS } from './types.js';
+import { EngineInputError } from './errors';
+import type { ForecastDay } from './types';
+import { FORECAST_DAYS, ZERO_DEMAND_COVER_DAYS } from './types';
 
 export interface StockoutRisk {
   /** Whole days of full cover; 90 when forecast demand is zero (D-17). */

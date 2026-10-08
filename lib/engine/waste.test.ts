@@ -3,12 +3,12 @@
  * (WASTE-01/02, D-18) — consuming forecast() output, never reimplementing it.
  */
 import { describe, expect, it } from 'vitest';
-import { forecast } from './forecast.js';
-import { wasteRisk } from './waste.js';
-import { EngineInputError } from './errors.js';
-import { seeds } from './seeds.js';
-import type { ForecastDay } from './types.js';
-import { FORECAST_DAYS } from './types.js';
+import { forecast } from './forecast';
+import { wasteRisk } from './waste';
+import { EngineInputError } from './errors';
+import { seeds } from './seeds';
+import type { ForecastDay } from './types';
+import { FORECAST_DAYS } from './types';
 
 const flatForecast = (daily: number): ForecastDay[] =>
   Array.from({ length: FORECAST_DAYS }, (_, i) => ({ value: daily, advisory: i + 1 >= 15 }));

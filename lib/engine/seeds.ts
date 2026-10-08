@@ -19,7 +19,7 @@
  *   quantities (A ≈ 206u/3 transport days, B ≈ 228u/1 transport day) for the
  *   D-11 waste-first ordering. Consumed by plan 03 (suggestMoves).
  */
-import type { DemandHistory } from './types.js';
+import type { DemandHistory } from './types';
 
 export interface SeedScenario {
   name: string;

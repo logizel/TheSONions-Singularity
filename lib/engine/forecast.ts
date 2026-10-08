@@ -3,9 +3,9 @@
  *
  * Pure functions, no I/O, no randomness, no time-dependence (D-19, D-21).
  */
-import { EngineInputError } from './errors.js';
-import type { DemandHistory, ForecastDay } from './types.js';
-import { ADVISORY_FROM_DAY, FORECAST_DAYS, HISTORY_DAYS } from './types.js';
+import { EngineInputError } from './errors';
+import type { DemandHistory, ForecastDay } from './types';
+import { ADVISORY_FROM_DAY, FORECAST_DAYS, HISTORY_DAYS } from './types';
 
 /** Engine keeps 1-decimal floats; rounding to integers happens at consumption (D-02). */
 const round1 = (n: number): number => Math.round(n * 10) / 10;

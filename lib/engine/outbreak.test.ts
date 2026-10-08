@@ -3,10 +3,10 @@
  * switching (OUTBK-01/02, D-05..D-08) — asserted against committed seeds (D-21, D-22).
  */
 import { describe, expect, it } from 'vitest';
-import { detectOutbreak, trendForecast } from './outbreak.js';
-import { EngineInputError } from './errors.js';
-import { seeds } from './seeds.js';
-import { ADVISORY_FROM_DAY, FORECAST_DAYS } from './types.js';
+import { detectOutbreak, trendForecast } from './outbreak';
+import { EngineInputError } from './errors';
+import { seeds } from './seeds';
+import { ADVISORY_FROM_DAY, FORECAST_DAYS } from './types';
 
 /** Independent baseline reimplementation so spike-shape assertions are meaningful. */
 const baseline = (history: number[]) => {
