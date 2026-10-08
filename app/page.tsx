@@ -16,7 +16,20 @@ import {
   type ResultsFixture,
 } from "./data/results";
 import { Header } from "@/components/Header";
+import { DashboardGrid } from "@/components/cards/DashboardGrid";
 import { InventoryCard, type InventoryCardRow } from "@/components/cards/InventoryCard";
+import { ForecastCard, type ForecastCardRow } from "@/components/cards/ForecastCard";
+import { ShortageCard, type ShortageCardRow } from "@/components/cards/ShortageCard";
+import { ExpiryCard, type ExpiryCardRow } from "@/components/cards/ExpiryCard";
+import {
+  MovesCard,
+  type MovesCardOrder,
+  type MovesCardTransfer,
+} from "@/components/cards/MovesCard";
+import {
+  PrioritiesCard,
+  type PrioritiesCardRow,
+} from "@/components/cards/PrioritiesCard";
 import { SkeletonCard } from "@/components/cards/ui";
 import { HospitalPanel } from "@/components/panel/HospitalPanel";
 import { ChatPanel } from "@/components/chat/ChatPanel";
@@ -80,22 +93,144 @@ function Dashboard() {
     }
   }, [rawParam, router, pathname]);
 
+  // Single-selection cross-filter with toggle; URL is the source of truth
+  // so refresh, back/forward and shared links all restore context (D-16).
   const selectHospital = (id: string | null) => {
     if (id !== null && !isKnownHospitalId(fixture, id)) return;
-    router.push(id ? `${pathname}?hospital=${encodeURIComponent(id)}` : pathname);
+    const next = id === selectedId ? null : id;
+    router.push(next ? `${pathname}?hospital=${encodeURIComponent(next)}` : pathname);
   };
+
+  const hospitalNameById = useMemo(
+    () => Object.fromEntries(fixture.hospitals.map((h) => [h.id, h.name])),
+    [],
+  );
+  const medicineNameById = useMemo(
+    () => Object.fromEntries(fixture.medicines.map((m) => [m.id, m.name])),
+    [],
+  );
+  const trendByKey = useMemo(
+    () =>
+      Object.fromEntries(
+        fixture.inventory.map((r) => [
+          `${r.hospitalId}|${r.medicineId}`,
+          r.trend,
+        ]),
+      ),
+    [],
+  );
+
+  const inScope = (hospitalId: string) =>
+    selectedId === null || hospitalId === selectedId;
 
   const inventoryRows = useMemo(
     () => buildInventoryRows(fixture, selectedId),
     [selectedId],
   );
-  const visibleInventoryRows = useMemo(
+
+  const forecastRows: ForecastCardRow[] = useMemo(
     () =>
-      selectedId
-        ? inventoryRows.filter((r) => r.hospitalId === selectedId)
-        : inventoryRows,
-    [inventoryRows, selectedId],
+      fixture.forecast
+        .filter((f) => inScope(f.hospitalId))
+        .map((f) => ({
+          hospitalId: f.hospitalId,
+          hospitalName: hospitalNameById[f.hospitalId] ?? f.hospitalId,
+          medicineName: medicineNameById[f.medicineId] ?? f.medicineId,
+          mode: f.mode,
+          next7: f.next7,
+          avgDaily: f.avgDaily,
+        })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedId, hospitalNameById, medicineNameById],
   );
+
+  const shortageRows: ShortageCardRow[] = useMemo(
+    () =>
+      fixture.shortages
+        .filter((s) => inScope(s.hospitalId))
+        .map((s) => ({
+          hospitalId: s.hospitalId,
+          hospitalName: hospitalNameById[s.hospitalId] ?? s.hospitalId,
+          medicineName: medicineNameById[s.medicineId] ?? s.medicineId,
+          daysToStockout: s.daysToStockout,
+          severity: s.severity,
+          trend: trendByKey[`${s.hospitalId}|${s.medicineId}`] ?? [],
+        })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedId, hospitalNameById, medicineNameById, trendByKey],
+  );
+
+  const expiryRows: ExpiryCardRow[] = useMemo(
+    () =>
+      fixture.expiries
+        .filter((e) => inScope(e.hospitalId))
+        .map((e) => ({
+          hospitalId: e.hospitalId,
+          hospitalName: hospitalNameById[e.hospitalId] ?? e.hospitalId,
+          medicineName: medicineNameById[e.medicineId] ?? e.medicineId,
+          qty: e.qty,
+          expiryDate: e.expiryDate,
+          severity: e.severity,
+        })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedId, hospitalNameById, medicineNameById],
+  );
+
+  const transferRows: MovesCardTransfer[] = useMemo(
+    () =>
+      fixture.moves
+        .filter(
+          (m) =>
+            selectedId === null ||
+            m.fromId === selectedId ||
+            m.toId === selectedId,
+        )
+        .map((m) => ({
+          fromId: m.fromId,
+          fromName: hospitalNameById[m.fromId] ?? m.fromId,
+          toId: m.toId,
+          toName: hospitalNameById[m.toId] ?? m.toId,
+          medicineName: medicineNameById[m.medicineId] ?? m.medicineId,
+          qty: m.qty,
+          arrivesInDays: m.arrivesInDays,
+        })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedId, hospitalNameById, medicineNameById],
+  );
+
+  const orderRows: MovesCardOrder[] = useMemo(
+    () =>
+      fixture.emergencyOrders
+        .filter((o) => inScope(o.hospitalId))
+        .map((o) => ({
+          hospitalId: o.hospitalId,
+          hospitalName: hospitalNameById[o.hospitalId] ?? o.hospitalId,
+          medicineName: medicineNameById[o.medicineId] ?? o.medicineId,
+          qty: o.qty,
+          leadDays: o.leadDays,
+        })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedId, hospitalNameById],
+  );
+
+  const priorityRows: PrioritiesCardRow[] = useMemo(
+    () =>
+      fixture.priorities
+        .filter((p) => inScope(p.hospitalId))
+        .map((p) => ({
+          rank: p.rank,
+          hospitalId: p.hospitalId,
+          hospitalName: hospitalNameById[p.hospitalId] ?? p.hospitalId,
+          score: p.score,
+          reasons: p.reasons,
+          outbreak:
+            fixture.hospitals.find((h) => h.id === p.hospitalId)?.outbreak ??
+            false,
+        })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedId, hospitalNameById],
+  );
+
   const selectedHospital = fixture.hospitals.find((h) => h.id === selectedId);
 
   if (fixture.hospitals.length === 0) {
@@ -165,18 +300,49 @@ function Dashboard() {
         </div>
       ) : null}
       {!mounted ? (
-        <div data-testid="loading-skeletons" style={gridStyle}>
+        <div data-testid="loading-skeletons" style={loadingGridStyle}>
           {Array.from({ length: 6 }, (_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       ) : (
-        <div style={gridStyle}>
-          <InventoryCard
-            rows={visibleInventoryRows}
-            onSelectHospital={selectHospital}
-          />
-        </div>
+        <DashboardGrid
+          cards={[
+            <InventoryCard
+              key="inventory"
+              rows={inventoryRows}
+              onSelectHospital={selectHospital}
+            />,
+            <ForecastCard
+              key="forecast"
+              rows={forecastRows}
+              mape={fixture.mape}
+              advisoryLabel={fixture.advisory.label}
+              onSelectHospital={selectHospital}
+            />,
+            <ShortageCard
+              key="shortage"
+              rows={shortageRows}
+              onSelectHospital={selectHospital}
+            />,
+            <ExpiryCard
+              key="expiry"
+              rows={expiryRows}
+              onSelectHospital={selectHospital}
+            />,
+            <MovesCard
+              key="moves"
+              transfers={transferRows}
+              orders={orderRows}
+              onSelectHospital={selectHospital}
+            />,
+            <PrioritiesCard
+              key="priorities"
+              rows={priorityRows}
+              onSelectHospital={selectHospital}
+            />,
+          ]}
+        />
       )}
       <HospitalPanel
         hospitalId={selectedId}
@@ -195,7 +361,7 @@ const pageStyle: React.CSSProperties = {
   padding: spacing.xl,
 };
 
-const gridStyle: React.CSSProperties = {
+const loadingGridStyle: React.CSSProperties = {
   display: "grid",
   gap: spacing.lg,
 };

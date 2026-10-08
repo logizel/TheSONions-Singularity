@@ -47,9 +47,7 @@ export function InventoryCard({
               <button
                 data-testid={`inventory-row-${row.hospitalId}`}
                 type="button"
-                onClick={() =>
-                  onSelectHospital(row.selected ? null : row.hospitalId)
-                }
+                onClick={() => onSelectHospital(row.hospitalId)}
                 aria-pressed={row.selected}
                 style={{
                   width: "100%",
