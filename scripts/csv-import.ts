@@ -16,6 +16,40 @@ function isIsoDate(s: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s));
 }
 
+// Minimal RFC-4180 field splitter (WR-02): handles quoted commas and escaped
+// quotes (Excel exports quote fields containing commas). Unquoted path is
+// identical to the old split(",") behavior.
+function splitRow(line: string): string[] {
+  if (!line.includes('"')) return line.split(",").map((p) => p.trim());
+  const fields: string[] = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        cur += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      fields.push(cur.trim());
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  fields.push(cur.trim());
+  return fields;
+}
+
 async function main() {
   const file = process.argv[2];
   if (!file) {
@@ -43,7 +77,7 @@ async function main() {
     const raw = lines[i].trim();
     if (!raw) continue;
     const line = i + 1;
-    const parts = raw.split(",").map((p) => p.trim());
+    const parts = splitRow(raw);
     if (parts.length !== 6) {
       errors.push({ line, reason: `expected 6 columns, got ${parts.length}` });
       continue;

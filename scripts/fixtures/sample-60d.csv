@@ -61,3 +61,4 @@ date,hospital,medicine,used_qty,patient_load,emergency_pct
 2026-10-07,h-civil,m-ors,32,75,23
 2026-10-05,h-civil,m-ors,25,80,150
 2026-10-06,h-civil,FreeTextMed,25,80,20
+"2026-10-07",h-civil,m-ors,33,70,12
