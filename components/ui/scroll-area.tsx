@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export interface ScrollAreaProps extends React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> {}
 
-export const ScrollArea = React.forwardRef<
+const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
 >(({ className, ...props }, ref) => (
@@ -16,9 +16,9 @@ export const ScrollArea = React.forwardRef<
     {...props}
   />
 ));
-ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
+ScrollArea.displayName = "ScrollArea";
 
-export const ScrollBar = React.forwardRef<
+const ScrollBar = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
 >(({ className, orientation = "vertical", ...props }, ref) => (
@@ -38,16 +38,16 @@ export const ScrollBar = React.forwardRef<
 ));
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 
-export const ScrollAreaViewport = React.forwardRef<
+const ScrollAreaViewport = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
   <ScrollAreaPrimitive.Viewport
     ref={ref}
-    className={cn("h-full w-full rounded-[inherit]", props.className)}
+    className={cn("h-full w-full rounded-[inherit]", className)}
     {...props}
   />
 ));
 ScrollAreaViewport.displayName = ScrollAreaPrimitive.Viewport.displayName;
 
-export const ScrollArea = ScrollAreaPrimitive.Root;
+export { ScrollArea, ScrollBar, ScrollAreaViewport };

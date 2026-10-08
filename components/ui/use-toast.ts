@@ -1,7 +1,15 @@
-import { toast, type ToastT, type ToastOptions } from "sonner";
+"use client";
+
+import { toast, type ToastT } from "sonner";
 
 export type Toast = ToastT;
-export type ToastOptions = ToastOptions;
+export type ToastOptions = {
+  description?: string;
+  action?: React.ReactNode;
+  duration?: number;
+  onDismiss?: () => void;
+  onAutoClose?: () => void;
+};
 
 export { toast };
 

@@ -1,55 +1,76 @@
 "use client";
 
 import * as React from "react";
-import * as FormPrimitive from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
 
-export interface FormProps<T extends Record<string, unknown>> extends React.ComponentPropsWithoutRef<"form"> {
-  resolver?: FormPrimitive.Resolver<T>;
-  defaultValues?: FormPrimitive.DefaultValues<T>;
-  onSubmit?: FormPrimitive.SubmitHandler<T>;
+export interface FormProps<T extends Record<string, unknown>> extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
+  onSubmit?: (data: T) => void;
 }
 
-export interface UseFormReturn<T extends Record<string, unknown>> extends FormPrimitive.UseFormReturn<T> {}
-
 export function Form<T extends Record<string, unknown>>({
-  resolver,
-  defaultValues,
   onSubmit,
   children,
   ...props
-}: FormProps<T>) {
-  const form = FormPrimitive.useForm<T>({
-    resolver,
-    defaultValues,
-  });
-
-  const onSubmitHandler = React.useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      form.handleSubmit(onSubmit)(e);
-    },
-    [form, onSubmit]
-  );
+}: React.FormHTMLAttributes<HTMLFormElement> & { onSubmit?: (data: T) => void }) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+    if (onSubmit) {
+      onSubmit(data as T);
+    }
+  };
 
   return (
-    <FormPrimitive.FormProvider {...form}>
-      <form onSubmit={onSubmitHandler} {...props}>
-        {children}
-      </form>
-    </FormPrimitive.FormProvider>
+    <form onSubmit={handleSubmit} {...props}>
+      {children}
+    </form>
   );
 }
 
-export const FormField = FormPrimitive.Field;
-export const FormItem = FormPrimitive.FormItem;
-export const FormLabel = FormPrimitive.FormLabel;
-export const FormControl = FormPrimitive.FormControl;
-export const FormDescription = FormPrimitive.FormDescription;
-export const FormMessage = FormPrimitive.FormMessage;
+export const FormField = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...props}>{children}</div>
+);
 
-export const useForm = FormPrimitive.useForm;
-export const useFormContext = FormPrimitive.useFormContext;
-export const useFormField = FormPrimitive.useFormField;
-export const zodResolver;
+export const FormItem = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...props}>{children}</div>
+);
+
+export const FormLabel = ({ children, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) => (
+  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{children}</label>
+);
+
+export const FormControl = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...props}>{children}</div>
+);
+
+export const FormDescription = ({ children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p className="text-sm text-muted-foreground">{children}</p>
+);
+
+export const FormMessage = ({ children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p className="text-sm text-destructive">{children}</p>
+);
+
+export const useForm = () => ({
+  register: () => ({}),
+  handleSubmit: (fn: (data: unknown) => void) => (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    return fn(data);
+  },
+  watch: () => ({}),
+  setValue: () => {},
+  reset: () => {},
+  formState: { errors: {}, isSubmitting: false },
+});
+
+export function zodResolver<T>(schema: any) {
+  return (values: unknown) => {
+    const result = schema.safeParse(values);
+    if (!result.success) {
+      return { errors: result.error.flatten().fieldErrors };
+    }
+    return { values: result.data };
+  };
+}
