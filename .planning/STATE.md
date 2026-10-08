@@ -3,7 +3,7 @@ gsd_state_version: "1.0"
 current_phase: 04
 current_phase_name: Dashboard UI
 status: verification_gaps_found
-stopped_at: Phase 04 verification found 6 gaps (21/23 must-haves); awaiting gap closure
+stopped_at: Phase 04 verification found 6 gaps (21/23 must-haves); gap-closure plans 04-04/04-05 created, awaiting execution
 last_updated: "2026-10-08T12:39:12Z"
 last_activity: 2026-10-08
 last_activity_desc: Phase 04 plan 04-03 executed (chat panel)
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-10-08)
 
 Phase: 04 (Dashboard UI) — plans executed 3/3, verification found gaps
 Plan: 3 of 3 executed (04-01 dashboard tracer done, commits aaa1f06/273ecbc/ec68a9d; 04-02 drill-in panel done, commits 599d87c/091b9d1/e493f33; 04-03 chat panel done, commits f6c2b24/8971479/5956def)
-Status: Verification gaps_found (21/23 must-haves; 2 high + 4 medium gaps) — phase NOT complete, awaiting `/gsd-plan-phase 04 --gaps`
+Status: Verification gaps_found (21/23 must-haves; 2 high + 4 medium gaps) — gap-closure plans 04-04 (dashboard, G-04-1/G-04-2) + 04-05 (chat+roles, G-04-3..G-04-6) planned in one wave, ready for `/gsd-execute-phase 04`
 Last activity: 2026-10-08 — Phase 04 verified with gaps (see 04-VERIFICATION.md)
 
 Progress: [████████░░] 80% (execution done, verification gaps pending)

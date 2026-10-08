@@ -74,12 +74,13 @@ Notes:
 **Success Criteria** (what must be TRUE):
   1. Administrator sees inventory, forecast, shortage risk, expiry risk, recommended moves, and priority hospitals on one screen
   2. Administrator can click into any hospital for its detail
-**Plans:** 3 plans
+**Plans:** 5 plans (3 done + 2 gap-closure)
 **UI hint**: yes
 
 Plans:
 - Wave 1: [x] 04-01-PLAN.md — Dashboard tracer: shell, theme, mock fixture, 6-card grid, header/refresh, cross-filter, deep link (done 2026-10-08, SUMMARY committed)
 - Wave 2 *(blocked on Wave 1 completion)*: [x] 04-02-PLAN.md — Drill-in side panel with expandable medicines and role views (done 2026-10-08, SUMMARY committed); [x] 04-03-PLAN.md — Chat panel with mock Q&A plus advisory/MAPE/outbreak treatments (done 2026-10-08, SUMMARY committed)
+- Gap closure *(wave 1, parallel — disjoint files, verification gaps_found 21/23)*: [ ] 04-04-PLAN.md — Dashboard pass: filter inventory card by selectedId, share per-row risk derivation, scope total label (G-04-1, G-04-2); [ ] 04-05-PLAN.md — Chat+roles pass: scope all intents, same-hospital pairing, per-answer quote gate, fail-closed owner (G-04-3..G-04-6)
 
 Notes:
 - Builds against the Phase 1 frozen contracts and mock ResultsJSON, so UI work is independent of Phase 3 completion; final wiring happens in Phase 5.
@@ -108,5 +109,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Data Layer + Frozen Contracts | 0/TBD | Not started | - |
 | 2. Forecast & Decision Engine | 0/TBD | Not started | - |
 | 3. API, Chat & Access | 0/TBD | Not started | - |
-| 4. Dashboard UI | 3/3 | Complete | 2026-10-08 |
+| 4. Dashboard UI | 3/5 | Verification gaps — closing (04-04/04-05 planned) | 2026-10-08 |
 | 5. Integration & Wiring | 0/TBD | Not started | - |
