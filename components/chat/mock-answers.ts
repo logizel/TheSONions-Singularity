@@ -2,9 +2,10 @@
  * Canned mock answer engine (D-19, D-20, D-21, D-23).
  *
  * Quote-only by construction: every answer is built from the static mock
- * ResultsJSON fixture and every numeric token is post-checked against the
- * fixture before it may render (T-4-11). Unanswerable questions resolve to
- * the safe fallback sentence — fake data never renders (D-23).
+ * ResultsJSON fixture and every numeric token is post-checked against a
+ * per-answer allow-set built from the exact cited rows before it may
+ * render (T-4-11, T-4-17). Unanswerable questions resolve to the safe
+ * fallback sentence — fake data never renders (D-23).
  *
  * Matching is single-shot (Phase 3 D-12): answerQuestion receives only the
  * current question text plus the active hospital filter. Conversation
@@ -17,6 +18,11 @@
  * answers name the hospital so the filter is visible in the reply; an
  * empty scoped slice degrades to the global answer, or to SAFE_FALLBACK
  * where no honest scoped answer exists.
+ *
+ * Most-at-risk pairs within one hospital (G-04-4): the worst shortage of
+ * the top-ranked priority hospital itself, quoting that entry's own
+ * reasons vocabulary — never a cross-hospital join, never hardcoded
+ * flag wording.
  *
  * Answers are plain text with no source tags (D-20) and carry no
  * Approve/Order affordances — the chat never renders move-approval actions
@@ -41,21 +47,59 @@ export interface ChatMessage {
   text: string;
 }
 
+/** One built answer plus the allow-set its quote gate enforces. */
+interface CitedAnswer {
+  text: string;
+  allowed: ReadonlySet<string>;
+}
+
 const fixture = fixtureJson as ResultsFixture;
 
-/**
- * Every numeric token that exists in the fixture, tokenized the same way
- * answers are scanned. Membership here is the exact-match quote gate
- * (Phase 3 D-13 spirit: every number rendered must appear verbatim).
- */
-const FIXTURE_NUMERIC_TOKENS: ReadonlySet<string> = new Set(
-  JSON.stringify(fixture).match(/\d+(?:\.\d+)?/g) ?? [],
-);
+const NUMERIC_TOKEN_RE = /\d+(?:\.\d+)?/g;
+/** Dosage fragments embedded in medicine names ("500mg", "100mcg",
+ * "100U/ml") are never quantity quotes — stripped before the gate scans. */
+const DOSAGE_FRAGMENT_RE = /\d+(?:\.\d+)?\s*(?:U\/ml|mg|mcg|g|ml)\b/gi;
+/** ISO dates are verified as whole cited strings, never as loose parts. */
+const ISO_DATE_RE = /\d{4}-\d{2}-\d{2}/g;
 
-/** Post-check: true when every numeric token in text exists in the fixture. */
-export function passesQuoteCheck(text: string): boolean {
-  const tokens = text.match(/\d+(?:\.\d+)?/g) ?? [];
-  return tokens.every((token) => FIXTURE_NUMERIC_TOKENS.has(token));
+function numericTokens(value: string | number): string[] {
+  return String(value).match(NUMERIC_TOKEN_RE) ?? [];
+}
+
+/**
+ * Per-answer allow-set from the exact cited rows: quantity fields (days,
+ * scores, qtys) plus the full ISO date strings actually quoted.
+ * Medicine-name dosage fragments are never collected here (G-04-5).
+ */
+function citedAllowSet(...values: Array<string | number>): Set<string> {
+  const allowed = new Set<string>();
+  for (const value of values) {
+    for (const token of numericTokens(value)) allowed.add(token);
+    for (const date of String(value).match(ISO_DATE_RE) ?? [])
+      allowed.add(date);
+  }
+  return allowed;
+}
+
+/**
+ * Per-answer quote gate (G-04-5, T-4-17): every ISO date in the text must
+ * equal a cited date actually quoted, and every remaining numeric token —
+ * after stripping medicine-name dosage fragments — must appear in the
+ * allow-set built from the cited rows' quantity fields. A wrong quantity
+ * whose digits merely exist elsewhere in the fixture no longer passes;
+ * dosage fragments and date parts are rejected as quantity quotes.
+ */
+export function passesQuoteCheck(
+  text: string,
+  allowed: ReadonlySet<string>,
+): boolean {
+  const dates = text.match(ISO_DATE_RE) ?? [];
+  if (!dates.every((date) => allowed.has(date))) return false;
+  const scrubbed = text
+    .replace(ISO_DATE_RE, " ")
+    .replace(DOSAGE_FRAGMENT_RE, " ");
+  const tokens = scrubbed.match(NUMERIC_TOKEN_RE) ?? [];
+  return tokens.every((token) => allowed.has(token));
 }
 
 function hospitalName(id: string): string {
@@ -77,34 +121,64 @@ function lcfirst(text: string): string {
   return text.length === 0 ? text : text.charAt(0).toLowerCase() + text.slice(1);
 }
 
-/** Intent 1 — most-at-risk hospital (chip 1). */
-function answerMostAtRisk(contextHospitalId: string | null): string {
-  const scoped = knownHospitalId(contextHospitalId);
-  const top = [...fixture.priorities].sort((a, b) => a.rank - b.rank)[0];
-  const pool = scoped
-    ? fixture.shortages.filter((s) => s.hospitalId === scoped)
-    : fixture.shortages;
-  // Empty scoped slice degrades to the global answer (G-04-3).
-  const rows = pool.length > 0 ? pool : fixture.shortages;
-  const worst = [...rows].sort(
-    (a, b) => a.daysToStockout - b.daysToStockout,
-  )[0];
-  if (!top || !worst) return SAFE_FALLBACK;
-  const flagged = fixture.hospitals.find((h) => h.id === top.hospitalId);
-  const flags =
-    flagged?.outbreak === true
-      ? "high load, emergency share, and outbreak"
-      : "high load and emergency share";
-  return (
-    `${hospitalName(top.hospitalId)} is most at risk — ` +
+/** Safe fallback carries no numbers, so it passes any per-answer gate. */
+function fallback(): CitedAnswer {
+  return { text: SAFE_FALLBACK, allowed: new Set<string>() };
+}
+
+/** Worst shortage row for one hospital; undefined when it has none. */
+function worstShortageFor(hospitalId: string) {
+  return [...fixture.shortages]
+    .filter((s) => s.hospitalId === hospitalId)
+    .sort((a, b) => a.daysToStockout - b.daysToStockout)[0];
+}
+
+/**
+ * Two-sentence risk answer quoting the priority entry's own reasons
+ * vocabulary (G-04-4). The hospital is named, so a scoped filter stays
+ * visible in the reply (G-04-3).
+ */
+function riskAnswer(
+  entry: ResultsFixture["priorities"][number],
+  worst: ResultsFixture["shortages"][number],
+): CitedAnswer {
+  const text =
+    `${hospitalName(entry.hospitalId)} is most at risk — ` +
     `${medicineName(worst.medicineId)} reaches stockout in ` +
-    `${worst.daysToStockout} days with priority score ${top.score}.` +
-    ` ${flags} flags apply.`
+    `${worst.daysToStockout} days with priority score ${entry.score}.` +
+    ` Reasons: ${entry.reasons.join(", ")}.`;
+  const allowed = citedAllowSet(
+    worst.daysToStockout,
+    entry.score,
+    ...entry.reasons,
   );
+  return { text, allowed };
+}
+
+/** Global path: worst shortage of the top-ranked priority hospital (G-04-4). */
+function globalMostAtRisk(): CitedAnswer {
+  const top = [...fixture.priorities].sort((a, b) => a.rank - b.rank)[0];
+  if (!top) return fallback();
+  const worst = worstShortageFor(top.hospitalId);
+  if (!worst) return fallback();
+  return riskAnswer(top, worst);
+}
+
+/** Intent 1 — most-at-risk hospital (chip 1). */
+function answerMostAtRisk(contextHospitalId: string | null): CitedAnswer {
+  const scoped = knownHospitalId(contextHospitalId);
+  if (scoped === null) return globalMostAtRisk();
+  const entry = fixture.priorities.find((p) => p.hospitalId === scoped);
+  // No priority entry for the filtered hospital: degrade to global (G-04-3).
+  if (!entry) return globalMostAtRisk();
+  const worst = worstShortageFor(entry.hospitalId);
+  // A hospital with no shortage row has no honest risk answer (G-04-4).
+  if (!worst) return fallback();
+  return riskAnswer(entry, worst);
 }
 
 /** Intent 2 — waste quantities (chip 2). */
-function answerWaste(contextHospitalId: string | null): string {
+function answerWaste(contextHospitalId: string | null): CitedAnswer {
   const scoped = knownHospitalId(contextHospitalId);
   const pool = scoped
     ? fixture.expiries.filter((e) => e.hospitalId === scoped)
@@ -114,7 +188,7 @@ function answerWaste(contextHospitalId: string | null): string {
   const top = [...rows].sort((a, b) => b.qty - a.qty);
   const first = top[0];
   const second = top[1];
-  if (!first) return SAFE_FALLBACK;
+  if (!first) return fallback();
   const secondClause = second
     ? `, and ${second.qty} units of ${medicineName(second.medicineId)} at ` +
       `${hospitalName(second.hospitalId)} expire on ${second.expiryDate}`
@@ -126,11 +200,17 @@ function answerWaste(contextHospitalId: string | null): string {
   // The filter stays visible in the reply when scoping applied (G-04-3).
   const prefix =
     scoped && pool.length > 0 ? `At ${hospitalName(scoped)}, ` : "";
-  return prefix === "" ? body : prefix + lcfirst(body);
+  const text = prefix === "" ? body : prefix + lcfirst(body);
+  const allowed = citedAllowSet(
+    first.qty,
+    first.expiryDate,
+    ...(second ? [second.qty, second.expiryDate] : []),
+  );
+  return { text, allowed };
 }
 
 /** Intent 3 — transfer reasons (chip 3). */
-function answerTransfers(contextHospitalId: string | null): string {
+function answerTransfers(contextHospitalId: string | null): CitedAnswer {
   const scoped = knownHospitalId(contextHospitalId);
   const pool = scoped
     ? fixture.moves.filter((m) => m.fromId === scoped || m.toId === scoped)
@@ -138,7 +218,7 @@ function answerTransfers(contextHospitalId: string | null): string {
   // Empty scoped slice degrades to the global answer (G-04-3).
   const rows = pool.length > 0 ? pool : fixture.moves;
   const first = rows[0];
-  if (!first) return SAFE_FALLBACK;
+  if (!first) return fallback();
   const shortage = fixture.shortages.find(
     (s) => s.hospitalId === first.toId && s.medicineId === first.medicineId,
   );
@@ -154,11 +234,17 @@ function answerTransfers(contextHospitalId: string | null): string {
   // The filter stays visible in the reply when scoping applied (G-04-3).
   const prefix =
     scoped && pool.length > 0 ? `At ${hospitalName(scoped)}, ` : "";
-  return prefix === "" ? body : prefix + lcfirst(body);
+  const text = prefix === "" ? body : prefix + lcfirst(body);
+  const allowed = citedAllowSet(
+    first.qty,
+    first.arrivesInDays,
+    ...(shortage ? [shortage.daysToStockout] : []),
+  );
+  return { text, allowed };
 }
 
 /** Intent 4 — stockout timing, reachable via the composer (D-21). */
-function answerStockoutTiming(contextHospitalId: string | null): string {
+function answerStockoutTiming(contextHospitalId: string | null): CitedAnswer {
   const scoped = knownHospitalId(contextHospitalId);
   const rows = scoped
     ? fixture.inventory.filter((r) => r.hospitalId === scoped)
@@ -166,14 +252,19 @@ function answerStockoutTiming(contextHospitalId: string | null): string {
   const worst = [...rows].sort(
     (a, b) => a.daysToStockout - b.daysToStockout,
   )[0];
-  if (!worst) return SAFE_FALLBACK;
+  if (!worst) return fallback();
   const scopeNote = scoped ? ", the earliest there" : ", the earliest in the network";
-  return (
+  const text =
     `${medicineName(worst.medicineId)} at ` +
     `${hospitalName(worst.hospitalId)} reaches stockout in ` +
     `${worst.daysToStockout} days${scopeNote}.` +
-    ` Days 15 to 30 of the forecast are advisory only.`
+    ` Days 15 to 30 of the forecast are advisory only.`;
+  const allowed = citedAllowSet(
+    worst.daysToStockout,
+    fixture.advisory.startDay,
+    fixture.advisory.endDay,
   );
+  return { text, allowed };
 }
 
 /**
@@ -236,7 +327,11 @@ export function answerQuestion(
   return { text: SAFE_FALLBACK };
 }
 
-/** T-4-11: an answer with a non-fixture number never renders. */
-function checked(text: string): { text: string } {
-  return { text: passesQuoteCheck(text) ? text : SAFE_FALLBACK };
+/** T-4-11: an answer with a non-cited number never renders. */
+function checked(answer: CitedAnswer): { text: string } {
+  return {
+    text: passesQuoteCheck(answer.text, answer.allowed)
+      ? answer.text
+      : SAFE_FALLBACK,
+  };
 }
