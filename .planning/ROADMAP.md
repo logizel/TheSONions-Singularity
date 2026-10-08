@@ -50,11 +50,11 @@ Notes:
   4. Administrator is warned per hospital/medicine with expiring-unused quantities computed as stock minus realistic demand before expiry (capped at 90 days)
   5. Administrator receives transfer suggestions passing all 5 checks plus emergency supplier orders for the remainder, with competing hospitals visibly ranked and justified
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 
 Plans:
 - [x] 02-01-PLAN.md — Tracer: harness plus forecast/stockout history-to-warning slice on deterministic seeds
-- [ ] 02-02-PLAN.md — Outbreak detection with trend switching plus expiry-waste risk
+- [x] 02-02-PLAN.md — Outbreak detection with trend switching plus expiry-waste risk
 - [ ] 02-03-PLAN.md — Transfer suggestions with remainder orders plus global priority ranking
 
 Notes:
@@ -117,7 +117,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Layer + Frozen Contracts | 0/TBD | Not started | - |
-| 2. Forecast & Decision Engine | 1/3 | In Progress|  |
+| 2. Forecast & Decision Engine | 2/3 | In Progress|  |
 | 3. API, Chat & Access | 0/TBD | Not started | - |
 | 4. Dashboard UI | 0/TBD | Not started | - |
 | 5. Integration & Wiring | 0/TBD | Not started | - |

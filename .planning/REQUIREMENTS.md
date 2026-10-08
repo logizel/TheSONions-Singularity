@@ -22,8 +22,8 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Outbreak
 
-- [ ] **OUTBK-01**: System flags outbreak when daily demand climbs far above normal range (above +2σ for 2 consecutive days)
-- [ ] **OUTBK-02**: System switches flagged hospital to recent-rising-trend forecast until demand normalizes
+- [x] **OUTBK-01**: System flags outbreak when daily demand climbs far above normal range (above +2σ for 2 consecutive days)
+- [x] **OUTBK-02**: System switches flagged hospital to recent-rising-trend forecast until demand normalizes
 
 ### Stock-out Risk
 
@@ -32,8 +32,8 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Waste Risk
 
-- [ ] **WASTE-01**: System computes waste units (stock minus realistic demand before expiry, capped at 90 days)
-- [ ] **WASTE-02**: System warns per hospital/medicine with expiring-unused quantities (e.g. 3,500 units expire unused)
+- [x] **WASTE-01**: System computes waste units (stock minus realistic demand before expiry, capped at 90 days)
+- [x] **WASTE-02**: System warns per hospital/medicine with expiring-unused quantities (e.g. 3,500 units expire unused)
 
 ### Moves & Orders
 
@@ -104,12 +104,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-05 | Phase 1 | Pending |
 | FCAST-01 | Phase 2 | Complete |
 | FCAST-02 | Phase 2 | Complete |
-| OUTBK-01 | Phase 2 | Pending |
-| OUTBK-02 | Phase 2 | Pending |
+| OUTBK-01 | Phase 2 | Complete |
+| OUTBK-02 | Phase 2 | Complete |
 | RISK-01 | Phase 2 | Complete |
 | RISK-02 | Phase 2 | Complete |
-| WASTE-01 | Phase 2 | Pending |
-| WASTE-02 | Phase 2 | Pending |
+| WASTE-01 | Phase 2 | Complete |
+| WASTE-02 | Phase 2 | Complete |
 | MOVE-01 | Phase 2 | Pending |
 | MOVE-02 | Phase 2 | Pending |
 | PRIOR-01 | Phase 2 | Pending |
