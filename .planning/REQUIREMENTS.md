@@ -47,8 +47,8 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Dashboard
 
-- [ ] **UI-01**: Administrator sees inventory, forecast, shortage risk, expiry risk, recommended moves, and priority hospitals on one screen
-- [ ] **UI-02**: Administrator can click into any hospital for detail
+- [x] **UI-01**: Administrator sees inventory, forecast, shortage risk, expiry risk, recommended moves, and priority hospitals on one screen
+- [x] **UI-02**: Administrator can click into any hospital for detail
 
 ### Chatbot
 
@@ -114,8 +114,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MOVE-02 | Phase 2 | Pending |
 | PRIOR-01 | Phase 2 | Pending |
 | PRIOR-02 | Phase 2 | Pending |
-| UI-01 | Phase 4 | Pending |
-| UI-02 | Phase 4 | Pending |
+| UI-01 | Phase 4 | Complete |
+| UI-02 | Phase 4 | Complete |
 | CHAT-01 | Phase 3 | Pending |
 | CHAT-02 | Phase 3 | Pending |
 | CHAT-03 | Phase 3 | Pending |

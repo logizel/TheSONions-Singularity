@@ -79,7 +79,7 @@ Notes:
 
 Plans:
 - Wave 1: [x] 04-01-PLAN.md — Dashboard tracer: shell, theme, mock fixture, 6-card grid, header/refresh, cross-filter, deep link (done 2026-10-08, SUMMARY committed)
-- Wave 2 *(blocked on Wave 1 completion)*: [x] 04-02-PLAN.md — Drill-in side panel with expandable medicines and role views (done 2026-10-08, SUMMARY committed); [ ] 04-03-PLAN.md — Chat panel with mock Q&A plus advisory/MAPE/outbreak treatments
+- Wave 2 *(blocked on Wave 1 completion)*: [x] 04-02-PLAN.md — Drill-in side panel with expandable medicines and role views (done 2026-10-08, SUMMARY committed); [x] 04-03-PLAN.md — Chat panel with mock Q&A plus advisory/MAPE/outbreak treatments (done 2026-10-08, SUMMARY committed)
 
 Notes:
 - Builds against the Phase 1 frozen contracts and mock ResultsJSON, so UI work is independent of Phase 3 completion; final wiring happens in Phase 5.
@@ -108,5 +108,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Data Layer + Frozen Contracts | 0/TBD | Not started | - |
 | 2. Forecast & Decision Engine | 0/TBD | Not started | - |
 | 3. API, Chat & Access | 0/TBD | Not started | - |
-| 4. Dashboard UI | 2/3 | In Progress | - |
+| 4. Dashboard UI | 3/3 | Complete | 2026-10-08 |
 | 5. Integration & Wiring | 0/TBD | Not started | - |
