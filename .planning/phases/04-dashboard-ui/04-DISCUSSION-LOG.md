@@ -253,3 +253,7 @@ None — the user decided every item. One "You decide" option was offered (card 
 ## Deferred Ideas
 
 None — discussion stayed within phase scope. No scope-creep suggestions arose.
+
+## Post-discussion alignment check
+
+After the discussion, prior phase contexts (Phase 1 `01-CONTEXT.md`, Phase 3 `03-CONTEXT.md` — missed by the initial scan because `ls -R` is unsupported) were read and checked against the decisions above. No conflicts found. Carried-forward constraints were recorded in CONTEXT.md: mock answers follow the Phase 3 answer contract (1–2 sentences, exact-match quoting, single-shot matching, Phase 3-owned rejection wording); dashboard data assumptions (seed scale, batch rows, transport/lead fields, `/api/results` envelope, role scoping) come from Phases 1 and 3.

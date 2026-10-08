@@ -38,8 +38,8 @@ The administrator runs the whole hospital network from one screen — inventory,
 - **D-18:** BeautifulUI Chat (tabbed panel) + Prompt Bar primitives only — not the full BeautifulUI set (no streaming-text/sources in v1)
 - **D-19:** Canned mock Q&A answered from the mock ResultsJSON file until the Phase 3 chat API exists
 - **D-20:** Plain answers with no source tags in the v1 UI
-- **D-21:** Three suggested risk-question chips: "Most at risk next week?", "What expires unused?", "Which transfers first?"
-- **D-22:** Session-only history — in-memory per session, refresh clears, no DB storage in the prototype
+- **D-21:** Three suggested risk-question chips: "Most at risk next week?", "What expires unused?", "Which transfers first?" (the 4th v1 intent, stockout timing, is reachable via the composer)
+- **D-22:** Session-only history — in-memory per session, refresh clears, no DB storage in the prototype; display-only, never feeds the matcher (matching stays single-shot per Phase 3 D-12)
 - **D-23:** Safe fallback ("I can only answer from system results") when no number can be quoted for a question — never show fake data
 
 ### Freshness, states, roles
@@ -47,6 +47,14 @@ The administrator runs the whole hospital network from one screen — inventory,
 - **D-25:** Skeleton cards while loading; guided empty state ("No hospitals seeded yet — upload CSV in data entry") linking to the Phase 1 screens
 - **D-26:** Role-filtered views — hospital admin sees own hospital full and others read-only with moves actions hidden; network admin sees full dashboard with approve/order actions (UI enforces AUTH-01/AUTH-02)
 - **D-27:** "Updated X min ago" timestamp plus Refresh button in the dashboard header
+
+### Carried forward from Phases 1 & 3 (pre-answered, not re-discussed)
+- Theme finalization is P1's job in Phase 4 on top of the Phase 1 `theme/tokens.ts` stub (Phase 1 D-23; `docs/TEAM.md`) — no theme discussion needed here
+- Dashboard scale assumes the Phase 1 seed demo network (~3 hospitals × 5 medicines × 60 days; Phase 1 D-21)
+- Drill-in expiry display assumes per-batch stock rows with automatic FIFO deduction and archived (not deleted) expired batches (Phase 1 D-01..D-04); per-medicine `buffer_days`, `substitute_ids`, the directed transport matrix, and per-medicine `lead_days` feed the transit/shelf-life move rows (Phase 1 D-05/D-06, D-12/D-13)
+- Dashboard fetches the full ResultsJSON payload once (single GET `/api/results`, client-side filtering; Phase 3 D-01); envelope `generatedAt` drives the header timestamp (D-27), and envelope MAPE / advisory / outbreak flags drive D-05 and D-08 (Phase 3 D-03)
+- Role filtering mirrors Phase 3 middleware scoping: hospital_admin RW-own / RO-others, moves/orders network_admin-only with no v1 audit log (Phase 3 D-07/D-08)
+- Mock chat answers must follow the Phase 3 answer contract: 1–2 sentences quoting exact ResultsJSON numbers plus reason (Phase 3 D-10), exact-match with no rounding or unit conversion (Phase 3 D-13); the exact rejection-sentence wording is owned by Phase 3, so the D-23 fallback copy is a placeholder
 
 ### the agent's Discretion
 None — the user decided every item; no "You decide" selections were made.
@@ -68,6 +76,10 @@ None — the user decided every item; no "You decide" selections were made.
 
 ### Chat component source (user-locked)
 - `https://www.beautifului.dev/` — Chat (tabbed chat panel with reasoning replies and composer) + Prompt Bar (composer) primitives for the chat panel; v1 uses Chat + Prompt Bar only (D-18). MIT-licensed copy-paste components — adapt, don't hotlink.
+
+### Prior phase contexts (locked decisions this phase builds on)
+- `.planning/phases/01-data-layer-frozen-contracts/01-CONTEXT.md` — batch-row stock model, FIFO, buffer/substitute/transport/lead fields, seed network scale, theme-stub handoff, minimal data-entry pages
+- `.planning/phases/03-api-chat-access/03-CONTEXT.md` — `/api/results` shape and envelope, auth scoping, 4 chat intents, answer contract, validator exact-match, single-shot matching
 
 ### Frozen contracts (Phase 1 — pending, build against mock until they land)
 - `db/schema.ts` — tables (frozen in Phase 1; does not exist yet)
@@ -102,7 +114,7 @@ None — the user decided every item; no "You decide" selections were made.
 - Advisory treatment: days 15–30 greyed with "advisory" tag; MAPE badge next to forecast (e.g. 6%)
 - Deep link form: `?hospital=id`
 - Empty state copy: "No hospitals seeded yet — upload CSV in data entry" (links to Phase 1 screens)
-- Chat fallback copy: "I can only answer from system results"
+- Chat fallback copy (placeholder — exact rejection sentence owned by Phase 3): "I can only answer from system results"
 
 </specifics>
 
