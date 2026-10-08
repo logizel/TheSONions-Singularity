@@ -60,3 +60,12 @@ export async function getHospitalLocations(): Promise<HospitalLocationsResponse 
     .orderBy(hospitals.id);
   return buildHospitalLocations(rows);
 }
+
+/** Hospital directory (id + name) for pickers such as demo sign-in. Throws on DB failure. */
+export async function listHospitals(): Promise<{ id: string; name: string }[]> {
+  const [{ db }, { hospitals }] = await Promise.all([
+    import('../../db/client'),
+    import('../../db/schema'),
+  ]);
+  return db.select({ id: hospitals.id, name: hospitals.name }).from(hospitals).orderBy(hospitals.name);
+}

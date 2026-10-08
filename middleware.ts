@@ -7,6 +7,8 @@ type Role = "hospital_admin" | "network_admin";
 interface SessionPayload {
   role: Role;
   hospitalId?: string;
+  /** Optional expiry, epoch seconds (demo sign-in sets it; gen-cookie omits it). */
+  exp?: number;
 }
 
 function base64UrlDecode(input: string): string {
@@ -70,6 +72,12 @@ async function verifySession(
       return null;
     }
     if (payload.role === "hospital_admin" && typeof payload.hospitalId !== "string") {
+      return null;
+    }
+    if (
+      payload.exp !== undefined &&
+      (typeof payload.exp !== "number" || payload.exp <= Math.floor(Date.now() / 1000))
+    ) {
       return null;
     }
     return payload;
