@@ -8,17 +8,25 @@ export function validateAnswer(answer: string, resultsJson: unknown): boolean {
     return false;
   }
 
-  // 1. Dates (YYYY-MM-DD) — removed first so their parts are not re-matched.
-  const dateTokens = answer.match(/\d{4}-\d{2}-\d{2}/g) ?? [];
-  const withoutDates = answer.replace(/\d{4}-\d{2}-\d{2}/g, " ");
+  // 1. ISO dates (YYYY-MM-DD) — removed first so their parts are not re-matched.
+  const isoDateTokens = answer.match(/\d{4}-\d{2}-\d{2}/g) ?? [];
+  let rest = answer.replace(/\d{4}-\d{2}-\d{2}/g, " ");
 
-  // 2. Percentages (e.g. "15%") — removed so "15" is not double-counted.
-  const percentTokens = withoutDates.match(/\d+(?:\.\d+)?%/g) ?? [];
-  const withoutPercents = withoutDates.replace(/\d+(?:\.\d+)?%/g, " ");
+  // 2. Human dates (e.g. "8 Oct 2026", "08 October 2026") — removed next so
+  // the day and year are not double-counted as separate integers.
+  const MONTH_DATE =
+    /\b\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{4}\b/gi;
+  const monthDateTokens = rest.match(MONTH_DATE) ?? [];
+  rest = rest.replace(MONTH_DATE, " ");
 
-  // 3. Remaining integers / decimals (day-counts like "14" in "14 days").
-  const numberTokens = withoutPercents.match(/\d+(?:\.\d+)?/g) ?? [];
+  // 3. Percentages (e.g. "15%") — removed so "15" is not double-counted.
+  const percentTokens = rest.match(/\d+(?:\.\d+)?%/g) ?? [];
+  rest = rest.replace(/\d+(?:\.\d+)?%/g, " ");
 
-  const tokens = [...dateTokens, ...percentTokens, ...numberTokens];
+  // 4. Remaining integers / decimals — day-counts like "14 days" surface as
+  // the bare integer "14", which must appear verbatim in ResultsJSON.
+  const numberTokens = rest.match(/\d+(?:\.\d+)?/g) ?? [];
+
+  const tokens = [...isoDateTokens, ...monthDateTokens, ...percentTokens, ...numberTokens];
   return tokens.every((token) => haystack.includes(token));
 }
