@@ -1,0 +1,27 @@
+{
+  "source": "demo-coordinates",
+  "updatedAt": "2026-10-09T00:00:00.000Z",
+  "hospitals": [
+    {
+      "id": "h-civil",
+      "name": "City Civil Hospital",
+      "lat": 12.8703,
+      "lng": 74.8436,
+      "address": "Demo location near Hampankatta, Mangaluru"
+    },
+    {
+      "id": "h-stmary",
+      "name": "St Mary Clinic",
+      "lat": 12.8605,
+      "lng": 74.8835,
+      "address": "Demo location near Padil, Mangaluru"
+    },
+    {
+      "id": "h-north",
+      "name": "Northgate General",
+      "lat": 12.933,
+      "lng": 74.818,
+      "address": "Demo location near Kavoor, Mangaluru"
+    }
+  ]
+}
