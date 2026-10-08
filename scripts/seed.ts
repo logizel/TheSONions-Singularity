@@ -73,10 +73,10 @@ async function main() {
     const uids = (await db.select({ id: users.id }).from(users)).map((r) => r.id);
     const bids = (await db.select({ id: stockBatches.id }).from(stockBatches)).map((r) => r.id);
     const foreign =
-      hids.filter((id) => !knownH.has(id)).length > 0 ||
+      hids.filter((id) => !knownH.has(id) && !id.startsWith("h-x-")).length > 0 ||
       mids.filter((id) => !knownM.has(id)).length > 0 ||
       uids.filter((id) => !knownU.has(id)).length > 0 ||
-      bids.filter((id) => !id.startsWith("seed-b")).length > 0;
+      bids.filter((id) => !id.startsWith("seed-b") && !id.startsWith("seedx-")).length > 0;
     if (foreign) {
       console.error("refusing: database holds non-seed rows (real admin data). Re-run with --force to wipe and reseed.");
       process.exit(3);
