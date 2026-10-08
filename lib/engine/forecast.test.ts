@@ -110,6 +110,12 @@ describe('seed completeness (D-22: all four scenarios, D-21: deterministic)', ()
     // Outbreak tail spikes above the normal tail.
     expect(seeds.outbreak.history[58]).toBeGreaterThan(seeds.normal.history[58]);
     expect(seeds.outbreak.history[59]).toBeGreaterThan(seeds.normal.history[59]);
+    // Outbreak spikes are two consecutive +2σ days over the 60-day baseline (OUTBK-01 shape).
+    const h = seeds.outbreak.history;
+    const mean = h.reduce((a, b) => a + b, 0) / h.length;
+    const sd = Math.sqrt(h.reduce((a, b) => a + (b - mean) ** 2, 0) / h.length);
+    expect(h[58]).toBeGreaterThan(mean + 2 * sd);
+    expect(h[59]).toBeGreaterThan(mean + 2 * sd);
     // Waste stock dwarfs its demand-to-expiry.
     expect(seeds.waste.stock).toBeGreaterThan(0);
     // Multi-sender senders differ in waste-relevant terms and transport days.
