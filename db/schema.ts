@@ -1,0 +1,95 @@
+import {
+  boolean,
+  check,
+  date,
+  integer,
+  pgTable,
+  primaryKey,
+  text,
+} from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+
+// ---- Master data -----------------------------------------------------------
+
+// Coded medicine master (D-05): transfers match on stable ids, never on
+// free-text names. substitute_ids + base_unit feed PRIOR-01 scoring.
+export const medicines = pgTable("medicines", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  isCritical: boolean("is_critical").notNull().default(false),
+  baseUnit: text("base_unit").notNull(),
+  substituteIds: text("substitute_ids").array().notNull().default([]),
+});
+
+export const hospitals = pgTable("hospitals", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+});
+
+// Ownership columns live here from day one (D-24); enforcement hardens in
+// Phase 3 middleware. role is hospital_admin (own hospital) or network_admin.
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  hospitalId: text("hospital_id").references(() => hospitals.id),
+  role: text("role").notNull(),
+}, (t) => [
+  check("users_role_check", sql`${t.role} in ('hospital_admin','network_admin')`),
+]);
+
+// ---- Stock -----------------------------------------------------------------
+
+// Batch rows (D-01/D-02): one row per hospital + medicine + qty + expiry.
+// Expiry is mandatory (D-07). Expired batches are archived, never deleted (D-04).
+// buffer_days is admin-editable per hospital+medicine (D-06, feeds MOVE-01).
+export const stockBatches = pgTable("stock_batches", {
+  id: text("id").primaryKey(),
+  hospitalId: text("hospital_id").notNull().references(() => hospitals.id),
+  medicineId: text("medicine_id").notNull().references(() => medicines.id),
+  qty: integer("qty").notNull(),
+  expiryDate: date("expiry_date").notNull(),
+  archived: boolean("archived").notNull().default(false),
+  bufferDays: integer("buffer_days").notNull().default(7),
+}, (t) => [
+  check("stock_batches_qty_check", sql`${t.qty} >= 0`),
+]);
+
+// ---- Usage -----------------------------------------------------------------
+
+// Combined daily row (D-08): usage + load + emergency share in one table.
+// used_qty NULL means missing (engine interpolates); zero only when explicit (D-10).
+export const dailyUsage = pgTable("daily_usage", {
+  usageDate: date("usage_date").notNull(),
+  hospitalId: text("hospital_id").notNull().references(() => hospitals.id),
+  medicineId: text("medicine_id").notNull().references(() => medicines.id),
+  usedQty: integer("used_qty"),
+  patientLoad: integer("patient_load").notNull(),
+  emergencyPct: integer("emergency_pct").notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.usageDate, t.hospitalId, t.medicineId] }),
+  check("daily_usage_pct_check", sql`${t.emergencyPct} >= 0 and ${t.emergencyPct} <= 100`),
+  check("daily_usage_qty_check", sql`${t.usedQty} is null or ${t.usedQty} >= 0`),
+  check("daily_usage_load_check", sql`${t.patientLoad} >= 0`),
+]);
+
+// ---- Network config (network admin only, D-14) ------------------------------
+
+// Directed pairwise matrix (D-12): asymmetric routes allowed, self-pair = 0.
+export const transportDays = pgTable("transport_days", {
+  fromHospital: text("from_hospital").notNull().references(() => hospitals.id),
+  toHospital: text("to_hospital").notNull().references(() => hospitals.id),
+  days: integer("days").notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.fromHospital, t.toHospital] }),
+  check("transport_days_check", sql`${t.days} >= 0 and ${t.days} <= 30`),
+]);
+
+// Per hospital+medicine lead times (D-13): RISK-02 warnings need precision.
+export const supplierLeads = pgTable("supplier_leads", {
+  hospitalId: text("hospital_id").notNull().references(() => hospitals.id),
+  medicineId: text("medicine_id").notNull().references(() => medicines.id),
+  leadDays: integer("lead_days").notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.hospitalId, t.medicineId] }),
+  check("supplier_leads_check", sql`${t.leadDays} >= 0 and ${t.leadDays} <= 30`),
+]);

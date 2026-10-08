@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+
+# Env — NEVER commit real credentials (.env.example stays a placeholder)
+.env
+.env.local
+.env*.local
+
+# Drizzle
+drizzle/*.sql
+
+# OS / editor
+.DS_Store
+*.log
