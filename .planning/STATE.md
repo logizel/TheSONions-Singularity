@@ -69,6 +69,10 @@ Recent decisions affecting current work:
 - [04-04]: buildInventoryRows filters by validated selectedId so all six cards refilter together; card badge uses the min-row medicine's own lead/buffer (panel per-row semantics — h-city/m-cefix 16d reads ok on both); InventoryCard scope prop keeps the total caption honest
 - [04-05]: All four chat intents thread contextHospitalId (scoped answers name the hospital, empty slices fall back); most-at-risk pairs the top priority hospital with its own worst shortage + real reasons; per-answer quote allow-set strips dosage/date fragments; isOwnHospital(null) fails closed in roles.tsx and the panel inline gate
 
+### Roadmap Evolution
+
+- Phase 6 added: Live map + UI redesign + delivery-style order tracking (2026-10-09; decisions in phases/06-.../06-CONTEXT.md)
+
 ### Pending Todos
 
 None yet.

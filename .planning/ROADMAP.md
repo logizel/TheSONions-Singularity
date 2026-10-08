@@ -111,3 +111,15 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. API, Chat & Access | 0/TBD | Not started | - |
 | 4. Dashboard UI | 5/5 | Complete (verified 29/29, gaps G-04-1..G-04-6 closed, UAT 12/12, SECURED, UI-REVIEW 17/24 no blockers) | 2026-10-08 |
 | 5. Integration & Wiring | 0/TBD | Not started | - |
+
+### Phase 6: Live map + UI redesign + delivery-style order tracking
+
+**Goal:** The administrator works from one map-first screen fed by live DB → engine results: hospitals are placed on an OSM map, risk shows on the markers, and accepted transfers are tracked like deliveries (route, distance, engine delivery window, simulated vehicle).
+**Requirements**: TBD (see 06-CONTEXT.md decisions D-01..D-12)
+**Depends on:** Phase 5
+**Plans:** 3 plans (one stacked PR each)
+
+Plans:
+- [ ] 06-01: Live data pipeline + hospital coordinates + routing API (`feat/hospital-map-data`)
+- [ ] 06-02: Design system + map-first shell (`feat/ui-redesign-map`)
+- [ ] 06-03: Orders, cart and delivery-style tracking (`feat/order-tracking`)
