@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 import { getResults } from "@/lib/network";
 import { isApiError, parseAcceptBody, resolveTransfer } from "@/lib/orders";
 import { acceptLines } from "@/lib/orders/service";
-import { errorResponse, NO_STORE, ordersUnavailable, readJson } from "../_shared";
+import { canActForSender, errorResponse, NO_STORE, notSender, ordersUnavailable, readJson, sessionOf } from "../_shared";
 
 // POST /api/orders/accept  { fromHospital, toHospital, medicineId, qty? }
 // Accepts one engine transfer line. Ids must exist, the engine must have
@@ -16,6 +16,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (isApiError(body)) return errorResponse(body);
   const parsed = parseAcceptBody(body);
   if (isApiError(parsed)) return errorResponse(parsed);
+  if (!canActForSender(sessionOf(req), parsed.fromHospital)) return errorResponse(notSender);
 
   const envelope = await getResults();
   if (envelope === null) return errorResponse({ status: 503, error: "Results not available" });

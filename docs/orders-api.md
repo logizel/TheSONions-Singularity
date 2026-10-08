@@ -12,14 +12,14 @@ Each step stamps its own timestamp. "Suggested" is the snapshot the order came f
 |---|---|---|---|
 | `GET /api/orders` | network_admin | - | `{ orders }`, newest first |
 | `GET /api/orders/{id}` | network_admin | - | `{ order }` or 404 |
-| `POST /api/orders/accept` | network_admin | `{ fromHospital, toHospital, medicineId, qty? }` | 201 created / 200 existing, `{ orders, created }` |
+| `POST /api/orders/accept` | network_admin, or the sending hospital's admin | `{ fromHospital, toHospital, medicineId, qty? }` | 201 created / 200 existing, `{ orders, created }` |
 | `POST /api/orders/accept-all` | network_admin | empty or `{}` | 201 / 200, `{ orders, created }` |
-| `POST /api/orders/{id}/status` | network_admin | `{ status: packed \| in_transit \| delivered \| cancelled }` | 200 `{ order, changed }`; 409 on a skipped step or a final state |
+| `POST /api/orders/{id}/status` | network_admin, or the sending hospital's admin | `{ status: packed \| in_transit \| delivered \| cancelled }` | 200 `{ order, changed }`; 409 on a skipped step or a final state |
 | `GET /api/order-status` | both roles | - | `{ orders }`: all for network_admin, own hospital's lanes for hospital_admin |
 
 Validation: ids must exist (404), the engine must have suggested that lane + medicine in the
 live snapshot (404), and `qty` must be positive (400) and at most the engine qty (422).
-Middleware returns 401 without a session and 403 for hospital_admin on `/api/orders/*`.
+Middleware returns 401 without a session and 403 for hospital_admin on `/api/orders/*`, except accept and status, where the handler allows only the admin of the sending hospital (`fromHospital`).
 Wrong methods get 405.
 
 Idempotency: each line's key is `xfer:<asOf>:<from>:<to>:<medicineId>` (plus `#n` after n

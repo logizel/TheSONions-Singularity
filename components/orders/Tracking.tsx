@@ -38,11 +38,12 @@ export interface TrackingProps {
 }
 
 export function Tracking(p: TrackingProps) {
-  const { medName, hospName, unit, role } = useDash();
+  const { medName, hospName, unit, role, ownHospitalId } = useDash();
   const { order } = p;
   const [confirming, setConfirming] = useState(false);
   const keepRef = useRef<HTMLButtonElement>(null);
-  const isAdmin = role === "network_admin";
+  // Network admin, or the admin of the sending hospital.
+  const isAdmin = role === "network_admin" || ownHospitalId === order.fromHospital;
   const next = nextAction(order.status);
   const arrived = p.progress >= 1;
   const approximate = p.route.status !== "ok" || p.route.route.approximate;
@@ -188,7 +189,7 @@ export function Tracking(p: TrackingProps) {
           </div>
         )
       ) : !isAdmin ? (
-        <p className={rows.note}>Read only. Network admins update transfer status.</p>
+        <p className={rows.note}>Read only. The sending hospital or a network admin updates this transfer.</p>
       ) : null}
       <p className={`${rows.sectionHead} ${rows.caption}`}>Delivery updates status only. Stock records do not change.</p>
     </div>

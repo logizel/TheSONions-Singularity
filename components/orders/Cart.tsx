@@ -38,8 +38,10 @@ export function Cart({
   focused: string | null;
   onFocusLine: (key: string | null) => void;
 }) {
-  const { results, medName, hospName, unit, role, orders, orderFor, track, routes } = useDash();
+  const { results, medName, hospName, unit, role, ownHospitalId, orders, orderFor, track, routes } = useDash();
   const transfers = results.transfers;
+  // Network admin accepts any line; a hospital admin accepts lines its hospital sends.
+  const canAcceptLine = (t: TransferSuggestion) => orders !== null && (role === "network_admin" || ownHospitalId === t.fromHospital);
   const canAccept = role === "network_admin" && orders !== null;
 
   // Summary: units per unit type (never summed across units), distinct medicines,
@@ -102,7 +104,9 @@ export function Cart({
             <p className={`${rows.dlNote} ${rows.caption}`}>Planning window used by the stock engine.</p>
           </dl>
 
-          {role !== "network_admin" ? <p className={rows.note}>Read only. Network admins accept transfers.</p> : null}
+          {role !== "network_admin" ? (
+            <p className={rows.note}>You can accept transfers sent from {ownHospitalId ? hospName(ownHospitalId) : "your hospital"}. Others are read only.</p>
+          ) : null}
           {orders === null ? <p className={rows.note}>Order tracking unavailable: the order store did not respond.</p> : null}
           {error ? (
             <p className={rows.error} role="alert">
@@ -162,7 +166,7 @@ export function Cart({
                         </button>
                       </>
                     ) : null}
-                    {canAccept && acceptable ? (
+                    {canAcceptLine(t) && acceptable ? (
                       <button
                         type="button"
                         className={rows.accentButton}

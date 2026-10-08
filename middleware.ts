@@ -123,12 +123,16 @@ export default async function middleware(req: NextRequest): Promise<NextResponse
     }
   }
 
-  // D-08: moves/orders are network_admin-only. Hospital admins get 403
-  // regardless of method; network_admin passes through with full access.
+  // D-08: moves/orders are network_admin-only, except that a hospital admin
+  // may accept a transfer and advance its status (POST accept / <id>/status);
+  // those handlers then require the admin's hospital to be the sender.
+  const path = req.nextUrl.pathname;
+  const senderPath =
+    req.method === "POST" && (path === "/api/orders/accept" || /^\/api\/orders\/[^/]+\/status$/.test(path));
   if (
     session.role !== "network_admin" &&
-    (req.nextUrl.pathname.startsWith("/api/moves") ||
-      req.nextUrl.pathname.startsWith("/api/orders"))
+    (path.startsWith("/api/moves") || path.startsWith("/api/orders")) &&
+    !senderPath
   ) {
     return forbidden();
   }

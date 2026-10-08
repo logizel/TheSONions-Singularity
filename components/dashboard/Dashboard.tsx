@@ -264,7 +264,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
   // ---- actions -------------------------------------------------------------------------
   const failText = (e: unknown) =>
     e instanceof ApiFailure && e.status === 403
-      ? "Network admin role required to accept transfers."
+      ? "Only the sending hospital's admin or a network admin can accept this transfer."
       : `Transfer not accepted. ${e instanceof Error ? e.message : "Request failed"}. Try again.`;
 
   const onAccept = async (t: TransferSuggestion) => {
@@ -311,7 +311,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
     } catch (e) {
       setActionError(
         e instanceof ApiFailure && e.status === 403
-          ? "Network admin role required to update transfers."
+          ? "Only the sending hospital's admin or a network admin can update this transfer."
           : `Status not changed. ${e instanceof Error ? e.message : "Request failed"}. Try again.`,
       );
     } finally {
