@@ -1,0 +1,132 @@
+# Requirements: TheSONions-Singularity — Hospital Stock Balancer
+
+**Defined:** 2026-10-08
+**Core Value:** Administrator knows before it happens who runs out, what wastes, and which transfer or order fixes it.
+
+## v1 Requirements
+
+Requirements for prototype release. Each maps to roadmap phases.
+
+### Data Collection
+
+- [ ] **DATA-01**: Hospital admin can enter current stock per medicine with expiry date
+- [ ] **DATA-02**: Hospital admin can enter daily usage count per medicine
+- [ ] **DATA-03**: Hospital admin can enter patient load count and emergency share percent
+- [ ] **DATA-04**: Network admin can configure transport days between hospitals and supplier lead times
+- [ ] **DATA-05**: Hospital admin can bulk-upload 60 days demand history via CSV and export data to Excel
+
+### Forecast
+
+- [ ] **FCAST-01**: System forecasts demand per hospital/medicine for next 30 days from weekly pattern (60 days history)
+- [ ] **FCAST-02**: System reports forecast error (MAPE) against history, target band 3-11%
+
+### Outbreak
+
+- [ ] **OUTBK-01**: System flags outbreak when daily demand climbs far above normal range (above +2σ for 2 consecutive days)
+- [ ] **OUTBK-02**: System switches flagged hospital to recent-rising-trend forecast until demand normalizes
+
+### Stock-out Risk
+
+- [ ] **RISK-01**: System computes days-until-stockout (stock ÷ forecast demand) per hospital/medicine
+- [ ] **RISK-02**: System warns when days-until-stockout is shorter than supplier lead time (e.g. runs out in 10 days, supplier needs 14)
+
+### Waste Risk
+
+- [ ] **WASTE-01**: System computes waste units (stock minus realistic demand before expiry, capped at 90 days)
+- [ ] **WASTE-02**: System warns per hospital/medicine with expiring-unused quantities (e.g. 3,500 units expire unused)
+
+### Moves & Orders
+
+- [ ] **MOVE-01**: System suggests transfers from safe-surplus to short hospitals passing all 5 checks (arrives before receiver runs out; enough shelf life on arrival; sender keeps buffer; nothing beyond receiver need; waste-first + nearest sender preferred)
+- [ ] **MOVE-02**: System recommends emergency supplier order for remainder when transfers cannot cover need
+
+### Priority
+
+- [ ] **PRIOR-01**: System scores competing hospitals by patient load, emergency demand, soonness of stock-out, and substitute existence
+- [ ] **PRIOR-02**: System shows visible ranking with reasons so it can be justified
+
+### Dashboard
+
+- [ ] **UI-01**: Administrator sees inventory, forecast, shortage risk, expiry risk, recommended moves, and priority hospitals on one screen
+- [ ] **UI-02**: Administrator can click into any hospital for detail
+
+### Chatbot
+
+- [ ] **CHAT-01**: Administrator can ask risk questions (e.g. "Which hospital is most at risk next week?") via small rule-based intent matcher
+- [ ] **CHAT-02**: Chatbot answers only by quoting precomputed ResultsJSON, never calculates
+- [ ] **CHAT-03**: System rejects any answer containing a number not present in ResultsJSON
+
+### Access
+
+- [ ] **AUTH-01**: Hospital admin has read/write access to own hospital details and read-only access to other hospitals
+- [ ] **AUTH-02**: Network admin has full read/write access including moves and orders
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Integrations
+
+- **INTG-01**: Pull demand data from hospital EHR systems
+- **INTG-02**: Send orders directly to supplier systems
+
+### Mobile
+
+- **MOBL-01**: Administrator can view risks and approve moves from mobile
+
+### Chatbot upgrade
+
+- **CHAT-04**: Swap rule-based matcher for local or remote LLM behind the same quote-only interface and validator
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| Patient-level data / PHI | Aggregates only keeps prototype out of HIPAA scope |
+| Direct EHR integration | Invasive access, deferred to v2 behind INTG-01 |
+| Real supplier ordering | v1 recommends order only, no external ordering calls |
+| Mobile app | Web dashboard first for prototype |
+| 15-30 day forecast as decision trigger | Error grows with horizon, advisory display only |
+| Python ML forecasting | Weekly-pattern statistics suffice for prototype |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DATA-01 | TBD | Pending |
+| DATA-02 | TBD | Pending |
+| DATA-03 | TBD | Pending |
+| DATA-04 | TBD | Pending |
+| DATA-05 | TBD | Pending |
+| FCAST-01 | TBD | Pending |
+| FCAST-02 | TBD | Pending |
+| OUTBK-01 | TBD | Pending |
+| OUTBK-02 | TBD | Pending |
+| RISK-01 | TBD | Pending |
+| RISK-02 | TBD | Pending |
+| WASTE-01 | TBD | Pending |
+| WASTE-02 | TBD | Pending |
+| MOVE-01 | TBD | Pending |
+| MOVE-02 | TBD | Pending |
+| PRIOR-01 | TBD | Pending |
+| PRIOR-02 | TBD | Pending |
+| UI-01 | TBD | Pending |
+| UI-02 | TBD | Pending |
+| CHAT-01 | TBD | Pending |
+| CHAT-02 | TBD | Pending |
+| CHAT-03 | TBD | Pending |
+| AUTH-01 | TBD | Pending |
+| AUTH-02 | TBD | Pending |
+
+**Coverage:**
+- v1 requirements: 24 total
+- Mapped to phases: 0
+- Unmapped: 24
+
+---
+*Requirements defined: 2026-10-08*
+*Last updated: 2026-10-08 after initial definition*
