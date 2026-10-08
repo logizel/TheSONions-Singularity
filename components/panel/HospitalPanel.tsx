@@ -16,7 +16,7 @@
  * Header is stock-only (D-15): total units, medicine count, risk counts.
  * Patient load / emergency share statistics never render here.
  *
- * NOTE (T-4-09): no dangerouslySetInnerHTML anywhere; every string renders
+ * NOTE (T-4-09): no raw-HTML injection anywhere; every string renders
  * through React default escaping.
  */
 import fixtureJson from "@/app/data/mock-results.json";
@@ -24,7 +24,13 @@ import {
   isKnownHospitalId,
   type ResultsFixture,
 } from "@/app/data/results";
-import { Badge, Sparkline } from "@/components/cards/ui";
+import { Badge } from "@/components/cards/ui";
+import {
+  buildMoveDetail,
+  MedicineRow,
+  MoveRow,
+  type MedicineRowDetail,
+} from "./MedicineRow";
 import { colors, riskForDaysToStockout, spacing } from "@/theme/tokens";
 
 const fixture = fixtureJson as ResultsFixture;
@@ -123,9 +129,6 @@ export function HospitalPanel({
   const medicineNameById = Object.fromEntries(
     medicines.map((m) => [m.id, m.name]),
   );
-  const hospitalNameById = Object.fromEntries(
-    fixture.hospitals.map((h) => [h.id, h.name]),
-  );
 
   // T-4-08: hospital_admin sees other hospitals read-only; move/order
   // ACTION affordances hide off-hospital. Row data itself stays visible
@@ -198,89 +201,43 @@ export function HospitalPanel({
               (r) => r.medicineId === medicine.id,
             );
             if (!inv) return null;
-            const stock = inv.stock;
             const forecast = fixture.forecast.find(
               (f) =>
                 f.hospitalId === hospitalId && f.medicineId === medicine.id,
-            );
-            const shortage = fixture.shortages.find(
-              (s) =>
-                s.hospitalId === hospitalId && s.medicineId === medicine.id,
             );
             const expiries = fixture.expiries.filter(
               (e) =>
                 e.hospitalId === hospitalId && e.medicineId === medicine.id,
             );
-            const leadDays = leadByMedicine.get(medicine.id) ?? 0;
-            const level = riskForDaysToStockout(
-              inv.daysToStockout,
-              leadDays,
-              medicine.bufferDays,
-            );
-            return (
-              <li
-                key={medicine.id}
-                data-testid={`panel-medicine-${medicine.id}`}
-                style={medicineRowStyle}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "baseline",
-                    justifyContent: "space-between",
-                    gap: spacing.sm,
-                  }}
-                >
-                  <span style={{ fontSize: 13, fontWeight: 650 }}>
-                    {medicine.name}
-                  </span>
-                  <Badge level={level}>
-                    {inv.daysToStockout}d to stockout
-                  </Badge>
-                </div>
-                <div style={{ fontSize: 12, color: colors.textSecondary }}>
-                  {stock.toLocaleString()} units on hand
-                  {expiries.map((e) => (
-                    <span key={`${e.medicineId}-${e.expiryDate}`}>
-                      {" "}
-                      · {e.qty.toLocaleString()} expiring {e.expiryDate}
-                    </span>
-                  ))}
-                </div>
-                {forecast ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: spacing.sm,
-                      marginTop: 4,
-                    }}
-                  >
-                    <Sparkline values={forecast.next7} />
-                    <span
-                      style={{ fontSize: 12, color: colors.textSecondary }}
-                    >
-                      ~{forecast.avgDaily}/day next 7d
-                      {forecast.mode === "trend" ? " (trend mode)" : ""}
-                    </span>
-                  </div>
-                ) : (
-                  <div
-                    style={{ fontSize: 12, color: colors.textMuted }}
-                  >
-                    No forecast row for this medicine in the fixture.
-                  </div>
-                )}
-                {shortage ? (
-                  <div style={{ marginTop: 4 }}>
-                    <Badge level={shortage.severity}>
-                      {shortage.severity === "critical" ? "shortage" : "low"}{" "}
-                      warning
-                    </Badge>
-                  </div>
-                ) : null}
-              </li>
-            );
+            const wasteQty = expiries.reduce((sum, e) => sum + e.qty, 0);
+            const wasteExpiryDate =
+              expiries.length > 0
+                ? expiries.map((e) => e.expiryDate).sort()[0]
+                : null;
+            const movesForMedicine = fixture.moves
+              .filter(
+                (m) =>
+                  m.medicineId === medicine.id &&
+                  (m.fromId === hospitalId || m.toId === hospitalId),
+              )
+              .map((m) => buildMoveDetail(fixture, m, hospitalId));
+            const detail: MedicineRowDetail = {
+              medicineId: medicine.id,
+              medicineName: medicine.name,
+              stock: inv.stock,
+              daysToStockout: inv.daysToStockout,
+              trend: inv.trend,
+              forecastNext7: forecast?.next7 ?? inv.trend,
+              forecastAvgDaily: forecast?.avgDaily ?? 0,
+              forecastMode: forecast?.mode ?? null,
+              wasteQty,
+              wasteExpiryDate,
+              leadDays: leadByMedicine.get(medicine.id) ?? 0,
+              bufferDays: medicine.bufferDays,
+              moves: movesForMedicine,
+              showMoveActions,
+            };
+            return <MedicineRow key={medicine.id} detail={detail} />;
           })}
         </ul>
       </section>
@@ -295,24 +252,12 @@ export function HospitalPanel({
           <>
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {movesForHospital.map((m, i) => (
-                <li
+                <MoveRow
                   key={`pm-${i}`}
-                  data-testid={`panel-move-${m.fromId}-${m.toId}`}
-                  style={{ marginBottom: 8, fontSize: 13 }}
-                >
-                  Send {m.qty.toLocaleString()} units{" "}
-                  {medicineNameById[m.medicineId] ?? m.medicineId} from{" "}
-                  {hospitalNameById[m.fromId] ?? m.fromId} to{" "}
-                  {hospitalNameById[m.toId] ?? m.toId}, arrives in{" "}
-                  {m.arrivesInDays}{" "}
-                  {m.arrivesInDays === 1 ? "day" : "days"}
-                  {showMoveActions ? null : (
-                    <span style={{ color: colors.textMuted }}>
-                      {" "}
-                      (read-only)
-                    </span>
-                  )}
-                </li>
+                  detail={buildMoveDetail(fixture, m, hospitalId)}
+                  showAction={showMoveActions}
+                  testId={`panel-move-${m.fromId}-${m.toId}`}
+                />
               ))}
             </ul>
             {ordersForHospital.length > 0 ? (
@@ -426,11 +371,4 @@ const closeButtonStyle: React.CSSProperties = {
   borderRadius: 8,
   padding: "4px 12px",
   cursor: "pointer",
-};
-
-const medicineRowStyle: React.CSSProperties = {
-  border: `1px solid ${colors.cardBorder}`,
-  borderRadius: 8,
-  padding: spacing.sm,
-  marginBottom: spacing.sm,
 };
