@@ -4,9 +4,12 @@ import {
   date,
   doublePrecision,
   integer,
+  index,
   pgTable,
   primaryKey,
   text,
+  timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -104,4 +107,52 @@ export const supplierLeads = pgTable("supplier_leads", {
 }, (t) => [
   primaryKey({ columns: [t.hospitalId, t.medicineId] }),
   check("supplier_leads_check", sql`${t.leadDays} >= 0 and ${t.leadDays} <= 30`),
+]);
+
+// ---- Transfer orders (Phase 6, D-08) -----------------------------------------
+
+// One accepted shipment on a lane (from -> to). Lifecycle:
+// accepted -> packed -> in_transit -> delivered, or cancelled from any open
+// state; one timestamp column per step. "Suggested" is the engine snapshot
+// the order came from (suggested_at = its generatedAt). Delivery is a status
+// only: nothing here ever writes stock_batches.
+export const orders = pgTable("orders", {
+  id: text("id").primaryKey(),
+  // Sorted line keys: the same set of suggestions always maps to one order.
+  idempotencyKey: text("idempotency_key").notNull(),
+  fromHospital: text("from_hospital").notNull().references(() => hospitals.id),
+  toHospital: text("to_hospital").notNull().references(() => hospitals.id),
+  status: text("status").notNull().default("accepted"),
+  // Engine delivery window at accept time (whole days, transport_days).
+  transportDays: integer("transport_days").notNull(),
+  asOf: date("as_of").notNull(),
+  suggestedAt: timestamp("suggested_at", { withTimezone: true, mode: "string" }).notNull(),
+  acceptedAt: timestamp("accepted_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+  packedAt: timestamp("packed_at", { withTimezone: true, mode: "string" }),
+  inTransitAt: timestamp("in_transit_at", { withTimezone: true, mode: "string" }),
+  deliveredAt: timestamp("delivered_at", { withTimezone: true, mode: "string" }),
+  cancelledAt: timestamp("cancelled_at", { withTimezone: true, mode: "string" }),
+}, (t) => [
+  uniqueIndex("orders_idempotency_key_uq").on(t.idempotencyKey),
+  index("orders_lane_idx").on(t.fromHospital, t.toHospital),
+  check("orders_status_check", sql`${t.status} in ('accepted','packed','in_transit','delivered','cancelled')`),
+  check("orders_lane_check", sql`${t.fromHospital} <> ${t.toHospital}`),
+  check("orders_transport_days_check", sql`${t.transportDays} >= 0 and ${t.transportDays} <= 30`),
+]);
+
+// One medicine on an order. idempotency_key = xfer:<asOf>:<from>:<to>:<med>
+// (+ "#n" after n cancels): a double click or re-accept hits the unique
+// index instead of creating a second line.
+export const orderLines = pgTable("order_lines", {
+  id: text("id").primaryKey(),
+  orderId: text("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  medicineId: text("medicine_id").notNull().references(() => medicines.id),
+  qty: doublePrecision("qty").notNull(),
+  suggestedQty: doublePrecision("suggested_qty").notNull(),
+  idempotencyKey: text("idempotency_key").notNull(),
+  checksPassed: text("checks_passed").array().notNull().default([]),
+}, (t) => [
+  uniqueIndex("order_lines_idempotency_key_uq").on(t.idempotencyKey),
+  index("order_lines_order_idx").on(t.orderId),
+  check("order_lines_qty_check", sql`${t.qty} > 0 and ${t.qty} <= ${t.suggestedQty}`),
 ]);

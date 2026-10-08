@@ -126,3 +126,54 @@ export function pointAlongPath(path: readonly LatLngTuple[], fraction: number): 
   }
   return [last[0], last[1]];
 }
+
+/**
+ * Splits a [lat, lng] polyline at `fraction` of its length into the
+ * travelled part (start -> point) and the remaining part (point -> end).
+ * Both share the split point so they draw as one continuous line.
+ */
+export function splitPathAt(
+  path: readonly LatLngTuple[],
+  fraction: number,
+): { travelled: LatLngTuple[]; remaining: LatLngTuple[] } {
+  if (path.length === 0) return { travelled: [], remaining: [] };
+  const f = Number.isFinite(fraction) ? Math.min(1, Math.max(0, fraction)) : 0;
+  const point = pointAlongPath(path, f) as LatLngTuple;
+  if (f <= 0) return { travelled: [point], remaining: path.map((p) => [p[0], p[1]]) };
+  if (f >= 1) return { travelled: path.map((p) => [p[0], p[1]]), remaining: [point] };
+  const total = pathLengthM(path);
+  let target = total * f;
+  const travelled: LatLngTuple[] = [[path[0][0], path[0][1]]];
+  let i = 1;
+  for (; i < path.length; i++) {
+    const seg = haversineM({ lat: path[i - 1][0], lng: path[i - 1][1] }, { lat: path[i][0], lng: path[i][1] });
+    if (target <= seg) break;
+    target -= seg;
+    travelled.push([path[i][0], path[i][1]]);
+  }
+  travelled.push(point);
+  const remaining: LatLngTuple[] = [point, ...path.slice(i).map((p): LatLngTuple => [p[0], p[1]])];
+  return { travelled, remaining };
+}
+
+/** Initial great-circle bearing a -> b, degrees clockwise from north (0..360). */
+export function bearingDeg(a: LatLng, b: LatLng): number {
+  const φ1 = rad(a.lat);
+  const φ2 = rad(b.lat);
+  const Δλ = rad(b.lng - a.lng);
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+}
+
+/** Direction of travel at `fraction` along the path (looks a short step ahead). */
+export function bearingAlongPath(path: readonly LatLngTuple[], fraction: number): number {
+  if (path.length < 2) return 0;
+  const f = Math.min(1, Math.max(0, Number.isFinite(fraction) ? fraction : 0));
+  const a = pointAlongPath(path, Math.min(f, 0.999)) as LatLngTuple;
+  const b = pointAlongPath(path, Math.min(1, Math.min(f, 0.999) + 0.001)) as LatLngTuple;
+  if (a[0] === b[0] && a[1] === b[1]) {
+    return bearingDeg({ lat: path[0][0], lng: path[0][1] }, { lat: path[path.length - 1][0], lng: path[path.length - 1][1] });
+  }
+  return bearingDeg({ lat: a[0], lng: a[1] }, { lat: b[0], lng: b[1] });
+}
