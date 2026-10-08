@@ -97,36 +97,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | TBD | Pending |
-| DATA-02 | TBD | Pending |
-| DATA-03 | TBD | Pending |
-| DATA-04 | TBD | Pending |
-| DATA-05 | TBD | Pending |
-| FCAST-01 | TBD | Pending |
-| FCAST-02 | TBD | Pending |
-| OUTBK-01 | TBD | Pending |
-| OUTBK-02 | TBD | Pending |
-| RISK-01 | TBD | Pending |
-| RISK-02 | TBD | Pending |
-| WASTE-01 | TBD | Pending |
-| WASTE-02 | TBD | Pending |
-| MOVE-01 | TBD | Pending |
-| MOVE-02 | TBD | Pending |
-| PRIOR-01 | TBD | Pending |
-| PRIOR-02 | TBD | Pending |
-| UI-01 | TBD | Pending |
-| UI-02 | TBD | Pending |
-| CHAT-01 | TBD | Pending |
-| CHAT-02 | TBD | Pending |
-| CHAT-03 | TBD | Pending |
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 1 | Pending |
+| DATA-05 | Phase 1 | Pending |
+| FCAST-01 | Phase 2 | Pending |
+| FCAST-02 | Phase 2 | Pending |
+| OUTBK-01 | Phase 2 | Pending |
+| OUTBK-02 | Phase 2 | Pending |
+| RISK-01 | Phase 2 | Pending |
+| RISK-02 | Phase 2 | Pending |
+| WASTE-01 | Phase 2 | Pending |
+| WASTE-02 | Phase 2 | Pending |
+| MOVE-01 | Phase 2 | Pending |
+| MOVE-02 | Phase 2 | Pending |
+| PRIOR-01 | Phase 2 | Pending |
+| PRIOR-02 | Phase 2 | Pending |
+| UI-01 | Phase 4 | Pending |
+| UI-02 | Phase 4 | Pending |
+| CHAT-01 | Phase 3 | Pending |
+| CHAT-02 | Phase 3 | Pending |
+| CHAT-03 | Phase 3 | Pending |
+| AUTH-01 | Phase 3 | Pending |
+| AUTH-02 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24
+- Mapped to phases: 24 (Phase 1: 5, Phase 2: 12, Phase 3: 5, Phase 4: 2, Phase 5: integration — no new requirements)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-08*
-*Last updated: 2026-10-08 after initial definition*
+*Last updated: 2026-10-08 after roadmap creation (traceability mapped)*
