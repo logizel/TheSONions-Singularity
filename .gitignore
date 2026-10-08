@@ -6,6 +6,13 @@ node_modules/
 out/
 dist/
 
+# Next.js
+next-env.d.ts
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
 # Env — NEVER commit real credentials (.env.example stays a placeholder)
 .env
 .env.local
@@ -14,8 +21,10 @@ dist/
 # Drizzle
 drizzle/*.sql
 
+# Logs
+*.log
+npm-debug.log*
+
 # OS / editor
 .DS_Store
-*.log
-*.tsbuildinfo
-next-env.d.ts
+*.swp

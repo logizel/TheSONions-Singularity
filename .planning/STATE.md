@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Data Layer + Frozen Contracts
-status: planning
-stopped_at: Phase 02 complete, ready to plan Phase 1
-last_updated: "2026-10-08T11:28:46.744Z"
+current_phase: 04
+current_phase_name: Dashboard UI
+status: phase_complete
+stopped_at: Phase 04 complete — gap-closure plans 04-04/04-05 executed, re-verified 29/29, all gaps G-04-1..G-04-6 closed
+last_updated: "2026-10-08T13:30:00Z"
 last_activity: 2026-10-08
-last_activity_desc: Phase 02 complete, transitioned to Phase 1
-state_head: d11d671c84000f2b008fc2035c4360d168784231
+last_activity_desc: Phase 04 gap closure complete (04-04 dashboard + 04-05 chat/roles), re-verified passed
+state_head: 5956def463227bd3476e8f20b64175f793af74af
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
-  percent: 20
+  total_plans: 5
+  completed_plans: 5
+  percent: 100
 ---
 
 <!-- STATE-MD-SCHEMA:END:frontmatter -->
@@ -25,43 +25,34 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-08)
 
 **Core value:** Administrator knows before it happens who runs out, what wastes, and which transfer or order fixes it.
-**Current focus:** Phase 02 — Forecast & Decision Engine
+**Current focus:** Phase 04 — Dashboard UI
 
 ## Current Position
 
-Phase: 1 — Data Layer + Frozen Contracts
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-10-08 — Phase 02 complete, transitioned to Phase 1
+Phase: 04 (Dashboard UI) — complete, 5/5 plans, re-verified 29/29 must-haves
+Plan: 5 of 5 executed (04-01 dashboard tracer; 04-02 drill-in panel; 04-03 chat panel; 04-04 dashboard gap closure, commits 5081898/41d1a1a; 04-05 chat+roles gap closure, commits eaebbc5/d94412d/21e32a2)
+Status: Complete — re-verification passed (29/29), gaps G-04-1..G-04-6 closed, UI-01/UI-02 earned
+Last activity: 2026-10-08 — Phase 04 gap closure executed and re-verified (see 04-VERIFICATION.md)
 
-Progress: [██░░░░░░░░] 20%
+Progress: [██████████] 100% (phase complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: -
-- Total execution time: -
+- Total plans completed: 5
+- Total execution time: 29 min (plans 04-01..04-03) + gap-closure wave 04-04/04-05
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 02 | 4 | - | - |
+| 04-dashboard-ui | 5 | 29 min + gap wave | — |
 
 **Recent Trend:**
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: 04-01 (15 min), 04-02 (8 min), 04-03 (6 min), 04-04 + 04-05 gap closure
+- Trend: accelerating
 
 *Updated after each plan completion*
-**Per-Plan Metrics:**
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 02 P01 | 5 min | 3 tasks | 11 files |
-| Phase 02 P02 | 2 min | 2 tasks | 4 files |
-| Phase 02 P03 | 2 min | 2 tasks | 4 files |
-| Phase 02 P04 | 3 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -72,10 +63,11 @@ Recent decisions affecting current work:
 
 - [Roadmap]: 5 horizontal-layer phases, one track per phase (P2 data, P3 engine, P4 api/chat/auth, P1 UI, all-tracks integration); shared contracts frozen in Phase 1
 - [Roadmap]: No people assigned in roadmap — track-to-person mapping lives in docs/TEAM.md
-- [Phase 02]: 02-01 tracer proven: weekday-average forecast (MAPE ~7.3%) wired into stockout warnings; plans 02-03 build on seeds plus types shim
-- [Phase 02]: 02-02: OutbreakFlag shape { flagged, enteredOnDay } with re-entry state machine; wasteRisk extends at 30d-array mean rate to min(expiry,90)
-- [Phase 02]: 02-03: suggestMoves() enforces all 5 checks with buffer computed in-engine (stock minus 7x dailyDemand); rankPriorities() uses 60/25/15 soonness-first weights with -10 substitute penalty; 51/51 tests green
-- [Phase 02]: 02-04 gap closure: wasteRisk() rounds the difference to 1 decimal and warns on the rounded value (exact-zero yields no warn); validateRequest rejects self-send/duplicate senders (D-09 unbypassable); rankPriorities() breaks ties by soonness before identity; 56/56 tests green
+- [04-01]: Next.js 16 + React 19, static fixture import per page load, URL (?hospital=id) is cross-filter source of truth, inline styles on theme tokens; UI-01 stays Pending until 04-02/04-03 land (shared-ID gate)
+- [04-02]: Panel imports fixture directly so HospitalPanelProps stays stable; fixture-id switcher buttons drive shared filter state; move rationale cites waste-first/nearest/buffer/need-cap with 14-day shelf-life floor; role gating display-only (Phase 3 server enforcement + Phase 5 wiring deferred); UI-02 stays Pending until 04-03 lands (shared-ID gate)
+- [04-03]: Chat dock stays mounted hidden via display:none (scroll/draft/history survive, zero persistence); answers interpolate fixture lookups + runtime post-check (fabrication blocked twice); no Approve/Order affordances so D-26 holds trivially; UI-01 + UI-02 Complete (last declaring plan, shared-ID gate clears)
+- [04-04]: buildInventoryRows filters by validated selectedId so all six cards refilter together; card badge uses the min-row medicine's own lead/buffer (panel per-row semantics — h-city/m-cefix 16d reads ok on both); InventoryCard scope prop keeps the total caption honest
+- [04-05]: All four chat intents thread contextHospitalId (scoped answers name the hospital, empty slices fall back); most-at-risk pairs the top priority hospital with its own worst shortage + real reasons; per-answer quote allow-set strips dosage/date fragments; isOwnHospital(null) fails closed in roles.tsx and the panel inline gate
 
 ### Pending Todos
 
@@ -95,6 +87,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-08T11:24:00Z
-Stopped at: Phase 02 complete, ready to plan Phase 1
-Resume file: None
+Last session: 2026-10-08T13:30:00Z
+Stopped at: Phase 04 complete — gap closure executed (04-04/04-05), re-verified 29/29
+Resume file: None — Phase 04 complete, ready for Phase 05 (or remaining Phases 1-3 per roadmap order)

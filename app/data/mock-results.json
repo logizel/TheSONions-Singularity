@@ -1,0 +1,93 @@
+{
+  "generatedAt": "2026-10-08T11:30:00.000Z",
+  "mape": 6.2,
+  "advisory": { "startDay": 15, "endDay": 30, "label": "advisory" },
+  "hospitals": [
+    { "id": "h-city", "name": "City Central Hospital", "patientLoad": 342, "emergencyPct": 22, "outbreak": false },
+    { "id": "h-north", "name": "Northside Community Hospital", "patientLoad": 418, "emergencyPct": 31, "outbreak": true },
+    { "id": "h-river", "name": "Riverside Clinic", "patientLoad": 156, "emergencyPct": 12, "outbreak": false }
+  ],
+  "medicines": [
+    { "id": "m-para", "name": "Paracetamol 500mg", "isCritical": false, "bufferDays": 7, "substituteIds": [] },
+    { "id": "m-amox", "name": "Amoxicillin 250mg", "isCritical": false, "bufferDays": 10, "substituteIds": ["m-cefix"] },
+    { "id": "m-cefix", "name": "Cefixime 200mg", "isCritical": false, "bufferDays": 10, "substituteIds": ["m-amox"] },
+    { "id": "m-insulin", "name": "Insulin Glargine 100U/ml", "isCritical": true, "bufferDays": 14, "substituteIds": [] },
+    { "id": "m-salbut", "name": "Salbutamol Inhaler 100mcg", "isCritical": false, "bufferDays": 7, "substituteIds": [] }
+  ],
+  "leadDays": [
+    { "hospitalId": "h-city", "medicineId": "m-para", "days": 3 },
+    { "hospitalId": "h-city", "medicineId": "m-amox", "days": 4 },
+    { "hospitalId": "h-city", "medicineId": "m-cefix", "days": 4 },
+    { "hospitalId": "h-city", "medicineId": "m-insulin", "days": 5 },
+    { "hospitalId": "h-city", "medicineId": "m-salbut", "days": 3 },
+    { "hospitalId": "h-north", "medicineId": "m-para", "days": 3 },
+    { "hospitalId": "h-north", "medicineId": "m-amox", "days": 5 },
+    { "hospitalId": "h-north", "medicineId": "m-cefix", "days": 5 },
+    { "hospitalId": "h-north", "medicineId": "m-insulin", "days": 6 },
+    { "hospitalId": "h-north", "medicineId": "m-salbut", "days": 4 },
+    { "hospitalId": "h-river", "medicineId": "m-para", "days": 2 },
+    { "hospitalId": "h-river", "medicineId": "m-amox", "days": 3 },
+    { "hospitalId": "h-river", "medicineId": "m-cefix", "days": 3 },
+    { "hospitalId": "h-river", "medicineId": "m-insulin", "days": 4 },
+    { "hospitalId": "h-river", "medicineId": "m-salbut", "days": 2 }
+  ],
+  "transport": [
+    { "fromId": "h-city", "toId": "h-north", "days": 1 },
+    { "fromId": "h-north", "toId": "h-city", "days": 1 },
+    { "fromId": "h-city", "toId": "h-river", "days": 2 },
+    { "fromId": "h-river", "toId": "h-city", "days": 2 },
+    { "fromId": "h-north", "toId": "h-river", "days": 2 },
+    { "fromId": "h-river", "toId": "h-north", "days": 3 }
+  ],
+  "inventory": [
+    { "hospitalId": "h-city", "medicineId": "m-para", "stock": 4200, "daysToStockout": 34, "trend": [120, 118, 122, 125, 121, 119, 124] },
+    { "hospitalId": "h-city", "medicineId": "m-amox", "stock": 1850, "daysToStockout": 21, "trend": [86, 88, 90, 87, 91, 89, 92] },
+    { "hospitalId": "h-city", "medicineId": "m-cefix", "stock": 960, "daysToStockout": 16, "trend": [58, 60, 59, 62, 61, 63, 60] },
+    { "hospitalId": "h-city", "medicineId": "m-insulin", "stock": 640, "daysToStockout": 26, "trend": [24, 25, 24, 26, 25, 24, 25] },
+    { "hospitalId": "h-city", "medicineId": "m-salbut", "stock": 410, "daysToStockout": 29, "trend": [14, 13, 15, 14, 14, 15, 14] },
+    { "hospitalId": "h-north", "medicineId": "m-para", "stock": 1980, "daysToStockout": 12, "trend": [150, 158, 165, 172, 180, 188, 195] },
+    { "hospitalId": "h-north", "medicineId": "m-amox", "stock": 320, "daysToStockout": 3, "trend": [96, 102, 108, 115, 121, 128, 134] },
+    { "hospitalId": "h-north", "medicineId": "m-cefix", "stock": 540, "daysToStockout": 8, "trend": [64, 66, 68, 70, 69, 72, 74] },
+    { "hospitalId": "h-north", "medicineId": "m-insulin", "stock": 390, "daysToStockout": 11, "trend": [32, 33, 34, 35, 34, 36, 37] },
+    { "hospitalId": "h-north", "medicineId": "m-salbut", "stock": 220, "daysToStockout": 13, "trend": [16, 16, 17, 17, 18, 18, 19] },
+    { "hospitalId": "h-river", "medicineId": "m-para", "stock": 1250, "daysToStockout": 31, "trend": [40, 41, 39, 42, 40, 41, 40] },
+    { "hospitalId": "h-river", "medicineId": "m-amox", "stock": 700, "daysToStockout": 24, "trend": [28, 29, 28, 30, 29, 28, 30] },
+    { "hospitalId": "h-river", "medicineId": "m-cefix", "stock": 480, "daysToStockout": 27, "trend": [17, 18, 17, 18, 18, 17, 18] },
+    { "hospitalId": "h-river", "medicineId": "m-insulin", "stock": 150, "daysToStockout": 5, "trend": [28, 29, 30, 29, 31, 30, 32] },
+    { "hospitalId": "h-river", "medicineId": "m-salbut", "stock": 190, "daysToStockout": 22, "trend": [8, 9, 8, 9, 8, 9, 8] }
+  ],
+  "forecast": [
+    { "hospitalId": "h-city", "medicineId": "m-para", "mode": "base", "next7": [124, 122, 126, 123, 125, 98, 96], "avgDaily": 122 },
+    { "hospitalId": "h-city", "medicineId": "m-amox", "mode": "base", "next7": [90, 89, 91, 88, 92, 70, 68], "avgDaily": 89 },
+    { "hospitalId": "h-north", "medicineId": "m-para", "mode": "trend", "next7": [198, 205, 212, 220, 228, 236, 244], "avgDaily": 195 },
+    { "hospitalId": "h-north", "medicineId": "m-amox", "mode": "trend", "next7": [138, 144, 150, 157, 163, 170, 177], "avgDaily": 134 },
+    { "hospitalId": "h-north", "medicineId": "m-insulin", "mode": "trend", "next7": [38, 39, 40, 41, 42, 43, 44], "avgDaily": 37 },
+    { "hospitalId": "h-river", "medicineId": "m-para", "mode": "base", "next7": [41, 40, 42, 40, 41, 32, 31], "avgDaily": 40 },
+    { "hospitalId": "h-river", "medicineId": "m-insulin", "mode": "base", "next7": [31, 30, 32, 31, 32, 25, 24], "avgDaily": 31 }
+  ],
+  "shortages": [
+    { "hospitalId": "h-north", "medicineId": "m-amox", "daysToStockout": 3, "severity": "critical" },
+    { "hospitalId": "h-river", "medicineId": "m-insulin", "daysToStockout": 5, "severity": "critical" },
+    { "hospitalId": "h-north", "medicineId": "m-cefix", "daysToStockout": 8, "severity": "warning" },
+    { "hospitalId": "h-north", "medicineId": "m-insulin", "daysToStockout": 11, "severity": "warning" },
+    { "hospitalId": "h-north", "medicineId": "m-para", "daysToStockout": 12, "severity": "warning" }
+  ],
+  "expiries": [
+    { "hospitalId": "h-city", "medicineId": "m-para", "qty": 600, "expiryDate": "2026-11-20", "severity": "warning" },
+    { "hospitalId": "h-city", "medicineId": "m-salbut", "qty": 120, "expiryDate": "2026-12-05", "severity": "warning" },
+    { "hospitalId": "h-river", "medicineId": "m-cefix", "qty": 200, "expiryDate": "2026-11-02", "severity": "critical" }
+  ],
+  "moves": [
+    { "fromId": "h-city", "toId": "h-north", "medicineId": "m-amox", "qty": 400, "arrivesInDays": 1 },
+    { "fromId": "h-city", "toId": "h-river", "medicineId": "m-insulin", "qty": 120, "arrivesInDays": 2 },
+    { "fromId": "h-river", "toId": "h-north", "medicineId": "m-cefix", "qty": 150, "arrivesInDays": 3 }
+  ],
+  "emergencyOrders": [
+    { "hospitalId": "h-north", "medicineId": "m-amox", "qty": 500, "leadDays": 5 }
+  ],
+  "priorities": [
+    { "rank": 1, "hospitalId": "h-north", "score": 87, "reasons": ["high load", "emergency share", "3 days to stockout", "no substitute"] },
+    { "rank": 2, "hospitalId": "h-river", "score": 54, "reasons": ["5 days to stockout", "no substitute"] },
+    { "rank": 3, "hospitalId": "h-city", "score": 21, "reasons": ["16 days to stockout"] }
+  ]
+}
