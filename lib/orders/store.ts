@@ -20,7 +20,7 @@ async function dbAndSchema() {
 /** Postgres timestamptz strings -> ISO 8601 (UTC). */
 function iso(v: string | null): string | null {
   if (v === null) return null;
-  const t = Date.parse(v.includes('T') ? v : v.replace(' ', 'T'));
+  const t = Date.parse(v.replace(' ', 'T').replace(/([+-]\d\d)$/, '$1:00'));
   return Number.isNaN(t) ? v : new Date(t).toISOString();
 }
 

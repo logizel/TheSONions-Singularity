@@ -156,3 +156,24 @@ export const orderLines = pgTable("order_lines", {
   index("order_lines_order_idx").on(t.orderId),
   check("order_lines_qty_check", sql`${t.qty} > 0 and ${t.qty} <= ${t.suggestedQty}`),
 ]);
+
+// ---- Activity log (Phase 6) ---------------------------------------------------
+
+// Who did what, at every level. Actor is a role + hospital (no personal data).
+// hospital_ids = every hospital involved (actor's, sender, receiver), so a
+// hospital admin sees its own actions and anything touching its hospital;
+// the network admin sees all rows.
+export const activityLog = pgTable("activity_log", {
+  id: text("id").primaryKey(),
+  at: timestamp("at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+  actorRole: text("actor_role").notNull(),
+  actorHospital: text("actor_hospital"),
+  action: text("action").notNull(),
+  orderId: text("order_id"),
+  hospitalIds: text("hospital_ids").array().notNull().default([]),
+  summary: text("summary").notNull(),
+}, (t) => [
+  index("activity_log_at_idx").on(t.at.desc()),
+  index("activity_log_hospitals_idx").using("gin", t.hospitalIds),
+  check("activity_log_role_check", sql`${t.actorRole} in ('hospital_admin','network_admin')`),
+]);

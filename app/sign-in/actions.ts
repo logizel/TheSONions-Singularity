@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { listHospitals } from "@/lib/hospital-locations";
+import { logActivity } from "@/lib/logs";
+import { getSession } from "@/lib/session/server";
 import {
   SESSION_COOKIE,
   SESSION_TTL_S,
@@ -62,12 +64,15 @@ export async function signIn(_prev: SignInState, form: FormData): Promise<SignIn
   }
 
   await setSession(payload);
+  await logActivity({ role: payload.role, hospitalId: payload.hospitalId ?? null }, "sign_in", `Signed in as ${payload.role === "network_admin" ? "network admin" : "hospital admin"}`);
   const next = form.get("next");
   // Only same-app relative paths; never an open redirect.
   redirect(typeof next === "string" && /^\/(?!\/)[\w\-/?=&.]*$/.test(next) ? next : "/");
 }
 
 export async function signOut(): Promise<void> {
+  const current = await getSession();
+  if (current) await logActivity({ role: current.role, hospitalId: current.hospitalId ?? null }, "sign_out", "Signed out");
   const store = await cookies();
   store.delete(SESSION_COOKIE);
   redirect("/sign-in");
@@ -97,7 +102,13 @@ export async function switchRole(form: FormData): Promise<SignInState> {
     }
     payload.hospitalId = hospitalId;
   }
+  const previous = await getSession();
   await setSession(payload);
+  const to = payload.role === "network_admin" ? "network admin" : `hospital admin (${payload.hospitalId})`;
+  const from = previous ? (previous.role === "network_admin" ? "network admin" : `hospital admin (${previous.hospitalId})`) : "signed out";
+  await logActivity({ role: payload.role, hospitalId: payload.hospitalId ?? null }, "role_switch", `Switched role from ${from} to ${to}`, {
+    hospitals: [previous?.hospitalId],
+  });
   refresh();
   return { error: null };
 }

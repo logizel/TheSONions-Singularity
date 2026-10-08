@@ -22,6 +22,8 @@ interface Props {
   hospitals: { id: string; name: string }[];
   demoAuth: boolean;
   onRoleError: (msg: string) => void;
+  onLogs: () => void;
+  logsOpen: boolean;
 }
 
 function roleLabel(role: Props["role"], own: string | null, hospitals: Props["hospitals"]) {
@@ -160,6 +162,9 @@ export function TopBar(p: Props) {
             </div>
           ) : null}
         </div>
+        <button type="button" className={styles.outlineButton} onClick={p.onLogs} aria-pressed={p.logsOpen} data-testid="logs-button">
+          Logs
+        </button>
         <button type="button" className={styles.outlineButton} onClick={p.onRefresh} disabled={p.refreshing} data-testid="refresh-button">
           <Glyph name="refresh" />
           {p.refreshing ? "Refreshing" : "Refresh"}
@@ -188,6 +193,10 @@ export function TopBar(p: Props) {
               <div className={styles.menuRow}>{viewToggle}</div>
               <div className={styles.menuRule} />
               {p.demoAuth ? roleItems : <p className={styles.menuHeading}>Role: {roleLabel(p.role, p.ownHospitalId, p.hospitals)}</p>}
+              <div className={styles.menuRule} />
+              <button type="button" role="menuitem" className={styles.menuItem} onClick={() => { setMenu(null); p.onLogs(); }}>
+                Activity log
+              </button>
               <div className={styles.menuRule} />
               <div className={styles.menuRow}>{signOutForm}</div>
             </div>

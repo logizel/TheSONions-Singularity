@@ -5,7 +5,8 @@ export const runtime = "nodejs";
 import { getResults } from "@/lib/network";
 import { isApiError } from "@/lib/orders";
 import { acceptLines } from "@/lib/orders/service";
-import { errorResponse, NO_STORE, ordersUnavailable, readJson } from "../_shared";
+import { logActivity } from "@/lib/logs";
+import { actorOf, describeOrder, errorResponse, NO_STORE, ordersUnavailable, readJson, sessionOf } from "../_shared";
 
 // POST /api/orders/accept-all  (empty body or {})
 // Accepts every engine transfer in the live snapshot at its engine qty.
@@ -24,6 +25,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     const outcome = await acceptLines(envelope.results, lines);
+    if (outcome.created > 0) {
+      const actor = actorOf(sessionOf(req));
+      // Orders created by this call share one accepted_at (the newest).
+      const newest = outcome.orders.reduce((m, o) => (o.acceptedAt > m ? o.acceptedAt : m), "");
+      for (const o of outcome.orders) {
+        if (o.acceptedAt !== newest) continue;
+        await logActivity(actor, "order_accept", `Accepted (accept all) ${describeOrder(o, envelope.results)}`, {
+          orderId: o.id,
+          hospitals: [o.fromHospital, o.toHospital],
+        });
+      }
+    }
     return NextResponse.json(outcome, { status: outcome.created > 0 ? 201 : 200, headers: NO_STORE });
   } catch {
     return errorResponse(ordersUnavailable);

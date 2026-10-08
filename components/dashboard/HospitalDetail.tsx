@@ -20,6 +20,7 @@ import { OutbreakTag, RiskTag, Tag } from "../ui/Tag";
 import { useDash } from "./context";
 import rows from "./rows.module.css";
 import { SheetHeader } from "./SheetHeader";
+import { RecentActivity } from "../logs/LogsSheet";
 
 const SEV_FROM_RISK = { critical: "critical", low: "warning", ok: "ok" } as const;
 
@@ -28,7 +29,9 @@ export function HospitalDetail({
   location,
   onClose,
   onBack,
+  activityBump,
 }: {
+  activityBump?: unknown;
   hospitalId: string;
   location: HospitalLocation | null;
   onClose: () => void;
@@ -237,6 +240,7 @@ export function HospitalDetail({
           </ul>
         )}
       </div>
+      <RecentActivity hospitalId={hospitalId} bump={activityBump} />
     </div>
   );
 }

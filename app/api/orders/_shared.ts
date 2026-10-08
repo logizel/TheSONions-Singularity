@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
 
-import type { ApiError } from "@/lib/orders";
+import type { ResultsJSON } from "@/lib/contracts";
+import type { Actor } from "@/lib/logs";
+import type { ApiError, Order } from "@/lib/orders";
 import { SESSION_COOKIE, verifySession, type SessionPayload } from "@/lib/session";
 
 // Shared helpers for /api/orders/* (Phase 6, D-08). Auth: middleware.ts
@@ -38,3 +40,20 @@ export function canActForSender(s: SessionPayload | null, fromHospital: string):
 }
 
 export const notSender = { status: 403, error: "Only the sending hospital's admin or a network admin can do this" } as const;
+
+/** "Paracetamol 521.4 tablets, City Civil Hospital → Northgate General" using snapshot names. */
+export function describeOrder(o: Order, r: ResultsJSON | null): string {
+  const h = (id: string) => r?.hospitals.find((x) => x.hospitalId === id)?.hospitalName ?? id;
+  const m = (id: string) => r?.medicines.find((x) => x.medicineId === id);
+  const lines = o.lines.map((l) => {
+    const med = m(l.medicineId);
+    const unit = med?.baseUnit ?? "unit";
+    return `${med?.medicineName ?? l.medicineId} ${l.qty} ${l.qty === 1 ? unit : `${unit}s`}`;
+  });
+  return `${lines.join(", ")}, ${h(o.fromHospital)} → ${h(o.toHospital)}`;
+}
+
+/** Log entry actor from a (middleware-verified) session. */
+export function actorOf(s: SessionPayload | null): Actor {
+  return s ? { role: s.role, hospitalId: s.hospitalId ?? null } : { role: "network_admin" };
+}
