@@ -1,22 +1,21 @@
 ---
 phase: 04-dashboard-ui
-verified: 2026-10-08T14:00:00Z
-status: gaps_found
-score: 21/23 must-haves verified
-must_haves_verified: 21
-must_haves_total: 23
-gaps_count: 6
-advisory_count: 11
+verified: 2026-10-08T14:18:54Z
+status: passed
+score: 29/29 must-haves verified
+must_haves_verified: 29
+must_haves_total: 29
+gaps_count: 0
 build: pass
 ---
 
-# Phase 04 Dashboard UI — Verification Report
+# Phase 04 Dashboard UI — Verification Report (re-verification after gap closure)
 
 **Phase goal:** The administrator runs the whole network from one screen and can drill into any hospital.
-**Requirements in scope:** UI-01, UI-02 (both declared by 04-01/04-02/04-03; REQUIREMENTS.md already marks both Complete).
-**Plans verified:** 04-01-PLAN.md (7 truths), 04-02-PLAN.md (7 truths), 04-03-PLAN.md (9 truths) = 23 must-have truths.
-**Code review input:** 04-REVIEW.md (2 high / 4 medium / 11 low, all `open` per 04-REVIEW-DISPOSITION.md) — factored below honestly.
-**Build:** `npm run build` re-run during verification — PASS (Next.js 16.4.0, all routes static).
+**Requirements in scope:** UI-01, UI-02 (both marked Complete in REQUIREMENTS.md; this report confirms the flags are now earned).
+**Plans verified:** 04-01 (7 truths) + 04-02 (7) + 04-03 (9) + 04-04 (2, gap closure) + 04-05 (4, gap closure) = 29 must-have truths.
+**Prior report:** 04-VERIFICATION.md @ 2026-10-08T14:00:00Z — `gaps_found`, 21/23, gaps G-04-1..G-04-6. All six are closed below; no regressions in the 21 previously passing truths.
+**Build:** `npm run typecheck` PASS (tsc --noEmit, zero errors) + `npm run build` PASS (Next.js 16.4.0 Turbopack, all routes static) — both re-run during this verification.
 
 ## Must-have verification
 
@@ -24,117 +23,127 @@ build: pass
 
 | # | Truth | Verdict | Evidence |
 |---|-------|---------|----------|
-| 1 | Six equal cards on one screen at 1280px+, stacked with scroll below | PASS | `app/page.tsx:339-377` passes 6 cards into `DashboardGrid`; `components/cards/DashboardGrid.module.css:9-13` — 3-col grid at min-width 1280px, single column below |
-| 2 | Each card shows numbers with red/amber badges plus a small trend line, no heavy per-card charts | PASS | `Badge` + `Sparkline` in Inventory/Shortage/Forecast cards; `package.json` has no chart library; `theme/tokens.ts:83-91` `riskForDaysToStockout` maps to critical/warning/ok |
-| 3 | Priorities ranked 1..N with reason chips; moves uses action rows + emergency order rows | PASS | `components/cards/PrioritiesCard.tsx:31-96` ranked `<ol>` with `reasons` badges from fixed vocabulary (`app/data/mock-results.json:88-92`); `components/cards/MovesCard.tsx:57-148` transfer action rows + `Emergency supplier orders` section |
-| 4 | Clicking a hospital filters all six cards; `?hospital=id` survives refresh/back/share | **FAIL (H-01)** | Five cards filter via `inScope` (`app/page.tsx:140-141,150,171,187,204,224,240`), but `buildInventoryRows` (`app/page.tsx:46-80`) maps over ALL hospitals with no `selectedId` filter — inventory still lists 3 hospitals and `networkTotal` sums the whole network under an active filter. URL sync itself works (`app/page.tsx:99-119`, unknown-id fallback drops param) |
-| 5 | Header shows "Updated X min ago" + Refresh; static load per page load, no polling | PASS | `components/Header.tsx:8-17` `formatUpdatedAgo` + Refresh button (`:56-72`); `app/page.tsx:13,44` static fixture import; `onRefresh={() => window.location.reload()}` (`:262,:291`); no setInterval/polling/fetch in `app/` (grep: only a comment mentions "polling") |
-| 6 | Loading skeleton cards; empty network guided empty state linking to Phase 1 data entry | PASS | `SkeletonCard` while `!mounted` (`app/page.tsx:332-337`); zero-hospital empty state with `/data-entry` link (`app/page.tsx:257-285`, `data-testid="empty-state"`) |
-| 7 | Drill-in and chat shells mount behind stable prop interfaces | PASS | `HospitalPanel` (`app/page.tsx:379-386`) and `ChatPanel` (`:389-392`) mounted with compatible props; full implementations landed behind them in 04-02/04-03 |
+| 1 | Six equal cards on one screen at 1280px+, stacked with scroll below | PASS | Unchanged since prior PASS; `app/page.tsx:351-391` passes 6 cards into `DashboardGrid`; build green confirms layout intact |
+| 2 | Each card shows numbers with red/amber badges plus a small trend line, no heavy per-card charts | PASS | Unchanged; `riskForDaysToStockout` in `theme/tokens.ts:83-91` still the single badge mapping; no chart dependency added |
+| 3 | Priorities ranked 1..N with reason chips; moves uses action rows + emergency order rows | PASS | Unchanged; fixture reasons vocabulary quoted dynamically (see G-04-4) |
+| 4 | Clicking a hospital filters all six cards; `?hospital=id` survives refresh/back/share | PASS (was FAIL G-04-1, now closed) | `buildInventoryRows` filters by validated `selectedId` before mapping (`app/page.tsx:52-53`); all other five slices already filtered via `inScope`; URL sync + unknown-id fallback unchanged (`app/page.tsx:111-119`) |
+| 5 | Header shows "Updated X min ago" + Refresh; static load per page load, no polling | PASS | Unchanged; persistence grep over `components/chat/` + `app/page.tsx` clean |
+| 6 | Loading skeleton cards; empty network guided empty state linking to Phase 1 data entry | PASS | Unchanged (`app/page.tsx:269-297,344-350`) |
+| 7 | Drill-in and chat shells mount behind stable prop interfaces | PASS | Both mounts fully implemented; `HospitalPanel` and `ChatPanel` props compatible (`app/page.tsx:392-405`) |
 
 ### Plan 04-02 — Drill-in panel (UI-02)
 
 | # | Truth | Verdict | Evidence |
 |---|-------|---------|----------|
-| 1 | Clicking a hospital opens a side panel without leaving the dashboard | PASS (with deviation L-06) | `HospitalPanel` returns `null` when `!hospitalId` and renders `<aside>` otherwise (`components/panel/HospitalPanel.tsx:58,140`); no route change, only `?hospital=id` changes. Deviation: panel lays out BELOW the grid in normal flow (`panelStyle` has `marginTop`, `app/page.tsx:379` renders after grid) — reads as a section, not a beside-the-grid side panel on 1280px+. Functional, placement differs from D-09 wording |
-| 2 | Panel shows per-medicine stock with expiry dates, 30-day forecast line, shortage/expiry warnings, moves in/out, priority score reasons | **FAIL partial (H-02)** | All content present: stock + expiry via `MedicineRow` waste (`HospitalPanel.tsx:196-243`), forecast line (`MedicineRow.tsx:269-280`), warnings via badges, moves in/out (`HospitalPanel.tsx:245-280`), priority reasons (`:181-194`). BUT risk derivation disagrees with the dashboard: `app/page.tsx:57-66` uses hospital-global max leadDays/max bufferDays (threshold 4+14=18 → `warning` for h-city/m-cefix 16d), panel uses per-medicine lead/buffer (`HospitalPanel.tsx:107-120`, threshold 4+10=14 → `ok`). Same snapshot shows warning badge on card, healthy-leaning counts in panel |
-| 3 | Medicine rows expand to forecast, days-to-stockout, waste, suggested moves | PASS | `MedicineRow` `useState` expand toggle (`MedicineRow.tsx:217-257`); expanded block shows forecast outlook, days-to-stockout vs lead, waste qty + expiry (`:259-280+`), per-medicine moves |
-| 4 | Panel switcher changes hospital and refilters main cards; opening updates `?hospital=id` | PASS | `HospitalSwitcher` fixture-id buttons call shared `onSelectHospital` (`HospitalPanel.tsx:291-336`), the same state + URL sync as card clicks (`app/page.tsx:112-119`); T-4-07 validated against fixture |
-| 5 | Panel read-only; move rows show transit days + shelf-life-on-arrival with sender rationale | PASS | No `input`/`select`/`textarea`/`contentEditable` in panel (grep clean); `buildMoveDetail` computes transit from directed matrix + shelf-life-from-arrival + rationale (`MedicineRow.tsx:66-147`); `MoveRow` renders transit/shelf/rationale as escaped text (`:155-215`) |
-| 6 | Panel header stock-only, no patient load / emergency share | PASS | Header renders units + medicine count + risk counts only (`HospitalPanel.tsx:154-173`); grep for `patientLoad|patient_load|emergencyShare|emergency_share` in `components/panel/` — zero matches |
-| 7 | hospital_admin own-full/others-read-only with moves hidden; network_admin full with approve/order | PASS (with latent gap M-04) | `components/roles.tsx:43-59` `canSeeMoveActions/canSeeOrderActions`; threaded into `MovesCard` (`MovesCard.tsx:59-61,111-115`) and panel (`HospitalPanel.tsx:136-137`); `RoleSwitcher` prototype toggle defaults network_admin (`app/page.tsx:91-93`); display-only documented in code. Latent: `isOwnHospital(null,…)` returns `true` (`roles.tsx:34`) — a panel rendered without `ownHospitalId` under hospital_admin would show actions everywhere; `app/page.tsx:92-93` always passes the stub correctly today |
+| 1 | Clicking a hospital opens a side panel without leaving the dashboard | PASS | `HospitalPanel` returns `null` when `!hospitalId`, renders `<aside>` otherwise (`HospitalPanel.tsx:58,141`); no route change |
+| 2 | Panel shows per-medicine stock, expiry, forecast line, warnings, moves in/out, priority reasons — with risk consistent with the dashboard | PASS (was partial FAIL G-04-2, now closed) | Card badge now evaluates `riskForDaysToStockout` on the min row's OWN medicine lead/buffer (`app/page.tsx:62-79`: `leadByMedicine` lookup + `medicines.find(bufferDays)`, `?? 0` fallbacks mirroring panel `:110,117`). Numeric proof on fixture: h-city/m-cefix 16d, lead 4 + buffer 10 → `ok` on BOTH surfaces (node check; old global-max inputs 5+14 gave `warning`) |
+| 3 | Medicine rows expand to forecast, days-to-stockout, waste, suggested moves | PASS | Unchanged; `MedicineRow` expand path intact, build green |
+| 4 | Panel switcher changes hospital and refilters main cards; opening updates `?hospital=id` | PASS | Unchanged; switcher drives shared `onSelectHospital` (`HospitalPanel.tsx:292-337`) |
+| 5 | Panel read-only; move rows show transit days + shelf-life-on-arrival with sender rationale | PASS | Unchanged; no editable controls added by gap fixes (fixes touched only filter math, caption prop, gate expressions) |
+| 6 | Panel header stock-only, no patient load / emergency share | PASS | Unchanged (`HospitalPanel.tsx:154-174`); gap fixes did not touch the header |
+| 7 | hospital_admin own-full/others-read-only with moves hidden; network_admin full with approve/order | PASS (latent G-04-6 now closed — see 04-05 #4) | `canSeeMoveActions` network_admin short-circuit preserved (`roles.tsx:50`); page stub passes explicit `PROTOTYPE_OWN_HOSPITAL_ID` on hospital_admin path (`app/page.tsx:104-105`) |
 
 ### Plan 04-03 — Chat + advisory/outbreak (UI-01, UI-02)
 
 | # | Truth | Verdict | Evidence |
 |---|-------|---------|----------|
-| 1 | Chat docks right; drill-in collapses chat to floating button, both keep place | PASS (minor deviation L-07) | Fixed right dock (`ChatPanel.tsx:195-209`); stays mounted, hides via `display:none` so scroll/draft/history survive (`:91-97`); `drillInOpen` auto-collapses (`:57-59`); FAB restores (`:180-190`); page passes `drillInOpen={selectedId !== null}` (`app/page.tsx:389-392`). Deviation: collapse is one-way — closing drill-in leaves chat hidden until FAB click (extra click, state preserved, D-17 letter met) |
-| 2 | Chat + Prompt Bar primitives only, no streaming/sources | PASS | `ChatPanel.tsx` (message list + chips) + `PromptBar.tsx` (composer only, no sources/model-picker/dictation — `PromptBar.tsx:1-9` documents exclusion); no streaming/sources components, nothing hotlinked |
-| 3 | Canned mock Q&A from mock ResultsJSON (with deviation M-01) | PASS (with gap M-01) | `mock-answers.ts:18,37` imports fixture; all four intents build answers from fixture lookups + `checked()` post-check (`:200-203`). Deviation (medium, recorded as gap G-03): only `answerStockoutTiming` accepts `contextHospitalId` (`:125`); `answerMostAtRisk/answerWaste/answerTransfers` (`:69,89,106`) answer network-globally even under `?hospital=h-city` — plan decision table claim "chat respects cross-filter" holds for 1 of 4 intents |
-| 4 | Plain answers, no source tags | PASS | Answers are plain template strings (`mock-answers.ts:80-85,98-102,116-121,135-140`); no source-tag rendering in `ChatPanel.tsx` |
-| 5 | Three risk chips; stockout timing via composer | PASS | `RISK_CHIPS` has exactly 3 entries (`mock-answers.ts:25-29`); chips render (`ChatPanel.tsx:129-140`); stockout timing reachable via composer keywords (`mock-answers.ts:176-186`) and scoped to filter (`:125-141`) |
-| 6 | Session-only in-memory history, refresh clears, no DB, display-only never feeds matching | PASS | History is `useState` (`ChatPanel.tsx:49`); grep `localStorage|sessionStorage|IndexedDB|fetch(` in `components/chat/` + `app/page.tsx` — zero matches; `answerQuestion(question, contextHospitalId)` takes no history param (`mock-answers.ts:147-150`, documented `:143-146`) |
-| 7 | Safe fallback for unanswerable questions | PASS | `SAFE_FALLBACK = "I can only answer from system results"` (`mock-answers.ts:22`); unmatched questions return it (`:197`); `checked()` substitutes it when quote check fails (`:200-203`) |
-| 8 | Forecast greys days 15-30 with advisory tag + MAPE badge | PASS | Greyed band with advisory tag (`ForecastCard.tsx:75-81`, `advisoryBandStyle:143-154`); MAPE badge from envelope (`:41`, `mape={fixture.mape}` at `app/page.tsx:349`); days 1-14 labeled actionable (`ForecastCard.tsx:68`) |
-| 9 | Outbreak hospitals carry red Outbreak chip + forecast notes trend mode while flagged | PASS | `OutbreakBanner` red chip (`OutbreakBanner.tsx:12-28`, `colors.outbreak` `#dc2626`); rendered only when `row.outbreak` (`ForecastCard.tsx:62-66`) sourced from envelope flag (`app/page.tsx:160-162`); trend-mode note only while flagged (`ForecastCard.tsx:88-93`); priorities card also shows Outbreak badge (`PrioritiesCard.tsx:83-85`) |
+| 1 | Chat docks right; drill-in collapses chat to floating button, both keep place | PASS | Untouched by gap fixes; `drillInOpen={selectedId !== null}` wiring intact (`app/page.tsx:402-405`) |
+| 2 | Chat + Prompt Bar primitives only, no streaming/sources | PASS | Untouched |
+| 3 | Canned mock Q&A from mock ResultsJSON | PASS (scope gap G-04-3 now closed — see 04-05 #1) | All four intents build answers from fixture lookups + `checked()` post-check on every return path (`mock-answers.ts:281-286,331-337`) |
+| 4 | Plain answers, no source tags | PASS | Untouched; answers remain plain template strings |
+| 5 | Three risk chips; stockout timing via composer | PASS | `RISK_CHIPS` exactly 3 entries (`mock-answers.ts:38-42`); composer keyword routes intact (`:288-326`) |
+| 6 | Session-only in-memory history, refresh clears, no DB, display-only never feeds matching | PASS | Untouched; `answerQuestion(question, contextHospitalId)` still takes no history param; persistence grep clean |
+| 7 | Safe fallback for unanswerable questions | PASS | `SAFE_FALLBACK` intact (`:35`); gibberish → fallback confirmed live in harness |
+| 8 | Forecast greys days 15-30 with advisory tag + MAPE badge | PASS | Untouched (`ForecastCard.tsx` 15 advisory/MAPE hits) |
+| 9 | Outbreak hospitals carry red Outbreak chip + forecast notes trend mode while flagged | PASS | Untouched (`OutbreakBanner.tsx` 3 hits) |
 
-### Security / scope gates (all PASS)
+### Plan 04-04 — Dashboard gap closure (UI-01, UI-02)
+
+| # | Truth (gap) | Verdict | Evidence |
+|---|-------------|---------|----------|
+| 1 | Clicking a hospital filters ALL SIX cards including inventory; total honestly labeled (G-04-1) | PASS — CLOSED | Region-scoped grep: `selectedId` 4x inside `buildInventoryRows` (filter + per-row `selected` flag); `.filter((h) => selectedId === null \|\| h.id === selectedId)` at `app/page.tsx:53`. `scope` prop threaded both sides (`InventoryCard.tsx:23,28,37-39`; call site `app/page.tsx:357` wires `selectedHospital?.name ?? null`): filtered header reads "N units at {hospital}", unfiltered keeps "N units network-wide" byte-identical wording |
+| 2 | Dashboard and drill-in agree on risk for the same stock (G-04-2: h-city/m-cefix 16d) | PASS — CLOSED | Per-medicine lead/buffer lookup in builder (`app/page.tsx:68-79`) mirrors panel derivation (`HospitalPanel.tsx:102-120`) including `?? 0` fallbacks and first-min-row-wins ties. Node proof: `risk(16,4,10) = ok` (both surfaces) vs old `risk(16,5,14) = warning` (the reported divergence) |
+
+### Plan 04-05 — Chat + roles gap closure (UI-01, UI-02)
+
+| # | Truth (gap) | Verdict | Evidence |
+|---|-------------|---------|----------|
+| 1 | All four intents scope to the filter; scoped answers name the hospital (G-04-3) | PASS — CLOSED | `contextHospitalId` threads through all four intents (`mock-answers.ts` 16 occurrences; signatures `:168,181,213,247` all accept it; every chip tap + every composer keyword route passes it through `:282-324`). Live harness: waste/transfers/stockout-timing scoped to h-city all name "City Central"; risk scoped to h-north/h-river names the hospital; bogus id validates to null → global answer (`knownHospitalId`, `:114-117`) |
+| 2 | Most-at-risk pairs same hospital + quotes real reasons vocabulary (G-04-4) | PASS — CLOSED | `globalMostAtRisk` pairs `worstShortageFor(top.hospitalId)` (`:159-165`); scoped path pairs `worstShortageFor(entry.hospitalId)` (`:174`); `riskAnswer` quotes `entry.reasons.join(", ")` (`:149`). Hardcoded "high load and emergency share" clause absent from source (grep clean). Live harness: h-north → "Amoxicillin 250mg … 3 days … score 87. Reasons: high load, emergency share, 3 days to stockout, no substitute." (own hospital, own reasons); h-river → "Insulin Glargine … 5 days … score 54. Reasons: 5 days to stockout, no substitute."; h-city (priority but zero shortage rows in fixture) → SAFE_FALLBACK by design, never a cross-hospital join |
+| 3 | Per-answer allow-set; no whole-fixture bag as sole gate; dosage/date stripped (G-04-5) | PASS — CLOSED | `FIXTURE_NUMERIC_TOKENS` absent from source (grep clean); `citedAllowSet` builds allow-set from cited rows' quantity fields + whole cited ISO dates (`:74-82`); `passesQuoteCheck` enforces whole-date equality then strips dates + dosage fragments (`DOSAGE_FRAGMENT_RE`, `:61`) before scanning (`:92-103`); `checked()` remains the single enforcement point (`:331-337`). Live harness: novel qty 999 → reject; swapped date 2026-01-01 → reject; dosage "500mg" with allow-set {3} → pass (fragment stripped, real qty still gated) |
+| 4 | Unknown-owner panel hides move/order actions, failing closed (G-04-6) | PASS — CLOSED | `isOwnHospital` returns `false` on null (`roles.tsx:36`); panel inline gate is `ownHospitalId !== null && ownHospitalId === hospitalId` (`HospitalPanel.tsx:137`) — same fail-closed shape; `MovesCard.tsx`/`app/page.tsx` correctly unedited (network_admin short-circuit + explicit page stub verified in code) |
+
+### Security / scope gates (all PASS, re-checked)
 
 | Gate | Result |
 |------|--------|
-| `dangerouslySetInnerHTML` / `__html` / `innerHTML` in `app/ components/ theme/` | ABSENT (matches only in `.planning/` docs) |
-| Chat persistence (`localStorage`/`sessionStorage`/`IndexedDB`/`fetch(`) in `components/chat/` + `app/page.tsx` | ABSENT |
-| Out-of-scope edits (`app/api/`, `db/`, `lib/`, `scripts/`, `middleware.ts`) | UNTOUCHED — none exist; no phase-04 commit touches them |
-| Role gating claims server enforcement | None — display-only documented (`roles.tsx:11-16`, `MovesCard.tsx:5-9`) |
+| `dangerouslySetInnerHTML` / `__html` / `innerHTML` in `app/ components/ theme/` | ABSENT (grep clean) |
+| Chat persistence (`localStorage`/`sessionStorage`/`IndexedDB`) in `components/chat/` + `app/page.tsx` | ABSENT (grep clean) |
+| Out-of-scope edits (`app/api/`, `db/`, `lib/`, `scripts/`, `middleware.ts`) | UNTOUCHED — none exist; gap commits touch only `app/page.tsx`, `components/cards/InventoryCard.tsx`, `components/chat/mock-answers.ts`, `components/roles.tsx`, `components/panel/HospitalPanel.tsx` |
+| Role gating claims server enforcement | None — display-only documented (`roles.tsx:11-17`); fail-closed change does not alter display-only character |
 
 ## Requirement traceability
 
 | Requirement | Declared in | Status | Evidence |
 |-------------|-------------|--------|----------|
-| UI-01 — six risks on one screen | 04-01, 04-03 | SATISFIED with gap | Six-card grid renders from one static fixture load (`app/page.tsx:339-377`); header/refresh/skeleton/empty/chat/advisory all present. Gap: cross-filter does not cover the inventory card (H-01), so "runs the whole network from one screen" holds except filtered-inventory consistency |
-| UI-02 — click into any hospital for detail | 04-02, 04-03 | SATISFIED with gap | Panel opens per hospital with full detail + switcher + URL sync (`HospitalPanel.tsx`). Gap: dashboard/panel risk badges can disagree for the same stock (H-02) |
-| Every PLAN frontmatter ID accounted for | 04-01→UI-01, 04-02→UI-02, 04-03→UI-01+UI-02 | YES | Union = {UI-01, UI-02}; both in REQUIREMENTS.md Phase 4 scope; no orphaned IDs in either direction |
+| UI-01 — six risks on one screen | 04-01, 04-03, 04-04, 04-05 | SATISFIED | Six-card grid from one static load; cross-filter now covers all six cards with scope-honest totals (G-04-1); chat scoping + quote gate hold under filter (G-04-3/4/5) |
+| UI-02 — click into any hospital for detail | 04-02, 04-03, 04-04, 04-05 | SATISFIED | Panel opens per hospital with full detail + switcher + URL sync; dashboard/panel risk now agrees (G-04-2); null-owner fails closed (G-04-6) |
+| Every PLAN frontmatter ID accounted for | 04-01→UI-01, 04-02→UI-02, 04-03→UI-01+UI-02, 04-04→UI-01+UI-02, 04-05→UI-01+UI-02 | YES | Union = {UI-01, UI-02}; both in REQUIREMENTS.md Phase 4 scope; no orphaned IDs in either direction |
 
-REQUIREMENTS.md already marks UI-01/UI-02 Complete (04-03 flipped them via the shared-ID gate). This verification says the Complete flag is premature until G-01 (and ideally G-02) are closed — see disposition note below.
+REQUIREMENTS.md already marks UI-01/UI-02 Complete. The prior report called those flags premature pending G-04-1; with all six gaps closed and 29/29 must-haves verified, the Complete flags are now earned — no REQUIREMENTS.md edit needed.
 
 ## Gaps
 
-### G-01 — Inventory card ignores the hospital cross-filter (HIGH, blocks phase goal)
+### Closed in this re-verification (6/6)
 
-- **Source:** 04-REVIEW.md H-01, confirmed in code.
-- **Failed truth:** 04-01 #4 ("filters all six cards").
-- **Fix:** Filter in `buildInventoryRows` (`app/page.tsx:46-80`):
-  `data.hospitals.filter((h) => selectedId === null || h.id === selectedId).map(…)`.
-  Also scope `networkTotal` (`InventoryCard.tsx:27`) or relabel it when filtered.
-- **Suggested plan:** 1-task fix plan (P1-owned `app/page.tsx` + `components/cards/InventoryCard.tsx` only), verify by build + browser click/refresh check.
+- **G-04-1 (HIGH, phase-goal blocker)** — CLOSED by 04-04 Task 1+2 (commits `5081898`, `41d1a1a`): inventory filters with `selectedId`; header caption scope-honest.
+- **G-04-2 (HIGH)** — CLOSED by 04-04 Task 1 (commit `5081898`): per-medicine risk inputs shared with panel; h-city/m-cefix 16d reads `ok` on both surfaces (node proof above).
+- **G-04-3 (MEDIUM)** — CLOSED by 04-05 Task 1 (commit `eaebbc5`): scope threads through all four intents; scoped answers name the hospital; empty slices degrade to global or SAFE_FALLBACK; bogus ids validate to null.
+- **G-04-4 (MEDIUM)** — CLOSED by 04-05 Task 2 (commit `d94412d`): same-hospital pairing via `worstShortageFor(top/entry.hospitalId)`; reasons quoted from the entry; hardcoded flag clause gone; no-shortage hospital → SAFE_FALLBACK (observed: h-city scoped risk).
+- **G-04-5 (MEDIUM)** — CLOSED by 04-05 Task 2 (commit `d94412d`): whole-fixture bag removed; per-answer allow-set from cited rows; dosage fragments stripped; ISO dates verified whole; `checked()` single enforcement point.
+- **G-04-6 (MEDIUM, latent)** — CLOSED by 04-05 Task 3 (commit `21e32a2`): `isOwnHospital(null, …)` → `false`; panel inline gate matches; `MovesCard`/`app/page.tsx` verified untouched (network_admin short-circuit + explicit stub).
 
-### G-02 — Dashboard/panel risk badge disagreement for the same stock (HIGH)
+### Remaining gaps
 
-- **Source:** 04-REVIEW.md H-02, confirmed in code.
-- **Failed truth:** 04-02 #2 (partial — content present, derived risk inconsistent).
-- **Fix:** Single shared derivation: compute inventory-row risk from the row's own medicine lead/buffer (panel logic, `HospitalPanel.tsx:107-120`) in `buildInventoryRows` (`app/page.tsx:53-66`), or move `riskForDaysToStockout` evaluation per underlying row inside `InventoryCard`. Concrete divergence on shipped fixture: h-city/m-cefix 16d → dashboard `warning` vs panel `ok`.
-- **Suggested plan:** Same or follow-up fix plan as G-01 (same files plus `theme/tokens.ts` untouched); verify by unit-checking both surfaces on the h-city/m-cefix row.
+None. `gaps_count: 0`.
 
-### G-03 — Chat intents 1–3 ignore the active hospital filter (MEDIUM)
+### Advisory (carried, non-blocking)
 
-- **Source:** 04-REVIEW.md M-01, confirmed: `answerMostAtRisk/answerWaste/answerTransfers` (`mock-answers.ts:69-122`) take no scope; only intent 4 does.
-- **Breached claim:** 04-03 decision-table D-04 ("chat respects cross-filter"), not a must-have truth — truths still pass narrowly.
-- **Fix:** Thread validated scope (`knownHospitalId`, `mock-answers.ts:63-66`) into all four intents; scope shortages/expiries/moves to the selected hospital when set, prefix answer with hospital name; fall back to global answer (or SAFE_FALLBACK on empty scoped slice).
-
-### G-04 — `answerMostAtRisk` cross-hospital pairing + hardcoded flag vocabulary (MEDIUM)
-
-- **Source:** 04-REVIEW.md M-02 (`mock-answers.ts:69-86`). Today coincidentally correct (top priority and worst shortage are both h-north); breaks on any fixture where they differ. Hardcoded "high load and emergency share" flags vs actual `priorities[].reasons` (e.g. h-city's reason is `["16 days to stockout"]`).
-- **Fix:** Pick worst shortage for `top.hospitalId`; quote `top.reasons` vocabulary instead of hardcoded flags.
-
-### G-05 — Numeric quote gate is token-presence-only over a polluted token set (MEDIUM)
-
-- **Source:** 04-REVIEW.md M-03 (`mock-answers.ts:44-52`). Dosage fragments (500/250/200/100 in medicine names), date parts, loads, transport days are all "quotable" — wrong-quantity answers pass when digits coincide.
-- **Fix (prototype-scale defense in depth):** Per-answer allow-set from the exact cited rows' fields; at minimum strip medicine-name dosage fragments and date parts from `FIXTURE_NUMERIC_TOKENS`.
-
-### G-06 — `isOwnHospital(null, …)` fails open (MEDIUM, latent)
-
-- **Source:** 04-REVIEW.md M-04 (`roles.tsx:30-36`; panel default `ownHospitalId = null` at `HospitalPanel.tsx:56`, `MovesCard.tsx:41`). Display-only (T-4-06) so medium, not high.
-- **Fix:** Return `false` on `null` (unknown owner → hide actions); pass explicit non-null `ownHospitalId` on the network_admin path instead of relying on null-means-all. Note `HospitalPanel.tsx:136` has its own inline `ownHospitalId === null || …` with the same fail-open shape — fix both.
-
-### Advisory — 11 low findings (non-blocking, tracked open)
-
-L-01 (inventory sparkline = first medicine's trend, `app/page.tsx:67`) through L-11 (dead badge `label` field, `theme/tokens.ts:22-56`) per 04-REVIEW.md:135-201. All remain `open` in 04-REVIEW-DISPOSITION.md. Not re-litigated here; recommend triage in the same fix pass as G-01/G-02 (several are one-line: L-02 `startsWith("move")`, L-03 NaN guard, L-10 missing memo dep) or deferral to Phase 5 with explicit disposition updates. L-06 (panel placement) and L-07 (no chat auto-restore) touch must-have wording fidelity and deserve an accept-or-fix decision each.
+The 11 low findings L-01..L-11 from 04-REVIEW.md remain `open` per 04-REVIEW-DISPOSITION.md and were explicitly out of scope for 04-04/04-05 (disposition unchanged — no silent absorption). They do not breach any must-have truth and do not block the phase goal; recommend triage in Phase 5 or a dedicated polish pass.
 
 ## Human verification
 
-Browser checks no static verification can cover (no E2E runner in repo; all three SUMMARYs already flag `human_judgment: true` on these):
+No E2E runner in repo, so the following browser checks remain for human confirmation (functionally verified in code + harness; visual/interactive feel needs eyes). None blocks the `passed` status — all underlying truths are code-verified above.
 
-1. **Cross-filter (post-fix):** click a hospital in each card → all six cards refilter + filter banner appears + Clear restores. **Expected:** inventory included after G-01 fix.
-2. **Deep-link refresh/back/share:** open `?hospital=h-north`, refresh (filter persists), back/forward (selection history navigates), paste link in fresh tab (pre-filtered), unknown id (unfiltered, param dropped).
-3. **Panel open/switch:** click hospital → panel appears with full detail; switcher buttons refilter cards + update URL; Close clears filter.
-4. **Chat dock collapse/restore:** open drill-in → chat collapses to FAB; FAB restores with scroll/draft/history intact; manual Hide works when no drill-in.
-5. **Chips + composer answers:** tap all 3 chips → plain 1–2 sentence quoted-number answers; composer stockout question under active filter → scoped answer; gibberish question → "I can only answer from system results".
-6. **Fallback:** ask for data outside the fixture (e.g. a medicine not seeded) → safe fallback, never a fabricated number.
+1. **Cross-filter incl. inventory:** click a hospital in any card → all six cards refilter (inventory shows one row) + filter banner appears + Clear restores. Expected: inventory header reads "N units at {hospital}" when filtered, "N units network-wide" unfiltered.
+2. **Deep-link refresh/back/share:** open `?hospital=h-north`, refresh (filter persists), back/forward navigates, paste link in fresh tab (pre-filtered), unknown id (unfiltered, param dropped).
+3. **Panel open/switch:** click hospital → panel with full detail; switcher refilters cards + updates URL; Close clears filter. Confirm h-city panel shows healthy-leaning badges consistent with the dashboard inventory row (`ok` for the 16d min row).
+4. **Chat dock collapse/restore:** open drill-in → chat collapses to FAB; FAB restores with scroll/draft/history intact; manual Hide works with no drill-in.
+5. **Chips + composer under filter:** tap all 3 chips unfiltered → plain 1–2 sentence quoted answers; set `?hospital=h-river` → risk answer names Riverside with its own reasons; gibberish → "I can only answer from system results"; h-city scoped risk → safe fallback (no shortage rows for h-city in fixture — honest, not a bug).
+6. **Role views + fail-closed:** flip RoleSwitcher to hospital_admin → move/order Approve/Order buttons hidden off h-city, visible on h-city; network_admin → visible everywhere.
 7. **Advisory/outbreak rendering:** forecast rows show greyed 15–30 band + advisory tag + MAPE badge; h-north rows show red Outbreak chip + trend-mode note; h-city/h-river show neither.
-8. **Role views:** flip RoleSwitcher to hospital_admin → move/order Approve/Order buttons hidden off h-city, visible on h-city; network_admin → visible everywhere.
+
+## Behavioral spot-checks (run during this verification)
+
+| Behavior | Command | Result | Status |
+| -------- | ------- | ------ | ------ |
+| Typecheck | `npm run typecheck` | tsc --noEmit, zero errors | ✓ PASS |
+| Production build | `npm run build` | Next.js 16.4.0, compiled + static prerender (3/3 pages) | ✓ PASS |
+| Risk agreement h-city/m-cefix 16d | node `riskForDaysToStockout` replica | new inputs (4,10) → `ok`; old global-max (5,14) → `warning` | ✓ PASS |
+| Chat scoping (4 intents × filters) | tsx harness vs `answerQuestion` | waste/transfers/timing scoped name City Central; h-north/h-river risk name own hospital; bogus id → global; gibberish → fallback | ✓ PASS |
+| Same-hospital pairing + reasons | tsx harness | h-north pairs m-amox 3d + own reasons; h-river pairs m-insulin 5d + own reasons; h-city (no shortage rows) → SAFE_FALLBACK | ✓ PASS |
+| Quote gate adversarial | tsx harness vs `passesQuoteCheck` | novel qty 999 rejected; swapped date rejected; dosage fragment stripped while true qty still gated | ✓ PASS |
+| Security gates | grep XSS + persistence + scope | all absent/untouched | ✓ PASS |
+
+Note: the first harness run flagged 2 apparent failures (h-city scoped risk not naming the hospital) — investigation confirmed the code returns SAFE_FALLBACK there by plan design (04-05 Task 2: priority-without-shortage → fallback, never a cross-hospital join). Harness expectation was corrected, not the code; corrected run passes 10/10.
 
 ## Disposition
 
-- **Status rationale:** 21/23 must-have truths verified in code with build green and all security/scope gates clean. Two HIGH review findings reproduce as genuine must-have breaches (G-01 fails 04-01 #4 outright; G-02 partially fails 04-02 #2), so the phase goal — "runs the whole network from one screen" with consistent drill-in — is not yet fully achieved. Status is `gaps_found`, not `passed`.
-- **On REQUIREMENTS.md:** UI-01/UI-02 were flipped Complete by the 04-03 shared-ID gate. Recommend leaving the flags but treating them as provisional until G-01 is closed (G-02..G-06 + lows can follow in the same fix pass or Phase 5 with disposition updates to 04-REVIEW-DISPOSITION.md).
-- **Suggested next command:** `/gsd-plan-phase --gaps` against this report (G-01+G-02 one-task P1 fix; G-03..G-06 second pass), then re-verify with browser human checks above.
+- **Status rationale:** 29/29 must-have truths verified against the actual codebase with typecheck + build green, live chat-engine harness green, and all security/scope gates clean. All six prior gaps (G-04-1..G-04-6) are closed in code with per-gap evidence above; no regressions in the 21 previously passing truths (gap commits touch only the 5 listed files; all other surfaces re-grepped intact). The phase goal — "runs the whole network from one screen" (all six cards filter together with honest totals) "and can drill into any hospital" (consistent detail, scoped answers, fail-closed roles) — is achieved. Status is `passed`.
+- **On REQUIREMENTS.md:** UI-01/UI-02 Complete flags are now earned; left untouched per instructions.
+- **Suggested next command:** proceed to Phase 5 (integration wiring consumes the static-fixture slices, role stub, and quote-only chat interface verified here). Carry the 7 browser human checks + 11 low advisories as non-blocking follow-ups.
+
+---
+
+_Verified: 2026-10-08T14:18:54Z_
+_Verifier: the agent (gsd-verifier)_
