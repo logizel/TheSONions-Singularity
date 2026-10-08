@@ -52,14 +52,14 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Chatbot
 
-- [ ] **CHAT-01**: Administrator can ask risk questions (e.g. "Which hospital is most at risk next week?") via small rule-based intent matcher
-- [ ] **CHAT-02**: Chatbot answers only by quoting precomputed ResultsJSON, never calculates
-- [ ] **CHAT-03**: System rejects any answer containing a number not present in ResultsJSON
+- [x] **CHAT-01**: Administrator can ask risk questions (e.g. "Which hospital is most at risk next week?") via small rule-based intent matcher
+- [x] **CHAT-02**: Chatbot answers only by quoting precomputed ResultsJSON, never calculates
+- [x] **CHAT-03**: System rejects any answer containing a number not present in ResultsJSON
 
 ### Access
 
-- [ ] **AUTH-01**: Hospital admin has read/write access to own hospital details and read-only access to other hospitals
-- [ ] **AUTH-02**: Network admin has full read/write access including moves and orders
+- [x] **AUTH-01**: Hospital admin has read/write access to own hospital details and read-only access to other hospitals
+- [x] **AUTH-02**: Network admin has full read/write access including moves and orders
 
 ## v2 Requirements
 
@@ -116,11 +116,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRIOR-02 | Phase 2 | Pending |
 | UI-01 | Phase 4 | Pending |
 | UI-02 | Phase 4 | Pending |
-| CHAT-01 | Phase 3 | Pending |
-| CHAT-02 | Phase 3 | Pending |
-| CHAT-03 | Phase 3 | Pending |
-| AUTH-01 | Phase 3 | Pending |
-| AUTH-02 | Phase 3 | Pending |
+| CHAT-01 | Phase 3 | Complete |
+| CHAT-02 | Phase 3 | Complete |
+| CHAT-03 | Phase 3 | Complete |
+| AUTH-01 | Phase 3 | Complete |
+| AUTH-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 24 total
