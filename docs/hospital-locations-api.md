@@ -1,21 +1,17 @@
-# Hospital locations API
+# Map data APIs
 
-Backend contract for the react-leaflet hospital map. The map UI is built in the P1 track; this endpoint only serves data.
+Backend contracts for the Leaflet hospital map (Phase 6). All routes sit behind `middleware.ts`: a signed `session` cookie is required, both roles (`network_admin`, `hospital_admin`) can read, and no cookie gets `401 {"error":"Unauthorized"}`. Only `GET` is exported, so any other method gets `405`. Error bodies are `{"error": "..."}`, never stack traces.
 
-## Endpoint
+## ⚠ Coordinate order
 
-`GET /api/hospital-locations`
+Leaflet takes **`[lat, lng]`**. GeoJSON and OSRM use **`[lng, lat]`**. Every response here is Leaflet order: either named `lat`/`lng` fields or `[lat, lng]` tuples. Build positions as `[h.lat, h.lng]`. Swapping them moves Mangaluru (12.87° N, 74.84° E) into the Arctic Ocean near Svalbard (74.84° N, 12.87° E).
 
-- **Auth:** same as every `/api/*` route. `middleware.ts` requires a signed `session` cookie. Both roles (`network_admin`, `hospital_admin`) can read. No cookie → `401 {"error":"Unauthorized"}`.
-- **Methods:** GET only. Any other method → `405`.
-- **Caching:** `Cache-Control: private, max-age=300` (authenticated, never shared caches).
+## `GET /api/hospital-locations`
 
-### 200 response
+Hospitals from Neon `hospitals` (`latitude`, `longitude`, `address`). Rows without a valid position are dropped.
 
 ```json
 {
-  "source": "demo-coordinates",
-  "updatedAt": "2026-10-09T00:00:00.000Z",
   "center": { "lat": 12.8879, "lng": 74.8484 },
   "bounds": [[12.8605, 74.818], [12.933, 74.8835]],
   "hospitals": [
@@ -26,63 +22,57 @@ Backend contract for the react-leaflet hospital map. The map UI is built in the 
 }
 ```
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `source` | string | `"demo-coordinates"` for now (fictional points). |
-| `updatedAt` | ISO 8601 string | When the location data was last changed. |
-| `center` | `{lat, lng}` | Centroid of all hospitals. |
-| `bounds` | `[[south, west], [north, east]]` | A Leaflet `LatLngBoundsExpression`. Pass it straight to `<MapContainer bounds>`. A single hospital gets ±0.01° padding so the map doesn't zoom all the way in. |
-| `hospitals[].id` | string | The **DB seed id** (`h-civil`, `h-stmary`, `h-north`). This is the same id used in `?hospital=<id>` once the dashboard reads live data. Join transfers on it to draw lines. |
-| `hospitals[].name` | string | Matches `hospitals.name` in Neon. |
-| `hospitals[].lat`, `lng` | number | WGS84 decimal degrees. |
-| `hospitals[].address` | string, optional | Display text only. |
+| Field | Notes |
+|-------|-------|
+| `center` | Centroid of the hospitals. |
+| `bounds` | `[[south, west], [north, east]]`, a Leaflet `LatLngBoundsExpression`. Pass it straight to `<MapContainer bounds>`. One hospital gets ±0.01° padding. |
+| `hospitals[].id` | DB id: the same id as `?hospital=<id>` and every `ResultsJSON` row. |
+| `address` | Optional display text. |
 
-### 503 response
+`Cache-Control: private, max-age=300`. `503` when the DB is unreachable or no hospital has a position.
 
-`{"error":"Hospital locations unavailable"}` when no valid hospital survives validation. Entries with invalid coordinates or duplicate ids are dropped.
+## `GET /api/route?from=<id>&to=<id>`
 
-## ⚠ Coordinate order
+Road route between two hospitals. Ids are resolved server-side; the client never sends coordinates.
 
-Leaflet takes **`[lat, lng]`**. GeoJSON uses **`[lng, lat]`**. This API deliberately returns named `lat`/`lng` fields (not GeoJSON) so you never have to guess. Always build positions as `[h.lat, h.lng]`. Swapping them moves Mangaluru (12.87° N, 74.84° E) into the Arctic Ocean near Svalbard (74.84° N, 12.87° E).
+```json
+{ "from": "h-civil", "to": "h-north", "distanceM": 9960.4, "durationS": 774.2, "path": [[12.870346, 74.843564], "..."], "approximate": false }
+```
 
-## react-leaflet usage (example for the map track)
+- `distanceM` / `durationS` are **road** distance and drive time from OSRM. They are not the engine's delivery window (`transportDays` in `ResultsJSON`), and the UI shows the two separately.
+- Routes are directional (one-way streets), so `a→b` may differ from `b→a`.
+- When OSRM is unreachable, the API returns a straight line: `approximate: true`, haversine `distanceM`, and `durationS: null`.
+- Errors: `400` for missing or invalid ids or `from === to`, `404` when an id is unknown or has no position, `503` when the DB is down.
+- `Cache-Control: private, max-age=3600`. The server also caches each successful pair in memory.
+- **OSRM server:** `ROUTING_BASE_URL`, defaulting to the public demo server `https://router.project-osrm.org`. That server is **fair-use only with no SLA: fine for a demo, not for production.** Self-host OSRM for real use.
+
+## `GET /api/results`
+
+The single `ResultsJSON` v2 snapshot (`lib/contracts.ts`) that the dashboard, chat and cart read. It is built live from Neon through the engine (`lib/network`) and reused for 30 s. If the DB is down, the last `data/results.json` is served with `X-Results-Source: snapshot` (otherwise `live`). Regenerate that blob with `node --env-file=.env --import tsx scripts/generate-results.ts`.
+
+## react-leaflet usage (for the map track)
 
 ```tsx
 "use client";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
 
-type HospitalLocationsResponse = {
-  bounds: [[number, number], [number, number]];
-  hospitals: { id: string; name: string; lat: number; lng: number; address?: string }[];
-};
-
-export function HospitalMap({ data }: { data: HospitalLocationsResponse }) {
-  // MapContainer props are immutable after mount: render only once data has loaded.
+export function HospitalMap({ data, route }: { data: HospitalLocationsResponse; route?: { path: [number, number][] } }) {
+  // MapContainer props are immutable after mount: render once data has loaded.
   return (
     <MapContainer bounds={data.bounds} boundsOptions={{ padding: [24, 24] }} style={{ height: 400 }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {data.hospitals.map((h) => (
-        <Marker key={h.id} position={[h.lat, h.lng]}>
-          <Popup>{h.name}</Popup>
-        </Marker>
-      ))}
+      {data.hospitals.map((h) => <Marker key={h.id} position={[h.lat, h.lng]} />)}
+      {route && <Polyline positions={route.path} />}
     </MapContainer>
   );
 }
 ```
 
-Fetch with `fetch("/api/hospital-locations")` from the browser; the session cookie is sent automatically on same-origin requests. Leaflet touches `window`, so load the map with `next/dynamic` and `{ ssr: false }`.
+Leaflet touches `window`, so load the map with `next/dynamic(..., { ssr: false })`.
 
-## Source of the data
+## Demo data
 
-- `data/hospital-locations.json`: static demo coordinates, imported at build time.
-- `lib/hospital-locations/`: validation, center/bounds, and `getHospitalLocations()`. That function is the seam: when `hospitals` gains `latitude`/`longitude` columns, only its body changes. The response shape stays the same.
-
-## Known gaps
-
-- Coordinates are fictional demo points in Mangaluru, not real facilities.
-- The dashboard fixture (`app/data/mock-results.json`) still uses `h-city`/`h-north`/`h-river`. Map ids match the DB seed, so joins line up once the UI reads live `/api/results`.
+Coordinates are **fictional demo points** in Mangaluru (`scripts/demo-coordinates.ts`). They are not real facilities. To fill them without reseeding, run `scripts/set-demo-coordinates.ts`; it only issues `UPDATE`s by id.
