@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
+import path from "node:path";
+
+export const runtime = "nodejs";
 
 import type { ResultsJSON } from "@/lib/contracts";
 
@@ -9,7 +12,7 @@ import type { ResultsJSON } from "@/lib/contracts";
 // (generatedAt, mape, advisoryFlags, outbreakMarkers) ride inside the blob;
 // D-04: shape comes from the frozen lib/contracts.ts type.
 export async function GET(): Promise<NextResponse> {
-  const blobPath = process.env.RESULTS_BLOB_PATH ?? "/tmp/results.json";
+  const blobPath = path.join(process.cwd(), "data", "results.json");
   let resultsJson: ResultsJSON;
   try {
     resultsJson = JSON.parse(await readFile(blobPath, "utf8")) as ResultsJSON;

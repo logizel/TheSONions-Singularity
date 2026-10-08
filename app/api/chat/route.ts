@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
+import path from "node:path";
+
+export const runtime = "nodejs";
 
 import { chat } from "@/lib/chat";
 import type { ResultsJSON } from "@/lib/contracts";
@@ -19,7 +22,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Missing question" }, { status: 400 });
   }
 
-  const blobPath = process.env.RESULTS_BLOB_PATH ?? "/tmp/results.json";
+  const blobPath = path.join(process.cwd(), "data", "results.json");
   let resultsJson: ResultsJSON;
   try {
     resultsJson = JSON.parse(await readFile(blobPath, "utf8")) as ResultsJSON;
