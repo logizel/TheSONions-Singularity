@@ -1,12 +1,12 @@
 {
   "name": "thesonions-singularity",
   "version": "1.0.0",
-  "description": "Team Members:",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "description": "Hospital Stock Balancer",
+  "private": true,
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,11 +16,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/logizel/TheSONions-Singularity/issues"
-  },
-  "homepage": "https://github.com/logizel/TheSONions-Singularity#readme",
   "devDependencies": {
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
@@ -32,9 +27,9 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
     "drizzle-orm": "^0.45.4",
-    "next": "^15.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "xlsx": "^0.18.5"
   }
 }

@@ -17,3 +17,5 @@ drizzle/*.sql
 # OS / editor
 .DS_Store
 *.log
+*.tsbuildinfo
+next-env.d.ts
