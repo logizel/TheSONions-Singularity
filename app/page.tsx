@@ -47,30 +47,42 @@ function buildInventoryRows(
   data: ResultsFixture,
   selectedId: string | null,
 ): InventoryCardRow[] {
-  return data.hospitals.map((h) => {
+  // G-04-1: filter to the validated selectedId before mapping, so an
+  // active ?hospital filter yields exactly one inventory row.
+  return data.hospitals
+    .filter((h) => selectedId === null || h.id === selectedId)
+    .map((h) => {
     const rows = data.inventory.filter((r) => r.hospitalId === h.id);
     const totalStock = rows.reduce((sum, r) => sum + r.stock, 0);
-    const minDaysToStockout = rows.reduce(
-      (min, r) => Math.min(min, r.daysToStockout),
-      Number.POSITIVE_INFINITY,
+    // G-04-2: share the panel per-row semantics (HospitalPanel.tsx:107-120).
+    // The badge evaluates riskForDaysToStockout on the min row's OWN
+    // medicine lead/buffer — not global maxima — so dashboard and drill-in
+    // agree for the same stock. First-min-row wins on ties; `?? 0`
+    // fallbacks match the panel.
+    const minRow = rows.reduce<(typeof rows)[number] | null>(
+      (min, r) =>
+        min === null || r.daysToStockout < min.daysToStockout ? r : min,
+      null,
     );
-    const leadDays = Math.max(
-      ...data.leadDays
+    const minDaysToStockout = minRow?.daysToStockout ?? 0;
+    const leadByMedicine = new Map(
+      data.leadDays
         .filter((l) => l.hospitalId === h.id)
-        .map((l) => l.days),
-      0,
+        .map((l) => [l.medicineId, l.days] as const),
     );
-    const bufferDays = Math.max(
-      ...data.medicines.map((m) => m.bufferDays),
-      0,
-    );
+    const leadDays =
+      minRow !== null ? (leadByMedicine.get(minRow.medicineId) ?? 0) : 0;
+    const bufferDays =
+      minRow !== null
+        ? (data.medicines.find((m) => m.id === minRow.medicineId)
+            ?.bufferDays ?? 0)
+        : 0;
     const trend = rows[0]?.trend ?? [];
     return {
       hospitalId: h.id,
       hospitalName: h.name,
       totalStock,
-      minDaysToStockout:
-        minDaysToStockout === Number.POSITIVE_INFINITY ? 0 : minDaysToStockout,
+      minDaysToStockout,
       leadDays,
       bufferDays,
       trend,
