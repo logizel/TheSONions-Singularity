@@ -78,7 +78,7 @@ Notes:
 **UI hint**: yes
 
 Plans:
-- Wave 1: [ ] 04-01-PLAN.md — Dashboard tracer: shell, theme, mock fixture, 6-card grid, header/refresh, cross-filter, deep link
+- Wave 1: [x] 04-01-PLAN.md — Dashboard tracer: shell, theme, mock fixture, 6-card grid, header/refresh, cross-filter, deep link (done 2026-10-08, SUMMARY committed)
 - Wave 2 *(blocked on Wave 1 completion)*: [ ] 04-02-PLAN.md — Drill-in side panel with expandable medicines and role views; [ ] 04-03-PLAN.md — Chat panel with mock Q&A plus advisory/MAPE/outbreak treatments
 
 Notes:
