@@ -46,7 +46,12 @@ Notes:
   3. Administrator is warned per hospital/medicine when days-until-stockout is shorter than the supplier lead time
   4. Administrator is warned per hospital/medicine with expiring-unused quantities computed as stock minus realistic demand before expiry (capped at 90 days)
   5. Administrator receives transfer suggestions passing all 5 checks plus emergency supplier orders for the remainder, with competing hospitals visibly ranked and justified
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Tracer: harness plus forecast/stockout history-to-warning slice on deterministic seeds
+- [ ] 02-02-PLAN.md — Outbreak detection with trend switching plus expiry-waste risk
+- [ ] 02-03-PLAN.md — Transfer suggestions with remainder orders plus global priority ranking
 
 Notes:
 - Pure statistical TypeScript (weekday averages + trend switch), no ML training. Verified by unit tests against seeded data; no DB or UI code in this phase.
