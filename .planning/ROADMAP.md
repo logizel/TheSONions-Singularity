@@ -13,7 +13,7 @@ From an empty repo to a working network inventory balancer in five track-owned h
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Data Layer + Frozen Contracts** - Stock/usage/load entry, CSV upload, Excel export, Neon schema; freezes shared contracts (Track P2)
-- [ ] **Phase 2: Forecast & Decision Engine** - Forecast, outbreak, stock-out, waste, moves, priority as pure TS functions (Track P3)
+- [x] **Phase 2: Forecast & Decision Engine** - Forecast, outbreak, stock-out, waste, moves, priority as pure TS functions (Track P3) (completed 2026-10-08)
 - [ ] **Phase 3: API, Chat & Access** - ResultsJSON APIs, rule-based quote-only chatbot + validator, role-based auth (Track P4)
 - [ ] **Phase 4: Dashboard UI** - One-screen dashboard with drill-in and chat panel (Track P1)
 - [ ] **Phase 5: Integration & Wiring** - Wire all tracks through frozen contracts into one working prototype
@@ -50,7 +50,7 @@ Notes:
   4. Administrator is warned per hospital/medicine with expiring-unused quantities computed as stock minus realistic demand before expiry (capped at 90 days)
   5. Administrator receives transfer suggestions passing all 5 checks plus emergency supplier orders for the remainder, with competing hospitals visibly ranked and justified
 
-**Plans**: 4/4 plans executed (incl. gap closure)
+**Plans**: 4/4 plans complete (incl. gap closure)
 
 Plans:
 - [x] 02-01-PLAN.md — Tracer: harness plus forecast/stockout history-to-warning slice on deterministic seeds
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Layer + Frozen Contracts | 0/TBD | Not started | - |
-| 2. Forecast & Decision Engine | 4/4 | Complete | 2026-10-08 |
+| 2. Forecast & Decision Engine | 4/4 | Complete    | 2026-10-08 |
 | 3. API, Chat & Access | 0/TBD | Not started | - |
 | 4. Dashboard UI | 0/TBD | Not started | - |
 | 5. Integration & Wiring | 0/TBD | Not started | - |

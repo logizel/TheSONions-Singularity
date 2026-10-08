@@ -22,7 +22,7 @@ covered_files:
   - lib/engine/waste.ts
   - lib/engine/moves.ts
   - lib/engine/priorities.ts
-covered_digest: "unavailable-no-fingerprint-verb"
+covered_digest: "v2:sha256:40db7b7b8b9f8e4307a80b14c75a7bc6af3da722ae9967cc0dd8a624e3012374"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
