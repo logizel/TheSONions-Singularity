@@ -19,6 +19,9 @@ export interface WasteRisk {
 /** Demand window never extends past 90 days (D-18). */
 const MAX_WASTE_WINDOW_DAYS = 90;
 
+/** Engine keeps 1-decimal floats (D-02); sibling modules share this helper. */
+const round1 = (n: number): number => Math.round(n * 10) / 10;
+
 /**
  * Compute expiring-unused stock (D-18, WASTE-01): sum forecast demand over
  * min(daysToExpiry, 90) — the 30-day forecast array when expiry is near,
@@ -58,6 +61,8 @@ export function wasteRisk(
       ? forecast.slice(0, windowDays).reduce((s, d) => s + d.value, 0)
       : total30 + (windowDays - forecast.length) * (total30 / forecast.length);
 
-  const wasteUnits = Math.max(0, stock - demand);
+  // Round the difference (not the operands) so the WASTE-02 warn boundary
+  // is decided on the quotable number — float dust can no longer flip it.
+  const wasteUnits = Math.max(0, round1(stock - demand));
   return { wasteUnits, warns: wasteUnits > 0 };
 }
