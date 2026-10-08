@@ -74,8 +74,12 @@ Notes:
 **Success Criteria** (what must be TRUE):
   1. Administrator sees inventory, forecast, shortage risk, expiry risk, recommended moves, and priority hospitals on one screen
   2. Administrator can click into any hospital for its detail
-**Plans**: TBD
+**Plans:** 3 plans
 **UI hint**: yes
+
+Plans:
+- Wave 1: [ ] 04-01-PLAN.md — Dashboard tracer: shell, theme, mock fixture, 6-card grid, header/refresh, cross-filter, deep link
+- Wave 2 *(blocked on Wave 1 completion)*: [ ] 04-02-PLAN.md — Drill-in side panel with expandable medicines and role views; [ ] 04-03-PLAN.md — Chat panel with mock Q&A plus advisory/MAPE/outbreak treatments
 
 Notes:
 - Builds against the Phase 1 frozen contracts and mock ResultsJSON, so UI work is independent of Phase 3 completion; final wiring happens in Phase 5.
