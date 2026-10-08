@@ -50,13 +50,13 @@ Notes:
   4. Administrator is warned per hospital/medicine with expiring-unused quantities computed as stock minus realistic demand before expiry (capped at 90 days)
   5. Administrator receives transfer suggestions passing all 5 checks plus emergency supplier orders for the remainder, with competing hospitals visibly ranked and justified
 
-**Plans**: 3/3 plans executed + 1 gap-closure plan
+**Plans**: 4/4 plans executed (incl. gap closure)
 
 Plans:
 - [x] 02-01-PLAN.md — Tracer: harness plus forecast/stockout history-to-warning slice on deterministic seeds
 - [x] 02-02-PLAN.md — Outbreak detection with trend switching plus expiry-waste risk
 - [x] 02-03-PLAN.md — Transfer suggestions with remainder orders plus global priority ranking
-- [ ] 02-04-PLAN.md — Gap closure: BL-01 waste exactness, MJ-02 sender identity guards, MJ-01 soonness tiebreak
+- [x] 02-04-PLAN.md — Gap closure: BL-01 waste exactness, MJ-02 sender identity guards, MJ-01 soonness tiebreak
 
 Notes:
 - Pure statistical TypeScript (weekday averages + trend switch), no ML training. Verified by unit tests against seeded data; no DB or UI code in this phase.
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Layer + Frozen Contracts | 0/TBD | Not started | - |
-| 2. Forecast & Decision Engine | 3/3 | Complete | 2026-10-08 |
+| 2. Forecast & Decision Engine | 4/4 | Complete | 2026-10-08 |
 | 3. API, Chat & Access | 0/TBD | Not started | - |
 | 4. Dashboard UI | 0/TBD | Not started | - |
 | 5. Integration & Wiring | 0/TBD | Not started | - |

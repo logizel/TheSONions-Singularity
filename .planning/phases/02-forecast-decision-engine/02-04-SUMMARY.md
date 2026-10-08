@@ -157,3 +157,9 @@ None - no external service configuration required.
 ---
 *Phase: 02-forecast-decision-engine*
 *Completed: 2026-10-08*
+
+## Self-Check: PASSED
+
+- SUMMARY.md exists on disk; all 3 task commits (d552988, 09425a5, ba422bb) verified via `git log --all`
+- Plan-level verification re-run: `npx vitest run` 56/56 green, `npx tsc --noEmit` clean
+- Only the 6 plan-listed files touched; `lib/contracts.ts` nonexistent (Phase 1 pending), untouched
