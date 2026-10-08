@@ -19,7 +19,12 @@ export default async function SignInPage({
   const nextParam = (await searchParams).next;
   const next = typeof nextParam === "string" ? nextParam : "/";
 
-  const enabled = demoAuthEnabled();
+  // Both are needed: the flag turns the form on, the secret signs the cookie.
+  const missing = [
+    ...(demoAuthEnabled() ? [] : ["DEMO_AUTH=true"]),
+    ...(process.env.SESSION_SECRET ? [] : ["SESSION_SECRET"]),
+  ];
+  const enabled = missing.length === 0;
   let hospitals: { id: string; name: string }[] = [];
   let hospitalsError = false;
   if (enabled) {
@@ -42,7 +47,7 @@ export default async function SignInPage({
           <SignInForm hospitals={hospitals} hospitalsError={hospitalsError} next={next} />
         ) : (
           <p className={styles.disabled} data-testid="signin-disabled">
-            Demo sign-in is off. Set DEMO_AUTH=true on the server to enable it.
+            Demo sign-in is off. Add {missing.join(" and ")} to the server environment (.env locally; see .env.example).
           </p>
         )}
       </section>
