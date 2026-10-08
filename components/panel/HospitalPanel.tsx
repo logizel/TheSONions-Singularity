@@ -132,8 +132,9 @@ export function HospitalPanel({
 
   // T-4-08: hospital_admin sees other hospitals read-only; move/order
   // ACTION affordances hide off-hospital. Row data itself stays visible
-  // (aggregates only — no PHI fields exist to leak).
-  const isOwn = ownHospitalId === null || ownHospitalId === hospitalId;
+  // (aggregates only — no PHI fields exist to leak). Unknown owner hides
+  // actions (fail closed, G-04-6 — same shape as isOwnHospital).
+  const isOwn = ownHospitalId !== null && ownHospitalId === hospitalId;
   const showMoveActions = role === "network_admin" || isOwn;
 
   return (

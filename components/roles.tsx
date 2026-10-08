@@ -31,7 +31,9 @@ export function isOwnHospital(
   ownHospitalId: string | null,
   hospitalId: string,
 ): boolean {
-  if (ownHospitalId === null) return true;
+  // Unknown owner hides actions (fail closed, G-04-6): a null
+  // ownHospitalId means "no scoping info", never "sees everything".
+  if (ownHospitalId === null) return false;
   return ownHospitalId === hospitalId;
 }
 
