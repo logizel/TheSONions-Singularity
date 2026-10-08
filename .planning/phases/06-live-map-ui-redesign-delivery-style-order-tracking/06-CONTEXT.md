@@ -19,7 +19,7 @@ Three hospital id sets disagree (UI fixture `h-city…`, `data/results.json` `h1
 - **D-09 (A3) Design:** light, map-first operations layout: warm off-white, deep ink, one signal colour. CSS Modules + CSS variables (`theme/tokens.ts` = typed mirror), next/font self-hosted pair, tabular numerals. Bans per the brief (no Inter/Roboto/Arial/Space Grotesk, slate+blue, gradients, glass, emoji icons, identical card grids).
 - **D-10 Time semantics:** "Engine delivery window: N days" (ResultsJSON `transportDays`) and "Road drive time/distance" (routing) are always shown separately, never merged. Vehicle movement is simulated on a demo clock and labelled "Simulated".
 - **D-11 Chat:** stays quote-only. `lib/chat` reads name-joined rows from ResultsJSON v2; the validator haystack is the same snapshot. No new numbers are fed to chat.
-- **D-12 Delivery:** 3 stacked PRs: `feat/hospital-map-data` (built on `feat/hospital-locations-api`) → `feat/ui-redesign-map` → `feat/order-tracking`. Never push main, never merge. `origin/ui-enhancements` (another author, Tailwind/indigo) is out of scope and ignored.
+- **D-12 Delivery (superseded 2026-10-09):** sole developer; no PRs or feature branches. Commit in small verified steps and fast-forward push to `main`. `origin/ui-enhancements` (another author, Tailwind/indigo) is out of scope and ignored.
 
 - **D-13 Demo sign-in:** `/sign-in` page (outside `/api`) with a server action that sets the signed `session` cookie (same HMAC as `scripts/gen-cookie.ts`) for a chosen role + hospital. It is enabled only when `DEMO_AUTH=true` and labelled "Demo sign-in". The top-bar role switcher re-issues the cookie, so server 401/403 rules apply in the UI. `PROTOTYPE_OWN_HOSPITAL_ID` is replaced by the cookie's hospitalId.
 
