@@ -1,91 +1,110 @@
 /**
- * P1 theme tokens — final say: P1 UI principal (Phase 4, per Phase 1 D-23).
- * Single source of truth for dashboard surfaces, risk badges, spacing.
- * Components bind to these tokens via inline styles; globals.css mirrors
- * the page background / font for the document shell only.
+ * Typed mirror of theme/tokens.css (Phase 6, 06-UI-SPEC). Components style
+ * through CSS Modules + the CSS variables; these raw values exist for code
+ * that cannot read CSS variables (Leaflet path options, SVG markup built as
+ * strings, matchMedia). theme/tokens.test.ts asserts both files agree.
  */
+import type { Severity } from "../lib/contracts";
 
 export const colors = {
-  pageBackground: "#f4f6fa",
-  cardSurface: "#ffffff",
-  cardBorder: "#e2e8f0",
-  textPrimary: "#0f172a",
-  textSecondary: "#475569",
-  textMuted: "#94a3b8",
-  accent: "#2563eb",
-  accentHover: "#1d4ed8",
-  outbreak: "#dc2626",
+  paper: "#F3EFE6",
+  surface: "#FBF9F4",
+  sunk: "#ECE7DB",
+  ink: "#1C1B18",
+  ink2: "#4D483F",
+  ink3: "#6B6558",
+  rule: "#D8D1C2",
+  ruleStrong: "#B9B09D",
+  accent: "#0B6B53",
+  accentStrong: "#08533F",
+  accentTint: "#DDEDE6",
+  onAccent: "#FFFFFF",
+  critical: "#B42318",
 } as const;
 
-export type RiskLevel = "critical" | "warning" | "ok" | "neutral" | "advisory";
+/** CSS var name for each `colors` key. */
+export const colorVars: Record<keyof typeof colors, string> = {
+  paper: "--color-paper",
+  surface: "--color-surface",
+  sunk: "--color-sunk",
+  ink: "--color-ink",
+  ink2: "--color-ink-2",
+  ink3: "--color-ink-3",
+  rule: "--color-rule",
+  ruleStrong: "--color-rule-strong",
+  accent: "--color-accent",
+  accentStrong: "--color-accent-strong",
+  accentTint: "--color-accent-tint",
+  onAccent: "--color-on-accent",
+  critical: "--color-critical",
+};
 
-export const badges: Record<
-  RiskLevel,
-  { background: string; text: string; border: string; label: string }
-> = {
-  critical: {
-    background: "#fee2e2",
-    text: "#b91c1c",
-    border: "#fecaca",
-    label: "critical",
-  },
-  warning: {
-    background: "#fef3c7",
-    text: "#b45309",
-    border: "#fde68a",
-    label: "low",
-  },
-  ok: {
-    background: "#dcfce7",
-    text: "#15803d",
-    border: "#bbf7d0",
-    label: "ok",
-  },
-  neutral: {
-    background: "#f1f5f9",
-    text: "#475569",
-    border: "#e2e8f0",
-    label: "info",
-  },
-  advisory: {
-    background: "#e2e8f0",
-    text: "#64748b",
-    border: "#cbd5e1",
-    label: "advisory",
-  },
+export type { Severity };
+
+/** UI risk level; `warning` in the data is shown as "Low". */
+export const riskLabel: Record<Severity, string> = {
+  critical: "Critical",
+  warning: "Low",
+  ok: "OK",
+};
+
+export const risk: Record<Severity, { fill: string; text: string; tint: string }> = {
+  critical: { fill: "#B42318", text: "#B42318", tint: "#FBE5E0" },
+  warning: { fill: "#D99A1E", text: "#7A5100", tint: "#FAEFD4" },
+  ok: { fill: "#5C6657", text: "#5C6657", tint: "#EAE7DF" },
+};
+
+/** CSS var prefix per severity: `${prefix}`, `${prefix}-text`, `${prefix}-tint`. */
+export const riskVars: Record<Severity, string> = {
+  critical: "--risk-critical",
+  warning: "--risk-low",
+  ok: "--risk-ok",
+};
+
+export const space = { 1: 4, 2: 8, 3: 12, 4: 16, 6: 24, 8: 32, 12: 48, 16: 64 } as const;
+
+export const radius = { 0: 0, 1: 2, 2: 4, 3: 8 } as const;
+
+export const elevation = {
+  1: "0 0 0 1px #B9B09D, 0 4px 12px rgba(28, 27, 24, 0.10)",
+  2: "0 0 0 1px #B9B09D, 0 12px 32px rgba(28, 27, 24, 0.18)",
 } as const;
 
-export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
-  xxl: 32,
+export const z = {
+  map: 0,
+  mapUi: 5,
+  panel: 10,
+  topbar: 20,
+  sheet: 30,
+  chat: 40,
+  menu: 50,
+  toast: 60,
+  skip: 70,
 } as const;
 
-export const surfaces = {
-  cardRadius: 12,
-  cardShadow: "0 1px 2px rgba(15, 23, 42, 0.06)",
-  cardPadding: 16,
+export const motion = {
+  fastMs: 120,
+  sheetInMs: 240,
+  sheetOutMs: 160,
+  pulseMs: 2000,
+  easeOut: "cubic-bezier(0.2, 0, 0, 1)",
+  easeIn: "cubic-bezier(0.4, 0, 1, 1)",
 } as const;
+
+export const breakpoints = { md: 768, lg: 1024, xl: 1280, xxl: 1440 } as const;
 
 export const layout = {
-  /** Full 6-card grid at 1280px and above, vertical stack below (D-03). */
-  desktopBreakpointPx: 1280,
-  maxWidthPx: 1440,
+  topbarH: 56,
+  /** Floating-surface inset: 16px from 768 px, 8px below. */
+  inset: 16,
+  insetXs: 8,
+  /** Left panel width at md / lg / 2xl. */
+  panelW: { md: 360, lg: 400, xxl: 440 },
+  /** Right sheet width at xl / 2xl. */
+  sheetW: { xl: 420, xxl: 440 },
+  markerHit: 44,
+  /** Floating chat panel width (>= 768 px). */
+  chatW: 360,
+  /** Bottom sheet snap heights (XS): peek px; half/full are viewport-relative. */
+  sheetPeek: 144,
 } as const;
-
-/**
- * Map days-until-stockout to a badge level.
- * red when at/below the supplier lead time, amber inside the buffer window.
- */
-export function riskForDaysToStockout(
-  daysToStockout: number,
-  leadDays: number,
-  bufferDays: number,
-): RiskLevel {
-  if (daysToStockout <= leadDays) return "critical";
-  if (daysToStockout <= leadDays + bufferDays) return "warning";
-  return "ok";
-}

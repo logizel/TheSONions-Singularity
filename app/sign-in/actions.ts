@@ -1,5 +1,6 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -70,4 +71,33 @@ export async function signOut(): Promise<void> {
   const store = await cookies();
   store.delete(SESSION_COOKIE);
   redirect("/sign-in");
+}
+
+/**
+ * Top-bar role switcher (D-13): re-issues the signed cookie for another demo
+ * role, then refreshes the router so server reads and API 401/403 rules
+ * follow the new role. Same DEMO_AUTH gate and hospital check as signIn.
+ */
+export async function switchRole(form: FormData): Promise<SignInState> {
+  if (!demoAuthEnabled()) return { error: "Demo sign-in is disabled on this deployment." };
+  if (!process.env.SESSION_SECRET) return { error: "Server is missing SESSION_SECRET." };
+  const role = form.get("role");
+  const hospitalId = form.get("hospitalId");
+  if (typeof role !== "string" || !ROLES.has(role)) return { error: "Choose a role." };
+  const payload: SessionPayload = {
+    role: role as SessionPayload["role"],
+    exp: Math.floor(Date.now() / 1000) + SESSION_TTL_S,
+  };
+  if (role === "hospital_admin") {
+    if (typeof hospitalId !== "string" || hospitalId === "") return { error: "Choose your hospital." };
+    try {
+      if (!(await listHospitals()).some((h) => h.id === hospitalId)) return { error: "Unknown hospital." };
+    } catch {
+      return { error: "Hospital list unavailable. Try again shortly." };
+    }
+    payload.hospitalId = hospitalId;
+  }
+  await setSession(payload);
+  refresh();
+  return { error: null };
 }

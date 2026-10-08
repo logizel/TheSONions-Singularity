@@ -107,6 +107,11 @@ export default async function middleware(req: NextRequest): Promise<NextResponse
     process.env.SESSION_SECRET,
   );
   if (session === null) {
+    // Pages: send people to the demo sign-in with a real 307 (the dashboard
+    // streams, so a redirect from inside it would arrive as a meta refresh).
+    if (!req.nextUrl.pathname.startsWith("/api/")) {
+      return NextResponse.redirect(new URL("/sign-in", req.url), 307);
+    }
     return unauthorized();
   }
 
@@ -133,5 +138,6 @@ export default async function middleware(req: NextRequest): Promise<NextResponse
 }
 
 export const config = {
-  matcher: ["/api/:path*"],
+  // "/" is the dashboard page; /sign-in stays public.
+  matcher: ["/api/:path*", "/"],
 };

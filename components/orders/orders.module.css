@@ -1,0 +1,254 @@
+.stepper {
+  display: grid;
+  gap: 0;
+  margin: 0 var(--space-4);
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+}
+
+.step::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: -18px;
+  height: 36px;
+  width: 2px;
+  background: var(--color-rule-strong);
+}
+
+.step:first-child::before {
+  display: none;
+}
+
+.step.done::before,
+.step.current::before {
+  background: var(--color-ink);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  background: var(--color-surface);
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+}
+
+.dotInner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.done .dotInner {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.current .dot {
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+}
+
+.current .dotInner {
+  background: var(--color-accent);
+}
+
+.pending .dotInner {
+  border: 2px solid var(--color-ink-3);
+}
+
+.notReached {
+  color: var(--color-ink-3);
+  text-decoration: line-through;
+}
+
+.notReached .dotInner {
+  border: 2px solid var(--color-ink-3);
+}
+
+.cancelDot {
+  width: 12px;
+  height: 12px;
+  background: var(--color-ink);
+  color: var(--color-surface);
+  display: grid;
+  place-items: center;
+}
+
+.stepLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pending .stepLabel {
+  color: var(--color-ink-3);
+}
+
+.stepTime {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+}
+
+.readout {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.readoutTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.facts {
+  display: grid;
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.fact {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.fact + .fact {
+  border-top: 1px solid var(--color-rule);
+}
+
+.clock {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.clockRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.speeds {
+  display: inline-flex;
+}
+
+.speeds button {
+  display: grid;
+  min-height: 40px;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-ink);
+  background: var(--color-surface);
+  text-align: left;
+}
+
+.speeds button + button {
+  border-left: 0;
+}
+
+.speeds button:first-child {
+  border-radius: var(--radius-2) 0 0 var(--radius-2);
+}
+
+.speeds button:last-child {
+  border-radius: 0 var(--radius-2) var(--radius-2) 0;
+}
+
+.speeds button[aria-pressed="true"] {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.speedFactor {
+  font-family: var(--font-mono), monospace;
+  font-weight: 600;
+}
+
+.speedCaption {
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+
+.confirm {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--risk-critical-tint);
+}
+
+.line {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.lineFocused {
+  box-shadow: inset 3px 0 0 var(--color-accent);
+  padding-left: var(--space-3);
+}
+
+.lineTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.cell {
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-sunk);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+}
+
+.lineActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 1023px) {
+  .cells {
+    grid-template-columns: 1fr;
+  }
+}
+
+.blockLine {
+  display: block;
+}

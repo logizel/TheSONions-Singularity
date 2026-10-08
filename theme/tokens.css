@@ -1,0 +1,125 @@
+/*
+ * Design tokens (Phase 6, 06-UI-SPEC). Light, map-first operations board:
+ * warm paper, deep ink, one signal colour. theme/tokens.ts mirrors every
+ * value below; theme/tokens.test.ts keeps the two in sync.
+ */
+:root {
+  /* core palette */
+  --color-paper: #F3EFE6;
+  --color-surface: #FBF9F4;
+  --color-sunk: #ECE7DB;
+  --color-ink: #1C1B18;
+  --color-ink-2: #4D483F;
+  --color-ink-3: #6B6558;
+  --color-rule: #D8D1C2;
+  --color-rule-strong: #B9B09D;
+  --color-accent: #0B6B53;
+  --color-accent-strong: #08533F;
+  --color-accent-tint: #DDEDE6;
+  --color-on-accent: #FFFFFF;
+
+  /* risk scale: fill / text-on-tint / tint */
+  --risk-critical: #B42318;
+  --risk-critical-text: #B42318;
+  --risk-critical-tint: #FBE5E0;
+  --risk-low: #D99A1E;
+  --risk-low-text: #7A5100;
+  --risk-low-tint: #FAEFD4;
+  --risk-ok: #5C6657;
+  --risk-ok-text: #5C6657;
+  --risk-ok-tint: #EAE7DF;
+  --color-critical: #B42318;
+
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* type */
+  --text-12: 12px;
+  --text-14: 14px;
+  --text-20: 20px;
+  --text-40: 40px;
+  --leading-12: 16px;
+  --leading-14: 20px;
+  --leading-20: 24px;
+  --leading-40: 44px;
+
+  /* radii */
+  --radius-0: 0px;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  --radius-3: 8px;
+
+  /* elevation (floating surfaces over the map only) */
+  --elev-1: 0 0 0 1px #B9B09D, 0 4px 12px rgba(28, 27, 24, 0.10);
+  --elev-2: 0 0 0 1px #B9B09D, 0 12px 32px rgba(28, 27, 24, 0.18);
+
+  /* z layers */
+  --z-map: 0;
+  --z-map-ui: 5;
+  --z-panel: 10;
+  --z-topbar: 20;
+  --z-sheet: 30;
+  --z-chat: 40;
+  --z-menu: 50;
+  --z-toast: 60;
+  --z-skip: 70;
+
+  /* motion */
+  --motion-fast: 120ms;
+  --motion-sheet-in: 240ms;
+  --motion-sheet-out: 160ms;
+  --motion-pulse: 2000ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* layout */
+  --topbar-h: 56px;
+  --inset: 16px;
+  --panel-w: 360px;
+  --sheet-w: 420px;
+  --row-min-h: 36px;
+  --button-h: 32px;
+  --marker-hit: 44px;
+
+  /* breakpoints (mirrored for matchMedia; media queries use literal px) */
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1440px;
+
+  /* map */
+  --map-tile-filter: grayscale(0.85) sepia(0.12) contrast(0.92);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --panel-w: 400px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --panel-w: 440px;
+    --sheet-w: 440px;
+  }
+}
+
+@media (pointer: coarse) {
+  :root {
+    --row-min-h: 44px;
+    --button-h: 44px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --inset: 8px;
+  }
+}

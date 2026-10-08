@@ -177,3 +177,11 @@ export function bearingAlongPath(path: readonly LatLngTuple[], fraction: number)
   }
   return bearingDeg({ lat: a[0], lng: a[1] }, { lat: b[0], lng: b[1] });
 }
+
+/** Two-point [lat, lng] path a -> b (the straight-line fallback). */
+export function straightPath(a: LatLng, b: LatLng): LatLngTuple[] {
+  return [
+    [a.lat, a.lng],
+    [b.lat, b.lng],
+  ];
+}

@@ -1,0 +1,129 @@
+.page {
+  min-height: 100dvh;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: var(--space-12) var(--space-4);
+  background: var(--color-paper);
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-top: var(--space-16);
+  }
+}
+
+.card {
+  width: min(400px, 100%);
+  background: var(--color-surface);
+  box-shadow: var(--elev-1);
+  border-radius: var(--radius-2);
+  padding: var(--space-8) var(--space-6);
+  border-top: 4px solid var(--color-ink);
+}
+
+.kicker {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-3);
+}
+
+.heading {
+  margin-top: var(--space-2);
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+}
+
+.body {
+  margin-top: var(--space-2);
+  color: var(--color-ink-2);
+}
+
+.form {
+  margin-top: var(--space-6);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.select {
+  height: 40px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-ink-3);
+  border-radius: var(--radius-2);
+  background: var(--color-surface);
+}
+
+.select:disabled {
+  background: var(--color-sunk);
+  color: var(--color-ink-3);
+  cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+  .select {
+    font-size: 16px;
+    height: 44px;
+  }
+}
+
+.hint {
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+}
+
+.error {
+  color: var(--risk-critical-text);
+  font-weight: 600;
+}
+
+.disabled {
+  margin-top: var(--space-6);
+  padding: var(--space-3);
+  background: var(--color-sunk);
+  border-left: 4px solid var(--color-ink);
+}
+
+.submit {
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-2);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 600;
+}
+
+.submit:hover {
+  background: var(--color-accent-strong);
+}
+
+.submit:focus-visible {
+  outline-color: var(--color-ink);
+}
+
+.submit:disabled {
+  background: var(--color-sunk);
+  color: var(--color-ink-3);
+  cursor: not-allowed;
+}

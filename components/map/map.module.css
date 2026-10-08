@@ -1,0 +1,212 @@
+.wrap {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-map);
+  isolation: isolate;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  background: var(--color-paper);
+  font-family: var(--font-body), sans-serif;
+}
+
+.map :global(.leaflet-tile-pane) {
+  filter: var(--map-tile-filter);
+}
+
+.map :global(.leaflet-top) {
+  top: var(--map-inset-top);
+}
+
+.map :global(.leaflet-left) {
+  left: var(--map-inset-left);
+}
+
+.map :global(.leaflet-right) {
+  right: var(--map-inset-right);
+}
+
+.map :global(.leaflet-bottom) {
+  bottom: var(--map-inset-bottom);
+}
+
+.map :global(.leaflet-control-attribution) {
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  padding: 2px var(--space-1);
+  margin: 0;
+}
+
+.map :global(.leaflet-control-attribution a) {
+  color: var(--color-ink);
+}
+
+.map :global(.leaflet-bar) {
+  border: 0;
+  box-shadow: var(--elev-1);
+  border-radius: var(--radius-2);
+}
+
+.map :global(.leaflet-bar a) {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-bottom-color: var(--color-rule);
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  font-family: var(--font-body), sans-serif;
+}
+
+@media (max-width: 767px) {
+  .map :global(.leaflet-control-zoom) {
+    display: none;
+  }
+}
+
+/* ---- hospital markers --------------------------------------------------- */
+
+.marker {
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.marker:focus {
+  outline: none;
+}
+
+.marker:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.glyph {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--motion-fast) var(--ease-out);
+}
+
+.selRing {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.selected .selRing {
+  opacity: 1;
+}
+
+.selected .glyph {
+  transform: scale(1.25);
+}
+
+.nameTag {
+  position: absolute;
+  top: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 2px var(--space-1);
+  border: 1px solid var(--color-ink-3);
+  border-radius: var(--radius-1);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-body), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+}
+
+.selected .nameTag {
+  background: var(--color-ink);
+  color: var(--color-surface);
+  border-color: var(--color-ink);
+}
+
+.pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  border: 2px solid var(--risk-critical);
+  animation: pulse var(--motion-pulse) ease-out infinite;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+    transform: scale(1.5);
+    opacity: 1;
+    border-style: dashed;
+  }
+
+  .glyph {
+    transition: none;
+  }
+}
+
+/* ---- overlays ----------------------------------------------------------- */
+
+.arrow {
+  background: transparent;
+  border: 0;
+  pointer-events: none;
+}
+
+.arrowBody {
+  display: block;
+  width: 12px;
+  height: 12px;
+  transform: rotate(var(--bearing, 0deg));
+}
+
+.arrowBody svg {
+  display: block;
+}
+
+.vehicle {
+  background: transparent;
+  border: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.vehicleBody {
+  display: block;
+  width: 20px;
+  height: 20px;
+  transform: rotate(var(--bearing, 0deg));
+  transition: transform var(--motion-fast) linear;
+}
+
+.vehicleBody svg {
+  display: block;
+}
+
+.noTween .vehicleBody {
+  transition: none;
+}
+
+.connector {
+  pointer-events: none;
+}

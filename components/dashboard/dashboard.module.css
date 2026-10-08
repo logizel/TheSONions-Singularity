@@ -1,0 +1,564 @@
+/*
+ * Map-first shell (06-UI-SPEC Breakpoints and Layout Contract).
+ * XS (<768): bottom sheet. MD/LG (768-1279): floating left panel; the detail
+ * replaces it. XL+ (>=1280): left panel + right sheet.
+ */
+
+.root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-paper);
+  --sheet-height: 144px;
+  --map-inset-top: 88px;
+  --map-inset-left: 0px;
+  --map-inset-right: 0px;
+  --map-inset-bottom: 0px;
+}
+
+/* ---- map area / list view ------------------------------------------------ */
+
+.mapArea {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-map);
+}
+
+.mapLoading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-ink-2);
+  font-size: var(--text-12);
+}
+
+.mapNotice {
+  position: absolute;
+  z-index: var(--z-map-ui);
+  top: calc(var(--map-inset-top) + var(--space-2));
+  right: var(--space-4);
+  max-width: 360px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  box-shadow: var(--elev-1);
+  border-left: 4px solid var(--color-ink);
+  border-radius: var(--radius-2);
+}
+
+.listArea {
+  position: absolute;
+  z-index: var(--z-map);
+  top: 72px;
+  left: 0;
+  right: 0;
+  bottom: var(--sheet-height);
+  overflow: auto;
+  background: var(--color-paper);
+  padding: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .listArea {
+    top: 88px;
+    left: calc(var(--panel-w) + 2 * var(--inset));
+    right: calc(var(--inset) + var(--chat-space, 0px));
+    bottom: var(--inset);
+    padding: 0;
+  }
+}
+
+@media (min-width: 1280px) {
+  .listArea.withSheet {
+    right: calc(var(--sheet-w) + 2 * var(--inset));
+  }
+}
+
+/* ---- top bar -------------------------------------------------------------- */
+
+.topbar {
+  position: fixed;
+  z-index: var(--z-topbar);
+  top: var(--inset);
+  left: var(--inset);
+  right: var(--inset);
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-2) 0 var(--space-4);
+  background: var(--color-surface);
+  box-shadow: var(--elev-1);
+  border-radius: var(--radius-2);
+}
+
+.titleBlock {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titleShort {
+  display: inline;
+}
+
+.titleLong {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .titleShort {
+    display: none;
+  }
+  .titleLong {
+    display: inline;
+  }
+}
+
+.stamp {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.controls {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .controls {
+    display: flex;
+  }
+}
+
+.xsControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+@media (min-width: 768px) {
+  .xsControls {
+    display: none;
+  }
+}
+
+.outlineButton,
+.iconButton,
+.segment button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: var(--button-h);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-2);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.outlineButton:hover,
+.iconButton:hover,
+.segment button:hover {
+  background: var(--color-sunk);
+}
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-color: transparent;
+}
+
+.segment {
+  display: inline-flex;
+}
+
+.segment button {
+  border-radius: 0;
+}
+
+.segment button + button {
+  border-left: 0;
+}
+
+.segment button:first-child {
+  border-radius: var(--radius-2) 0 0 var(--radius-2);
+}
+
+.segment button:last-child {
+  border-radius: 0 var(--radius-2) var(--radius-2) 0;
+}
+
+.segment button[aria-pressed="true"] {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.menuWrap {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  z-index: var(--z-menu);
+  right: 0;
+  top: calc(100% + var(--space-2));
+  min-width: 260px;
+  padding: var(--space-2) 0;
+  background: var(--color-surface);
+  box-shadow: var(--elev-2);
+  border-radius: var(--radius-2);
+}
+
+.menuHeading {
+  padding: var(--space-1) var(--space-3) var(--space-2);
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-3);
+}
+
+.menuItem {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.menuItem:hover {
+  background: var(--color-sunk);
+}
+
+.menuItem[aria-checked="true"] {
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.menuRule {
+  height: 1px;
+  margin: var(--space-2) 0;
+  background: var(--color-rule);
+}
+
+.menuRow {
+  padding: var(--space-1) var(--space-3);
+}
+
+/* ---- network panel (left panel / XS bottom sheet) -------------------------- */
+
+.panel,
+.sheet {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  box-shadow: var(--elev-2);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--sheet-height);
+  border-radius: var(--radius-3) var(--radius-3) 0 0;
+  overflow: hidden;
+}
+
+.panel {
+  z-index: var(--z-panel);
+}
+
+.sheet {
+  z-index: var(--z-sheet);
+  animation: sheet-up var(--motion-sheet-in) var(--ease-out);
+}
+
+.dragging {
+  transition: none;
+}
+
+@media (min-width: 768px) {
+  .panel,
+  .sheet {
+    top: 88px;
+    left: var(--inset);
+    bottom: var(--inset);
+    right: auto;
+    width: var(--panel-w);
+    height: auto;
+    box-shadow: var(--elev-1);
+    border-radius: var(--radius-2);
+  }
+
+  .sheet {
+    animation-name: sheet-in-left;
+  }
+}
+
+.panel.covered {
+  visibility: hidden;
+}
+
+@media (min-width: 1280px) {
+  .sheet {
+    left: auto;
+    right: var(--inset);
+    width: var(--sheet-w);
+    box-shadow: var(--elev-2);
+    border-radius: var(--radius-3) 0 0 var(--radius-3);
+    animation-name: sheet-in-right;
+  }
+
+  .panel.covered {
+    visibility: visible;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-in-left {
+  from {
+    transform: translateX(-16px);
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-in-right {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+.handle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 var(--space-2) 0 var(--space-4);
+  touch-action: none;
+  cursor: grab;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.handleBar {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 32px;
+  height: 4px;
+  margin-left: -16px;
+  border-radius: 2px;
+  background: var(--color-ink-3);
+}
+
+.handleLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-2);
+}
+
+@media (min-width: 768px) {
+  .handle {
+    display: none;
+  }
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---- legend ---------------------------------------------------------------- */
+
+.legend {
+  position: absolute;
+  z-index: var(--z-map-ui);
+  left: calc(var(--map-inset-left) + 10px);
+  bottom: calc(var(--map-inset-bottom) + 10px);
+  max-width: 280px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  box-shadow: var(--elev-1);
+  border-radius: var(--radius-2);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+}
+
+.legendList {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: var(--space-1) var(--space-3);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+.legendFoot {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-ink-2);
+  white-space: normal;
+}
+
+.legendKey {
+  position: absolute;
+  z-index: var(--z-map-ui);
+  left: 10px;
+  bottom: calc(var(--map-inset-bottom) + 10px);
+  box-shadow: var(--elev-1);
+}
+
+.swatchLine {
+  display: inline-block;
+  width: 20px;
+  height: 0;
+  border-top: 3px solid var(--color-accent);
+}
+
+.swatchDash {
+  display: inline-block;
+  width: 20px;
+  height: 0;
+  border-top: 2px dashed var(--color-ink-3);
+}
+
+.swatchAccentDash {
+  display: inline-block;
+  width: 20px;
+  height: 0;
+  border-top: 3px dashed var(--color-accent);
+}
+
+.swatchVehicle {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: var(--color-ink);
+  border-radius: 2px;
+}
+
+.swatchSelected {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--color-accent);
+  border-radius: 50%;
+}
+
+.swatchOutbreak {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px dashed var(--risk-critical);
+  border-radius: 50%;
+}
+
+/* ---- full-screen states ------------------------------------------------------ */
+
+.fullState {
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: var(--space-3);
+  max-width: 64ch;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-4);
+}
+
+.stateHeading {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+}
+
+/* ---- skeleton (static) ------------------------------------------------------------ */
+
+.skeletonBoard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--color-rule-strong);
+}
+
+.skeletonBoard span {
+  height: 56px;
+  background: var(--color-sunk);
+}
+
+.skeletonRows {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.skeletonRows span {
+  height: 28px;
+  background: var(--color-sunk);
+}
+
+.liveRegion {
+  position: fixed;
+  z-index: var(--z-toast);
+}
+
+.asOf {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .asOf {
+    display: inline;
+  }
+}
+
+/* An open menu must clear the sheets (the top bar is its stacking context). */
+.menuOpen {
+  z-index: var(--z-menu);
+}

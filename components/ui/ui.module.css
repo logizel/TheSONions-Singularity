@@ -1,0 +1,87 @@
+/* Shared primitives: tags, buttons, sparklines, forecast strips. */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-1);
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.critical {
+  background: var(--risk-critical-tint);
+  color: var(--risk-critical-text);
+}
+
+.warning {
+  background: var(--risk-low-tint);
+  color: var(--risk-low-text);
+}
+
+.ok {
+  background: var(--risk-ok-tint);
+  color: var(--risk-ok-text);
+}
+
+.ink {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.outline {
+  border: 1px solid var(--color-ink);
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+
+.accent {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.dashed {
+  border: 1px dashed var(--color-ink);
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+
+.demo {
+  border: 1px dashed var(--color-ink-3);
+  color: var(--color-ink-3);
+  background: var(--color-surface);
+}
+
+.muted {
+  background: var(--color-sunk);
+  color: var(--color-ink-3);
+}
+
+.spark {
+  display: block;
+  color: var(--color-ink-2);
+}
+
+.strip {
+  display: block;
+}
+
+.stripWrap {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.stripKey {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+}

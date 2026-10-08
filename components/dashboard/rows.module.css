@@ -1,0 +1,440 @@
+/*
+ * Dense dispatch-board content shared by the network panel, drill-in, cart
+ * and tracking: ruled two-line rows, Label-role sub-headers over a 2px ink
+ * rule, captions, definition lists. No cards, no inner shadows.
+ */
+
+.label {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+}
+
+.muted {
+  color: var(--color-ink-3);
+}
+
+.heading {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.heading:focus {
+  outline: none;
+}
+
+.heading:focus-visible {
+  outline: 2px solid var(--color-accent);
+}
+
+.mono {
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.monoHeading {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.display {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-40);
+  line-height: var(--leading-40);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.sectionHead {
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  display: grid;
+  gap: var(--space-1);
+}
+
+.subhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: var(--space-3) var(--space-4) 0;
+  padding-bottom: var(--space-1);
+  border-bottom: 2px solid var(--color-ink);
+}
+
+.rows {
+  margin: 0 var(--space-4);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  column-gap: var(--space-2);
+  row-gap: 2px;
+  align-items: start;
+  min-height: var(--row-min-h);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.rowNoTag {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.rowSelected {
+  background: var(--color-accent-tint);
+  box-shadow: inset 3px 0 0 var(--color-accent);
+  margin: 0 calc(-1 * var(--space-4));
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.tagCell {
+  padding-top: 2px;
+}
+
+.main {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.line1 {
+  overflow-wrap: anywhere;
+}
+
+.line2 {
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.right {
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.inlineRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.hospitalLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-underline-offset: 3px;
+  text-align: left;
+}
+
+.hospitalLink:hover {
+  text-decoration-color: var(--color-ink);
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.outlineButton,
+.accentButton,
+.criticalButton,
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--button-h);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.outlineButton {
+  border: 1px solid var(--color-ink);
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.outlineButton:hover {
+  background: var(--color-sunk);
+}
+
+.accentButton {
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.accentButton:hover {
+  background: var(--color-accent-strong);
+}
+
+.accentButton:focus-visible,
+.criticalButton:focus-visible {
+  outline-color: var(--color-ink);
+}
+
+.criticalButton {
+  border: 1px solid var(--color-critical);
+  background: var(--color-critical);
+  color: var(--color-on-accent);
+}
+
+.textButton {
+  border: 0;
+  background: none;
+  color: var(--risk-critical-text);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.disabled,
+.accentButton[aria-disabled="true"],
+.outlineButton[aria-disabled="true"] {
+  background: var(--color-sunk);
+  color: var(--color-ink-3);
+  border-color: var(--color-sunk);
+  cursor: not-allowed;
+}
+
+.empty {
+  margin: var(--space-4);
+  padding: var(--space-6) 0;
+  display: grid;
+  gap: var(--space-1);
+  max-width: 64ch;
+}
+
+.emptyHeading {
+  font-weight: 600;
+}
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+}
+
+.bannerInk {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.bannerSunk {
+  background: var(--color-sunk);
+  box-shadow: inset 4px 0 0 var(--color-ink);
+}
+
+.bannerPlain {
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.bannerInk .linkButton {
+  color: var(--color-surface);
+}
+
+.note {
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-sunk);
+  box-shadow: inset 4px 0 0 var(--color-ink-3);
+}
+
+.error {
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--risk-critical-tint);
+  color: var(--risk-critical-text);
+  font-weight: 600;
+}
+
+.disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-2);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-underline-offset: 3px;
+}
+
+.checks {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+}
+
+.checks li {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: var(--space-1);
+  align-items: start;
+}
+
+.checkGlyph {
+  color: var(--color-accent);
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: 0 var(--space-4);
+}
+
+.dl dt,
+.dl dd {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.dl dd {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dlNote {
+  grid-column: 1 / -1;
+  margin-top: -6px;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.sheetHead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.sheetHeadTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.headButtons {
+  display: flex;
+  gap: var(--space-1);
+  flex: none;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--button-h);
+  height: var(--button-h);
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-2);
+  background: none;
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.iconButton:hover {
+  background: var(--color-sunk);
+}
+
+.block {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-rule-strong);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.switcher button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--button-h);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-2);
+  background: var(--color-surface);
+}
+
+.switcher button[aria-pressed="true"] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-rule-strong);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.bar {
+  display: block;
+}
