@@ -1,15 +1,18 @@
 /**
- * Geometry helper tests: lat/lng validation, centroid, Leaflet bounds, and
- * sanitizing raw hospital entries (invalid values and duplicate ids dropped).
+ * Geometry helper tests: lat/lng validation, centroid, Leaflet bounds
+ * (0 / 1 / many points), haversine distance and path interpolation.
  */
 import { describe, expect, it } from 'vitest';
 import {
   MIN_BOUNDS_PAD_DEG,
   computeBounds,
   computeCenter,
+  haversineM,
   isValidLatLng,
-  sanitizeHospitals,
-} from './geo';
+  pathLengthM,
+  pointAlongPath,
+  type LatLngTuple,
+} from './index';
 
 describe('isValidLatLng', () => {
   it('accepts finite in-range numbers including the edges', () => {
@@ -78,44 +81,61 @@ describe('computeCenter / computeBounds', () => {
   });
 });
 
-describe('sanitizeHospitals', () => {
-  it('drops entries with invalid coordinates, ids or names', () => {
-    const out = sanitizeHospitals([
-      { id: 'ok', name: 'Ok', lat: 12, lng: 74 },
-      { id: 'nan', name: 'NaN', lat: NaN, lng: 74 },
-      { id: 'str', name: 'Str', lat: '12', lng: 74 },
-      { id: 'range', name: 'Range', lat: 95, lng: 74 },
-      { id: '', name: 'Empty id', lat: 12, lng: 74 },
-      { id: 'noname', lat: 12, lng: 74 },
-      null,
-      'junk',
-    ]);
-    expect(out.map((h) => h.id)).toEqual(['ok']);
+describe('haversineM', () => {
+  it('is zero for the same point and symmetric', () => {
+    const a = { lat: 12.8703, lng: 74.8436 };
+    const b = { lat: 12.933, lng: 74.818 };
+    expect(haversineM(a, a)).toBe(0);
+    expect(haversineM(a, b)).toBeCloseTo(haversineM(b, a), 6);
   });
 
-  it('keeps the first of duplicate ids', () => {
-    const out = sanitizeHospitals([
-      { id: 'h-a', name: 'First', lat: 12, lng: 74 },
-      { id: 'h-a', name: 'Second', lat: 13, lng: 75 },
-      { id: 'h-b', name: 'Other', lat: 14, lng: 76 },
-    ]);
-    expect(out).toEqual([
-      { id: 'h-a', name: 'First', lat: 12, lng: 74 },
-      { id: 'h-b', name: 'Other', lat: 14, lng: 76 },
-    ]);
+  it('matches known distances', () => {
+    // One degree of latitude ~ 111.2 km on the mean sphere.
+    expect(haversineM({ lat: 0, lng: 0 }, { lat: 1, lng: 0 })).toBeCloseTo(111_195, -1);
+    // Demo Hampankatta -> Kavoor is ~7.5 km.
+    const km = haversineM({ lat: 12.8703, lng: 74.8436 }, { lat: 12.933, lng: 74.818 }) / 1000;
+    expect(km).toBeGreaterThan(7.2);
+    expect(km).toBeLessThan(7.8);
   });
 
-  it('keeps string addresses and drops other address types', () => {
-    const out = sanitizeHospitals([
-      { id: 'a', name: 'A', lat: 1, lng: 1, address: 'Somewhere' },
-      { id: 'b', name: 'B', lat: 2, lng: 2, address: 42 },
-    ]);
-    expect(out[0].address).toBe('Somewhere');
-    expect('address' in out[1]).toBe(false);
+  it('handles antipodal points without NaN', () => {
+    const d = haversineM({ lat: 0, lng: 0 }, { lat: 0, lng: 180 });
+    expect(Number.isFinite(d)).toBe(true);
+    expect(d).toBeCloseTo(Math.PI * 6_371_008.8, -1);
+  });
+});
+
+describe('pathLengthM / pointAlongPath', () => {
+  const path: LatLngTuple[] = [
+    [0, 0],
+    [0, 1],
+    [0, 3],
+  ];
+
+  it('sums segment lengths; empty and single-vertex paths are 0', () => {
+    expect(pathLengthM([])).toBe(0);
+    expect(pathLengthM([[1, 1]])).toBe(0);
+    const one = haversineM({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+    expect(pathLengthM(path)).toBeCloseTo(3 * one, 3);
   });
 
-  it('returns an empty list for non-array input', () => {
-    expect(sanitizeHospitals(undefined)).toEqual([]);
-    expect(sanitizeHospitals({ id: 'x' })).toEqual([]);
+  it('interpolates by distance, not by vertex count', () => {
+    // Halfway by distance is lng 1.5 (inside the second, longer segment).
+    const mid = pointAlongPath(path, 0.5)!;
+    expect(mid[0]).toBeCloseTo(0, 9);
+    expect(mid[1]).toBeCloseTo(1.5, 6);
+    const third = pointAlongPath(path, 1 / 3)!;
+    expect(third[1]).toBeCloseTo(1, 6);
+  });
+
+  it('clamps the fraction and handles degenerate paths', () => {
+    expect(pointAlongPath(path, -0.2)).toEqual([0, 0]);
+    expect(pointAlongPath(path, 0)).toEqual([0, 0]);
+    expect(pointAlongPath(path, 1)).toEqual([0, 3]);
+    expect(pointAlongPath(path, 7)).toEqual([0, 3]);
+    expect(pointAlongPath(path, NaN)).toEqual([0, 0]);
+    expect(pointAlongPath([], 0.5)).toBeNull();
+    expect(pointAlongPath([[5, 5]], 0.5)).toEqual([5, 5]);
+    expect(pointAlongPath([[5, 5], [5, 5]], 0.5)).toEqual([5, 5]);
   });
 });
