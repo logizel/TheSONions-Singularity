@@ -17,33 +17,33 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Forecast
 
-- [ ] **FCAST-01**: System forecasts demand per hospital/medicine for next 30 days from weekly pattern (60 days history)
-- [ ] **FCAST-02**: System reports forecast error (MAPE) against history, target band 3-11%
+- [x] **FCAST-01**: System forecasts demand per hospital/medicine for next 30 days from weekly pattern (60 days history)
+- [x] **FCAST-02**: System reports forecast error (MAPE) against history, target band 3-11%
 
 ### Outbreak
 
-- [ ] **OUTBK-01**: System flags outbreak when daily demand climbs far above normal range (above +2σ for 2 consecutive days)
-- [ ] **OUTBK-02**: System switches flagged hospital to recent-rising-trend forecast until demand normalizes
+- [x] **OUTBK-01**: System flags outbreak when daily demand climbs far above normal range (above +2σ for 2 consecutive days)
+- [x] **OUTBK-02**: System switches flagged hospital to recent-rising-trend forecast until demand normalizes
 
 ### Stock-out Risk
 
-- [ ] **RISK-01**: System computes days-until-stockout (stock ÷ forecast demand) per hospital/medicine
-- [ ] **RISK-02**: System warns when days-until-stockout is shorter than supplier lead time (e.g. runs out in 10 days, supplier needs 14)
+- [x] **RISK-01**: System computes days-until-stockout (stock ÷ forecast demand) per hospital/medicine
+- [x] **RISK-02**: System warns when days-until-stockout is shorter than supplier lead time (e.g. runs out in 10 days, supplier needs 14)
 
 ### Waste Risk
 
-- [ ] **WASTE-01**: System computes waste units (stock minus realistic demand before expiry, capped at 90 days)
-- [ ] **WASTE-02**: System warns per hospital/medicine with expiring-unused quantities (e.g. 3,500 units expire unused)
+- [x] **WASTE-01**: System computes waste units (stock minus realistic demand before expiry, capped at 90 days)
+- [x] **WASTE-02**: System warns per hospital/medicine with expiring-unused quantities (e.g. 3,500 units expire unused)
 
 ### Moves & Orders
 
-- [ ] **MOVE-01**: System suggests transfers from safe-surplus to short hospitals passing all 5 checks (arrives before receiver runs out; enough shelf life on arrival; sender keeps buffer; nothing beyond receiver need; waste-first + nearest sender preferred)
-- [ ] **MOVE-02**: System recommends emergency supplier order for remainder when transfers cannot cover need
+- [x] **MOVE-01**: System suggests transfers from safe-surplus to short hospitals passing all 5 checks (arrives before receiver runs out; enough shelf life on arrival; sender keeps buffer; nothing beyond receiver need; waste-first + nearest sender preferred)
+- [x] **MOVE-02**: System recommends emergency supplier order for remainder when transfers cannot cover need
 
 ### Priority
 
-- [ ] **PRIOR-01**: System scores competing hospitals by patient load, emergency demand, soonness of stock-out, and substitute existence
-- [ ] **PRIOR-02**: System shows visible ranking with reasons so it can be justified
+- [x] **PRIOR-01**: System scores competing hospitals by patient load, emergency demand, soonness of stock-out, and substitute existence
+- [x] **PRIOR-02**: System shows visible ranking with reasons so it can be justified
 
 ### Dashboard
 
@@ -102,18 +102,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-03 | Phase 1 | Pending |
 | DATA-04 | Phase 1 | Pending |
 | DATA-05 | Phase 1 | Pending |
-| FCAST-01 | Phase 2 | Pending |
-| FCAST-02 | Phase 2 | Pending |
-| OUTBK-01 | Phase 2 | Pending |
-| OUTBK-02 | Phase 2 | Pending |
-| RISK-01 | Phase 2 | Pending |
-| RISK-02 | Phase 2 | Pending |
-| WASTE-01 | Phase 2 | Pending |
-| WASTE-02 | Phase 2 | Pending |
-| MOVE-01 | Phase 2 | Pending |
-| MOVE-02 | Phase 2 | Pending |
-| PRIOR-01 | Phase 2 | Pending |
-| PRIOR-02 | Phase 2 | Pending |
+| FCAST-01 | Phase 2 | Complete |
+| FCAST-02 | Phase 2 | Complete |
+| OUTBK-01 | Phase 2 | Complete |
+| OUTBK-02 | Phase 2 | Complete |
+| RISK-01 | Phase 2 | Complete |
+| RISK-02 | Phase 2 | Complete |
+| WASTE-01 | Phase 2 | Complete |
+| WASTE-02 | Phase 2 | Complete |
+| MOVE-01 | Phase 2 | Complete |
+| MOVE-02 | Phase 2 | Complete |
+| PRIOR-01 | Phase 2 | Complete |
+| PRIOR-02 | Phase 2 | Complete |
 | UI-01 | Phase 4 | Pending |
 | UI-02 | Phase 4 | Pending |
 | CHAT-01 | Phase 3 | Complete |
