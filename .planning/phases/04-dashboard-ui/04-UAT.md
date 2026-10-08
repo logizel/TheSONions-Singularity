@@ -174,3 +174,19 @@ blocked: 0
       issue: "inline fail-open copy at :136"
   missing:
     - "Return false on null; pass explicit non-null ownHospitalId on network_admin path; fix inline copy"
+
+## Phase 6 test-id changes (2026-10-09, map-first redesign)
+
+The six-card grid was replaced by one ruled network panel + Leaflet map (06-UI-SPEC). Behaviour from tests 1-9 survives; these ids changed:
+
+| Old | New | Why |
+|-----|-----|-----|
+| `empty-state-data-entry-link` | retired | `/data-entry` never existed; empty state now says to seed the DB and Refresh |
+| `role-switcher-hospital_admin` | `role-switcher-hospital_admin-{hospitalId}` | role switch re-issues the signed session cookie for a chosen hospital |
+| `inventory-row-{h}`, `forecast-row-{h}`, `shortage-row-{h}`, `expiry-row-{h}`, `priority-row-{h}` | `stock-row-{h}-{m}`, `forecast-row-{h}-{m}`, `shortage-row-{h}-{m}`, `waste-row-{h}-{m}`, `priority-row-{h}-{m}` | rows are hospital x medicine |
+| `move-row-{from}-{to}`, `order-row-{h}` | `transfer-row-{from}-{to}-{m}`, `supplier-order-row-{h}-{m}` | unique per medicine |
+| `move-approve-*`, `order-approve-*` | `cart-accept-{from}-{to}-{m}`, `cart-accept-all` | dead-end buttons replaced by the transfer checkout |
+| `forecast-advisory-{h}` | `forecast-advisory-{h}-{m}` | per series |
+| `page-suspense-fallback` | `loading-skeletons` (app/loading.tsx) | server-rendered page |
+
+Kept: `dashboard-header`, `header-timestamp`, `refresh-button`, `role-switcher`, `outbreak-banner`, `filter-banner`, `clear-filter`, `dashboard-grid`, `loading-skeletons`, `empty-state`, `hospital-panel`, `hospital-panel-close`, `hospital-panel-switcher`, `hospital-panel-header-stock`, `hospital-panel-moves`, `hospital-panel-priority`, `chat-panel`, `chat-fab`, `chat-collapse`, `chat-history`, `chat-empty`, `chat-welcome`, `chat-chips`, `prompt-bar`, `prompt-bar-input`, `prompt-bar-send`.
