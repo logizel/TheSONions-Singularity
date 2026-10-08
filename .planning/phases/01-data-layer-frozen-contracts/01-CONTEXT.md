@@ -89,6 +89,7 @@ None — user selected a concrete option for every question; no "you decide" ans
 - Full role enforcement (AUTH-01/02 middleware) — Phase 3 (P4); Phase 1 only lays the ownership columns.
 - Real supplier ordering integration — out of scope (v1 recommends order only).
 - EHR pull / mobile / LLM chatbot swap — v2 (INTG-01/02, MOBL-01, CHAT-04).
+- Minimal data-entry pages (`app/(entry)/`, `components/DataForm.tsx`) — deferred to Phase 4 (P1, Likith). Likith declined the Phase 1 `app/` touch (2026-10-08); entry stays scripts + CSV until then. Single write path (`scripts/entry.ts`) preserved for P1 to call.
 
 ---
 
