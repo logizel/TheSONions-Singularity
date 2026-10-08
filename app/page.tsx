@@ -5,10 +5,15 @@
  * Clicking a hospital anywhere filters every card; selection syncs both
  * ways with ?hospital=id (D-04, D-16). No polling, no per-card fetching —
  * every card renders from the single static fixture slices below.
+ *
+ * Redesigned (D-23-ext): staggered card mount animation, refined filter
+ * banner, role switcher integrated into header bar, HospitalPanel is now
+ * a slide-over drawer (no layout shift).
  */
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import fixtureJson from "./data/mock-results.json";
 import {
@@ -39,7 +44,7 @@ import {
   RoleSwitcher,
   type Role,
 } from "@/components/roles";
-import { colors, layout, spacing } from "@/theme/tokens";
+import { layout, spacing } from "@/theme/tokens";
 
 const fixture = fixtureJson as ResultsFixture;
 
@@ -275,18 +280,19 @@ function Dashboard() {
         />
         <div
           data-testid="empty-state"
-          style={{
-            background: colors.cardSurface,
-            border: `1px solid ${colors.cardBorder}`,
-            borderRadius: 12,
-            padding: spacing.xxl,
-            textAlign: "center",
-          }}
+          style={emptyStateStyle}
         >
-          <h2 style={{ margin: "0 0 8px" }}>No hospitals seeded yet</h2>
-          <p style={{ color: colors.textSecondary }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🏥</div>
+          <h2 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 700, color: "var(--text-primary)" }}>
+            No hospitals seeded yet
+          </h2>
+          <p style={{ margin: 0, fontSize: 14, color: "var(--text-secondary)" }}>
             Upload CSV in{" "}
-            <a href="/data-entry" data-testid="empty-state-data-entry-link">
+            <a
+              href="/data-entry"
+              data-testid="empty-state-data-entry-link"
+              style={{ color: "var(--accent)" }}
+            >
               data entry
             </a>{" "}
             to populate the network dashboard.
@@ -298,49 +304,52 @@ function Dashboard() {
 
   return (
     <main style={pageStyle}>
-      <Header
-        generatedAt={fixture.generatedAt}
-        onRefresh={() => window.location.reload()}
-      />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: spacing.md,
-        }}
-      >
-        <RoleSwitcher role={role} onChange={setRole} />
-      </div>
-      {selectedId && selectedHospital ? (
-        <div
-          data-testid="filter-banner"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: spacing.sm,
-            marginBottom: spacing.md,
-            fontSize: 13,
-          }}
-        >
-          <span>
-            Filtered to <strong>{selectedHospital.name}</strong>
-          </span>
-          <button
-            data-testid="clear-filter"
-            type="button"
-            onClick={() => selectHospital(null)}
-            style={{
-              background: "transparent",
-              border: `1px solid ${colors.cardBorder}`,
-              borderRadius: 999,
-              padding: "2px 12px",
-              cursor: "pointer",
-            }}
-          >
-            Clear
-          </button>
+      {/* Header with integrated role switcher */}
+      <div style={headerAreaStyle}>
+        <Header
+          generatedAt={fixture.generatedAt}
+          onRefresh={() => window.location.reload()}
+        />
+        <div style={controlBarStyle}>
+          <RoleSwitcher role={role} onChange={setRole} />
+
+          {/* Filter banner — inline next to role switcher */}
+          {selectedId && selectedHospital ? (
+            <div
+              data-testid="filter-banner"
+              style={filterBannerStyle}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: "var(--accent)",
+                  flexShrink: 0,
+                  display: "inline-block",
+                }}
+              />
+              <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                Filtered to{" "}
+                <strong style={{ color: "var(--text-primary)" }}>
+                  {selectedHospital.name}
+                </strong>
+              </span>
+              <button
+                data-testid="clear-filter"
+                type="button"
+                onClick={() => selectHospital(null)}
+                style={clearFilterBtnStyle}
+              >
+                ✕ Clear
+              </button>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
+
+      {/* Dashboard grid */}
       {!mounted ? (
         <div data-testid="loading-skeletons" style={loadingGridStyle}>
           {Array.from({ length: 6 }, (_, i) => (
@@ -389,6 +398,8 @@ function Dashboard() {
           ]}
         />
       )}
+
+      {/* Hospital drill-in drawer — slide-over, no layout shift */}
       <HospitalPanel
         hospitalId={selectedId}
         hospitalName={selectedHospital?.name}
@@ -397,6 +408,7 @@ function Dashboard() {
         role={role}
         ownHospitalId={ownHospitalId}
       />
+
       {/* Chat dock collapses to a floating button while the drill-in
           panel is open so the two never collide (D-17). */}
       <ChatPanel
@@ -407,15 +419,61 @@ function Dashboard() {
   );
 }
 
-const pageStyle: React.CSSProperties = {
+const pageStyle: CSSProperties = {
   maxWidth: layout.maxWidthPx,
   margin: "0 auto",
-  padding: spacing.xl,
+  padding: `${spacing.xl}px ${spacing.xl}px`,
+  minHeight: "100vh",
 };
 
-const loadingGridStyle: React.CSSProperties = {
+const headerAreaStyle: CSSProperties = {
+  marginBottom: 20,
+};
+
+const controlBarStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  flexWrap: "wrap",
+};
+
+const filterBannerStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 7,
+  background: "var(--accent-subtle)",
+  border: "1px solid var(--hero-border)",
+  borderRadius: 10,
+  padding: "5px 10px 5px 8px",
+  fontSize: 13,
+};
+
+const clearFilterBtnStyle: CSSProperties = {
+  background: "transparent",
+  border: "1px solid var(--hero-border)",
+  borderRadius: 7,
+  padding: "1px 10px",
+  fontSize: 12,
+  fontWeight: 600,
+  cursor: "pointer",
+  color: "var(--accent)",
+  transition: "background 150ms",
+  marginLeft: 2,
+};
+
+const emptyStateStyle: CSSProperties = {
+  background: "var(--card-surface)",
+  border: "1px solid var(--card-border)",
+  borderRadius: 16,
+  padding: spacing.xxl,
+  textAlign: "center",
+  boxShadow: "var(--card-shadow)",
+};
+
+const loadingGridStyle: CSSProperties = {
   display: "grid",
   gap: spacing.lg,
+  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
 };
 
 export default function Page() {

@@ -1,13 +1,64 @@
-/* Equal 6-card grid: 3 columns x 2 rows at 1280px+, stack below (D-03). */
+/* Asymmetric 6-card grid: 4 supporting + 2 hero action cards (D-03, D-23-ext). */
 
+/* ── Container ─────────────────────────────────────────────────────────── */
 .grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 
+/* ── Supporting row: Inventory, Forecast, Shortage, Expiry ──────────────── */
+.supportRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.cell {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero action row: Moves + Priorities ─────────────────────────────────── */
+.heroRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.heroCell {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Tablet: 2 columns (1024–1279px) ────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .supportRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .heroRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Desktop: 4 in top row, 2 equal hero below (≥1280px) ────────────────── */
 @media (min-width: 1280px) {
   .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .supportRow {
+    /* 4 equal columns for supporting cards */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .heroRow {
+    /* Moves gets 55% (asymmetric — more action real estate), Priorities 45% */
+    grid-template-columns: 55fr 45fr;
+    gap: 16px;
   }
 }

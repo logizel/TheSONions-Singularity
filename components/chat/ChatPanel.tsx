@@ -1,6 +1,7 @@
 /**
  * ChatPanel — right-docked quote-only chat (D-17, D-18, D-19, D-20, D-21,
- * D-22, D-23).
+ * D-22, D-23). Redesigned (D-23-ext): premium floating panel with header
+ * bar, bubble-style messages, refined chips, collapse-to-FAB.
  *
  * Primitives: only the Chat tabbed-panel pattern (message list + risk
  * chips) and the Prompt Bar composer below, adapted copy-paste into
@@ -23,9 +24,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import fixtureJson from "@/app/data/mock-results.json";
 import { type ResultsFixture } from "@/app/data/results";
-import { colors, spacing } from "@/theme/tokens";
 import { PromptBar } from "./PromptBar";
 import {
   answerQuestion,
@@ -84,32 +85,44 @@ export function ChatPanel({
     setDraft("");
   };
 
+  const turnCount = Math.ceil(messages.length / 2);
+
   return (
     <>
-      {/* Right dock. Stays mounted while collapsed so scroll and draft keep
-          their place; hidden with display:none instead of unmounting. */}
+      {/* Right dock — stays mounted while collapsed */}
       <section
         data-testid="chat-panel"
         aria-hidden={open ? undefined : true}
+        aria-label="Assistant chat"
         style={{
           ...dockStyle,
           display: open ? "flex" : "none",
         }}
       >
-        <div style={headerRowStyle}>
-          <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>
-            Assistant
-          </h2>
-          <span style={quoteNoteStyle}>quotes system results only</span>
-          <button
-            data-testid="chat-collapse"
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Collapse chat"
-            style={iconButtonStyle}
-          >
-            Hide
-          </button>
+        {/* Panel header */}
+        <div style={headerStyle}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* Status dot */}
+            <span
+              aria-hidden="true"
+              style={statusDotStyle}
+            />
+            <h2 style={titleStyle}>Assistant</h2>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={quoteNoteStyle}>quotes system results only</span>
+            <button
+              data-testid="chat-collapse"
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Collapse chat"
+              style={iconBtnStyle}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {!hasAnswerable ? (
@@ -118,13 +131,10 @@ export function ChatPanel({
           </p>
         ) : (
           <>
+            {/* Risk chips */}
             <div
               data-testid="chat-chips"
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: spacing.sm,
-              }}
+              style={chipsContainerStyle}
             >
               {RISK_CHIPS.map((chip, i) => (
                 <button
@@ -139,155 +149,271 @@ export function ChatPanel({
               ))}
             </div>
 
+            {/* Message history */}
             <div
               data-testid="chat-history"
               ref={scrollRef}
               role="log"
               aria-label="Conversation"
+              aria-live="polite"
               style={historyStyle}
             >
               {messages.length === 0 ? (
-                <p data-testid="chat-welcome" style={emptyStyle}>
-                  {contextHospitalId
-                    ? "Ask about risk, stockout timing, expiry, or transfers — answers quote system numbers."
-                    : "Pick a risk question above or ask about stockout timing — answers quote system numbers."}
-                </p>
+                <div data-testid="chat-welcome" style={welcomeStyle}>
+                  <span style={welcomeIconStyle} aria-hidden="true">💬</span>
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    {contextHospitalId
+                      ? "Ask about risk, stockout timing, expiry, or transfers — answers quote system numbers."
+                      : "Pick a risk question above or ask about stockout timing — answers quote system numbers."}
+                  </p>
+                </div>
               ) : (
                 messages.map((m) => (
                   <div
                     key={m.id}
                     data-testid={`chat-message-${m.role}`}
-                    style={
-                      m.role === "user" ? userBubbleStyle : assistantStyle
-                    }
+                    style={m.role === "user" ? userBubbleStyle : assistantBubbleStyle}
                   >
-                    {m.text}
+                    {m.role === "assistant" && (
+                      <span
+                        aria-hidden="true"
+                        style={asstIconStyle}
+                      >
+                        ✦
+                      </span>
+                    )}
+                    <span style={{ flex: 1 }}>{m.text}</span>
                   </div>
                 ))
               )}
             </div>
 
-            <PromptBar
-              value={draft}
-              onChange={setDraft}
-              onSubmit={() => send(draft)}
-            />
+            {/* Composer */}
+            <div style={composerWrapStyle}>
+              <PromptBar
+                value={draft}
+                onChange={setDraft}
+                onSubmit={() => send(draft)}
+              />
+            </div>
           </>
         )}
       </section>
 
-      {/* Floating restore button (D-17): visible whenever the dock hides. */}
+      {/* Floating restore button (D-17) */}
       {!open ? (
         <button
           data-testid="chat-fab"
           type="button"
           onClick={() => setOpen(true)}
           style={fabStyle}
+          aria-label={`Open assistant chat${turnCount > 0 ? ` (${turnCount} turns)` : ""}`}
         >
-          Chat
-          {messages.length > 0 ? ` (${Math.ceil(messages.length / 2)})` : ""}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          {turnCount > 0 ? (
+            <span style={fabBadgeStyle}>{turnCount}</span>
+          ) : null}
         </button>
       ) : null}
     </>
   );
 }
 
-const dockStyle: React.CSSProperties = {
+// ─── Styles ────────────────────────────────────────────────────────────────
+
+const dockStyle: CSSProperties = {
   position: "fixed",
-  right: 16,
-  bottom: 16,
-  width: "min(360px, calc(100vw - 32px))",
-  maxHeight: "60vh",
+  right: 20,
+  bottom: 20,
+  width: "min(380px, calc(100vw - 40px))",
+  maxHeight: "62vh",
   flexDirection: "column",
-  gap: spacing.sm,
-  background: colors.cardSurface,
-  border: `1px solid ${colors.cardBorder}`,
-  borderRadius: 12,
-  boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
-  padding: spacing.lg,
+  background: "var(--card-surface)",
+  border: "1px solid var(--card-border)",
+  borderRadius: 16,
+  boxShadow: "0 8px 32px rgba(2, 6, 23, 0.16), 0 2px 8px rgba(2, 6, 23, 0.08)",
   zIndex: 20,
+  overflow: "hidden",
+  animation: "cardMount 220ms cubic-bezier(0.16, 1, 0.3, 1)",
 };
 
-const headerRowStyle: React.CSSProperties = {
+const headerStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
-  gap: 8,
+  justifyContent: "space-between",
+  padding: "12px 16px 10px",
+  borderBottom: "1px solid var(--card-border)",
+  background: "var(--card-surface)",
+  flexShrink: 0,
 };
 
-const quoteNoteStyle: React.CSSProperties = {
-  fontSize: 11,
-  color: colors.textSecondary,
-  flex: 1,
+const statusDotStyle: CSSProperties = {
+  width: 7,
+  height: 7,
+  borderRadius: "50%",
+  background: "#22c55e",
+  boxShadow: "0 0 0 2px rgba(34, 197, 94, 0.2)",
 };
 
-const iconButtonStyle: React.CSSProperties = {
-  background: "transparent",
-  border: `1px solid ${colors.cardBorder}`,
-  borderRadius: 8,
-  padding: "2px 10px",
-  fontSize: 12,
-  cursor: "pointer",
-  color: colors.textSecondary,
-};
-
-const chipStyle: React.CSSProperties = {
-  background: "#f1f5f9",
-  color: colors.textPrimary,
-  border: `1px solid ${colors.cardBorder}`,
-  borderRadius: 999,
-  padding: "4px 12px",
-  fontSize: 12,
-  fontWeight: 600,
-  cursor: "pointer",
-};
-
-const historyStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: spacing.sm,
-  overflowY: "auto",
-  minHeight: 120,
-  maxHeight: "32vh",
-  padding: "4px 2px",
-};
-
-const userBubbleStyle: React.CSSProperties = {
-  alignSelf: "flex-end",
-  background: "#eff6ff",
-  border: "1px solid #bfdbfe",
-  borderRadius: 10,
-  padding: "6px 10px",
-  fontSize: 13,
-  color: colors.textPrimary,
-  maxWidth: "90%",
-};
-
-const assistantStyle: React.CSSProperties = {
-  alignSelf: "flex-start",
-  fontSize: 13,
-  color: colors.textPrimary,
-  lineHeight: 1.5,
-  maxWidth: "100%",
-};
-
-const emptyStyle: React.CSSProperties = {
-  fontSize: 13,
-  color: colors.textSecondary,
+const titleStyle: CSSProperties = {
   margin: 0,
-};
-
-const fabStyle: React.CSSProperties = {
-  position: "fixed",
-  right: 16,
-  bottom: 16,
-  background: colors.accent,
-  color: "#ffffff",
-  border: "none",
-  borderRadius: 999,
-  padding: "10px 20px",
   fontSize: 14,
   fontWeight: 700,
+  color: "var(--text-primary)",
+  letterSpacing: "-0.01em",
+};
+
+const quoteNoteStyle: CSSProperties = {
+  fontSize: 10,
+  fontWeight: 500,
+  color: "var(--text-muted)",
+  letterSpacing: "0.01em",
+};
+
+const iconBtnStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 28,
+  height: 28,
+  background: "transparent",
+  border: "1px solid var(--card-border)",
+  borderRadius: 8,
   cursor: "pointer",
-  boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
+  color: "var(--text-muted)",
+  transition: "background 150ms",
+};
+
+const chipsContainerStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 6,
+  padding: "10px 16px 8px",
+  borderBottom: "1px solid var(--card-border)",
+  flexShrink: 0,
+};
+
+const chipStyle: CSSProperties = {
+  background: "var(--risk-neutral-bg)",
+  color: "var(--text-secondary)",
+  border: "1px solid var(--card-border)",
+  borderRadius: 999,
+  padding: "4px 12px",
+  fontSize: 11,
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "background 150ms, border-color 150ms",
+  letterSpacing: "0.01em",
+  whiteSpace: "nowrap",
+};
+
+const historyStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+  overflowY: "auto",
+  flex: 1,
+  padding: "12px 14px",
+  minHeight: 100,
+};
+
+const welcomeStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: 8,
+  padding: "16px 8px",
+  textAlign: "center",
+};
+
+const welcomeIconStyle: CSSProperties = {
+  fontSize: 24,
+  opacity: 0.5,
+};
+
+const userBubbleStyle: CSSProperties = {
+  alignSelf: "flex-end",
+  display: "flex",
+  background: "var(--accent)",
+  color: "#ffffff",
+  borderRadius: "12px 12px 3px 12px",
+  padding: "8px 12px",
+  fontSize: 13,
+  maxWidth: "85%",
+  lineHeight: 1.4,
+  boxShadow: "0 1px 3px rgba(79, 110, 247, 0.2)",
+};
+
+const assistantBubbleStyle: CSSProperties = {
+  alignSelf: "flex-start",
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 7,
+  background: "var(--risk-neutral-bg)",
+  border: "1px solid var(--card-border)",
+  borderRadius: "3px 12px 12px 12px",
+  padding: "8px 12px",
+  fontSize: 13,
+  color: "var(--text-primary)",
+  maxWidth: "90%",
+  lineHeight: 1.5,
+};
+
+const asstIconStyle: CSSProperties = {
+  color: "var(--accent)",
+  fontSize: 12,
+  flexShrink: 0,
+  marginTop: 1,
+};
+
+const emptyStyle: CSSProperties = {
+  fontSize: 13,
+  color: "var(--text-secondary)",
+  margin: 0,
+  padding: "16px",
+};
+
+const composerWrapStyle: CSSProperties = {
+  padding: "10px 14px 14px",
+  borderTop: "1px solid var(--card-border)",
+  flexShrink: 0,
+  background: "var(--card-surface)",
+};
+
+const fabStyle: CSSProperties = {
+  position: "fixed",
+  right: 20,
+  bottom: 20,
+  width: 50,
+  height: 50,
+  background: "var(--accent)",
+  color: "#ffffff",
+  border: "none",
+  borderRadius: "50%",
+  cursor: "pointer",
+  boxShadow: "0 4px 16px rgba(79, 110, 247, 0.35), 0 1px 4px rgba(2, 6, 23, 0.12)",
   zIndex: 20,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "transform 150ms, box-shadow 150ms",
+};
+
+const fabBadgeStyle: CSSProperties = {
+  position: "absolute",
+  top: 6,
+  right: 6,
+  width: 16,
+  height: 16,
+  borderRadius: "50%",
+  background: "#ef4444",
+  color: "#ffffff",
+  fontSize: 10,
+  fontWeight: 700,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  border: "2px solid var(--accent)",
 };

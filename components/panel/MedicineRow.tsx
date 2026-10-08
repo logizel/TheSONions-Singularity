@@ -1,12 +1,13 @@
 /**
  * MedicineRow — expandable per-medicine drill-in rows (D-11, D-14).
+ * Redesigned (D-23-ext): refined expand toggle, CSS vars, tabular-nums,
+ * cleaner move row layout matching the MovesCard style.
  *
  * Collapsed: medicine name, units on hand, days-to-stockout badge.
  * Expanded: 30-day forecast outlook, days-to-stockout vs supplier lead
  * time, waste quantity with expiry date, and the suggested moves for that
  * medicine. Every move row states transit days and the shelf-life-on-arrival
- * check plus a short sender rationale (buffer / need-cap / waste-first /
- * nearest-sender) so the choice is explainable (D-14).
+ * check plus a short sender rationale (D-14).
  *
  * Read-only: buttons and text only, no editable fields. All rationale
  * strings render as escaped text — never interpolated HTML (T-4-09).
@@ -14,8 +15,9 @@
 "use client";
 
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { Badge, Sparkline } from "../cards/ui";
-import { colors, spacing } from "@/theme/tokens";
+import { riskForDaysToStockout } from "@/theme/tokens";
 import type { MoveRow as FixtureMove, ResultsFixture } from "@/app/data/results";
 
 export interface PanelMoveDetail {
@@ -52,7 +54,6 @@ export interface MedicineRowDetail {
 
 /** Prototype usability floor for the shelf-life-on-arrival check (D-14). */
 const SHELF_LIFE_OK_FLOOR_DAYS = 14;
-
 const DAY_MS = 86_400_000;
 
 /**
@@ -147,10 +148,8 @@ export function buildMoveDetail(
 }
 
 /**
- * One move row with transit days, shelf-life-on-arrival check, sender
- * rationale, and an optional display-only action affordance (role-gated by
- * the caller; true enforcement belongs to the Phase 3 server-side auth
- * layer — see components/roles.tsx, T-4-06).
+ * One move row in the panel — transit days, shelf-life check,
+ * sender rationale, optional action button.
  */
 export function MoveRow({
   detail,
@@ -162,92 +161,117 @@ export function MoveRow({
   testId: string;
 }) {
   return (
-    <li data-testid={testId} style={{ marginBottom: 8, fontSize: 13 }}>
-      <span>
-        {detail.direction === "in" ? "Receive" : "Send"}{" "}
-        {detail.qty.toLocaleString()} units {detail.medicineName}{" "}
-        {detail.direction === "in" ? "from" : "to"} {detail.counterpartName}
-        {" · "}transit {detail.transitDays}{" "}
-        {detail.transitDays === 1 ? "day" : "days"}
-        {" · "}
-        {detail.shelfLifeOnArrivalDays === null ? (
-          <span>
-            no expiry constraint on record — shelf life on arrival OK
-          </span>
-        ) : (
-          <span>
-            shelf life on arrival {detail.shelfLifeOnArrivalDays}d —{" "}
-            {detail.shelfLifeOk ? "OK" : "check expiry"}
-          </span>
-        )}
-      </span>{" "}
-      <Badge level={detail.shelfLifeOk ? "ok" : "warning"}>
-        {detail.shelfLifeOk ? "shelf-life OK" : "shelf-life check"}
-      </Badge>
-      <span
-        style={{
-          display: "block",
-          fontSize: 12,
-          color: colors.textSecondary,
-          marginTop: 2,
-        }}
-      >
-        {detail.rationale}
-      </span>
-      {showAction ? (
-        <button
-          data-testid={`${testId}-approve`}
-          type="button"
-          onClick={() => {}}
-          title="Prototype display-only action — approval wires up in Phase 5"
-          style={approveButtonStyle}
+    <li data-testid={testId} style={moveRowStyle}>
+      <div style={moveRowInnerStyle}>
+        {/* Direction badge */}
+        <span
+          style={{
+            ...dirBadgeStyle,
+            background: detail.direction === "in"
+              ? "var(--risk-ok-bg)"
+              : "var(--accent-subtle)",
+            color: detail.direction === "in"
+              ? "var(--risk-ok-text)"
+              : "var(--accent)",
+          }}
         >
-          Approve
-        </button>
-      ) : (
-        <span style={{ fontSize: 12, color: colors.textMuted }}>
-          {" "}
-          (read-only)
+          {detail.direction === "in" ? "← in" : "→ out"}
         </span>
-      )}
+
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={moveTextStyle}>
+            {detail.direction === "in" ? "Receive" : "Send"}{" "}
+            <span style={{ fontVariantNumeric: "tabular-nums", fontWeight: 700 }}>
+              {detail.qty.toLocaleString()}
+            </span>
+            {" "}{detail.medicineName}{" "}
+            {detail.direction === "in" ? "from" : "to"}{" "}
+            <strong>{detail.counterpartName}</strong>
+            {" · transit "}
+            <span style={{ fontVariantNumeric: "tabular-nums" }}>
+              {detail.transitDays}
+            </span>
+            {detail.transitDays === 1 ? "d" : "d"}
+          </span>
+          <span style={moveSubStyle}>
+            {detail.shelfLifeOnArrivalDays === null ? (
+              "no expiry constraint — shelf life OK"
+            ) : (
+              <>
+                shelf life on arrival{" "}
+                <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                  {detail.shelfLifeOnArrivalDays}
+                </span>
+                d — {detail.shelfLifeOk ? "OK" : "check expiry"}
+              </>
+            )}
+          </span>
+          <span style={rationaleStyle}>{detail.rationale}</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+            <Badge level={detail.shelfLifeOk ? "ok" : "warning"}>
+              {detail.shelfLifeOk ? "shelf-life OK" : "shelf-life check"}
+            </Badge>
+            {showAction ? (
+              <button
+                data-testid={`${testId}-approve`}
+                type="button"
+                onClick={() => {}}
+                title="Prototype display-only action — approval wires up in Phase 5"
+                style={approveBtnStyle}
+              >
+                Approve
+              </button>
+            ) : (
+              <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                (read-only)
+              </span>
+            )}
+          </span>
+        </span>
+      </div>
     </li>
   );
 }
 
 export function MedicineRow({ detail }: { detail: MedicineRowDetail }) {
   const [expanded, setExpanded] = useState(false);
+  const level = riskForDaysToStockout(
+    detail.daysToStockout,
+    detail.leadDays,
+    detail.bufferDays,
+  );
 
   return (
     <li
       data-testid={`panel-medicine-${detail.medicineId}`}
-      style={rowStyle}
+      style={medRowStyle}
     >
+      {/* Collapsed toggle */}
       <button
         data-testid={`panel-medicine-toggle-${detail.medicineId}`}
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
         style={toggleStyle}
+        className="row-interactive"
       >
-        <span style={{ fontSize: 13, fontWeight: 650 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>
           {detail.medicineName}
         </span>
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: spacing.sm,
-          }}
-        >
-          <span style={{ fontSize: 12, color: colors.textSecondary }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: "auto" }}>
+          <span style={{ fontSize: 12, color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>
             {detail.stock.toLocaleString()} units
           </span>
+          <Badge level={level}>
+            {level === "ok" ? "healthy" : `${detail.daysToStockout}d`}
+          </Badge>
           <span
             style={{
               display: "inline-block",
               transform: expanded ? "rotate(180deg)" : "none",
+              transition: "transform 150ms",
               fontSize: 11,
-              color: colors.textSecondary,
+              color: "var(--text-muted)",
             }}
             aria-hidden="true"
           >
@@ -256,79 +280,77 @@ export function MedicineRow({ detail }: { detail: MedicineRowDetail }) {
         </span>
       </button>
 
+      {/* Expanded detail */}
       {expanded ? (
-        <div style={{ marginTop: spacing.sm }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: spacing.sm,
-              marginBottom: 6,
-            }}
-          >
-            <Sparkline values={detail.forecastNext7} />
-            <span style={{ fontSize: 12, color: colors.textSecondary }}>
+        <div style={expandedStyle}>
+          {/* Forecast sparkline + summary */}
+          <div style={forecastRowStyle}>
+            <Sparkline values={detail.forecastNext7} width={72} height={22} />
+            <span style={subTextStyle}>
               {detail.forecastMode === null ? (
-                "No forecast row for this medicine in the fixture."
+                "No forecast row for this medicine."
               ) : (
                 <>
-                  ~{detail.forecastAvgDaily}/day next 7d
-                  {detail.forecastMode === "trend" ? " (trend mode)" : ""} ·
-                  30-day outlook ≈
-                  {(detail.forecastAvgDaily * 30).toLocaleString()} units
-                  (projected)
+                  ~
+                  <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {detail.forecastAvgDaily}
+                  </span>
+                  /day next 7d
+                  {detail.forecastMode === "trend" ? " (trend mode)" : ""} · 30d ≈
+                  <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {" "}{(detail.forecastAvgDaily * 30).toLocaleString()}
+                  </span>{" "}
+                  units
                 </>
               )}
             </span>
           </div>
-          <div style={{ fontSize: 12, color: colors.textSecondary }}>
-            {detail.daysToStockout} days to stockout vs {detail.leadDays}d
-            supplier lead time ({detail.bufferDays}d buffer)
+
+          {/* Stock vs lead time */}
+          <div style={subTextStyle}>
+            <span style={{ fontVariantNumeric: "tabular-nums" }}>
+              {detail.daysToStockout}
+            </span>{" "}
+            days to stockout vs{" "}
+            <span style={{ fontVariantNumeric: "tabular-nums" }}>
+              {detail.leadDays}
+            </span>
+            d lead (
+            <span style={{ fontVariantNumeric: "tabular-nums" }}>
+              {detail.bufferDays}
+            </span>
+            d buffer)
           </div>
-          <div
-            style={{
-              fontSize: 12,
-              color: colors.textSecondary,
-              marginTop: 2,
-            }}
-          >
+
+          {/* Waste */}
+          <div style={subTextStyle}>
             {detail.wasteQty > 0 && detail.wasteExpiryDate ? (
               <>
-                Waste at risk: {detail.wasteQty.toLocaleString()} units
-                expiring {detail.wasteExpiryDate}
+                Waste risk:{" "}
+                <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                  {detail.wasteQty.toLocaleString()}
+                </span>{" "}
+                units expiring {detail.wasteExpiryDate}
               </>
             ) : (
-              <>No waste at risk before expiry.</>
+              "No waste at risk before expiry."
             )}
           </div>
+
+          {/* Moves */}
           <div style={{ marginTop: 6 }}>
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 700,
-                color: colors.textPrimary,
-                marginBottom: 4,
-              }}
-            >
-              Suggested moves for this medicine
-            </div>
+            <div style={movesHeaderStyle}>Suggested moves for this medicine</div>
             {detail.moves.length === 0 ? (
-              <p
-                style={{
-                  fontSize: 12,
-                  color: colors.textSecondary,
-                  margin: 0,
-                }}
-              >
-                No suggested moves for this medicine in this snapshot.
+              <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
+                No suggested moves in this snapshot.
               </p>
             ) : (
-              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
                 {detail.moves.map((m, i) => (
                   <MoveRow
                     key={`${m.direction}-${m.counterpartName}-${i}`}
                     detail={m}
-                    showAction={detailShowAction(detail)}
+                    showAction={detail.showMoveActions}
                     testId={`panel-medmove-${detail.medicineId}-${i}`}
                   />
                 ))}
@@ -341,38 +363,115 @@ export function MedicineRow({ detail }: { detail: MedicineRowDetail }) {
   );
 }
 
-/** Per-medicine rows inherit the panel-level action visibility. */
-function detailShowAction(detail: MedicineRowDetail): boolean {
-  return detail.showMoveActions;
-}
+// ─── Styles ────────────────────────────────────────────────────────────────
 
-const rowStyle: React.CSSProperties = {
-  border: `1px solid ${colors.cardBorder}`,
-  borderRadius: 8,
-  padding: spacing.sm,
-  marginBottom: spacing.sm,
+const medRowStyle: CSSProperties = {
+  border: "1px solid var(--card-border)",
+  borderRadius: 10,
+  overflow: "hidden",
+  marginBottom: 6,
 };
 
-const toggleStyle: React.CSSProperties = {
+const toggleStyle: CSSProperties = {
   width: "100%",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: spacing.sm,
+  gap: 8,
   background: "transparent",
   border: "none",
-  padding: 0,
+  padding: "10px 12px",
   cursor: "pointer",
   textAlign: "left",
+  borderRadius: 10,
 };
 
-const approveButtonStyle: React.CSSProperties = {
-  marginTop: 4,
-  background: "transparent",
-  border: `1px solid ${colors.cardBorder}`,
-  borderRadius: 8,
-  padding: "2px 10px",
+const expandedStyle: CSSProperties = {
+  padding: "8px 12px 12px",
+  borderTop: "1px solid var(--card-border)",
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+  background: "var(--risk-neutral-bg)",
+};
+
+const forecastRowStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+};
+
+const subTextStyle: CSSProperties = {
   fontSize: 12,
+  color: "var(--text-secondary)",
+  fontVariantNumeric: "tabular-nums",
+};
+
+const movesHeaderStyle: CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: "0.05em",
+  textTransform: "uppercase",
+  color: "var(--text-muted)",
+  marginBottom: 6,
+};
+
+const moveRowStyle: CSSProperties = {
+  borderRadius: 8,
+  border: "1px solid var(--card-border)",
+  overflow: "hidden",
+};
+
+const moveRowInnerStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 8,
+  padding: "8px 10px",
+};
+
+const dirBadgeStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  borderRadius: 6,
+  padding: "2px 7px",
+  fontSize: 11,
+  fontWeight: 700,
+  whiteSpace: "nowrap",
+  flexShrink: 0,
+  marginTop: 1,
+};
+
+const moveTextStyle: CSSProperties = {
+  display: "block",
+  fontSize: 12,
+  color: "var(--text-secondary)",
+  fontVariantNumeric: "tabular-nums",
+};
+
+const moveSubStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11,
+  color: "var(--text-muted)",
+  marginTop: 2,
+  fontVariantNumeric: "tabular-nums",
+};
+
+const rationaleStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11,
+  color: "var(--text-muted)",
+  marginTop: 2,
+  fontStyle: "italic",
+};
+
+const approveBtnStyle: CSSProperties = {
+  background: "transparent",
+  border: "1px solid var(--accent)",
+  borderRadius: 6,
+  padding: "2px 10px",
+  fontSize: 11,
   fontWeight: 600,
   cursor: "pointer",
+  color: "var(--accent)",
+  transition: "background 150ms",
 };
