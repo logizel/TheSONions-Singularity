@@ -89,16 +89,20 @@ function Dashboard() {
   // Unknown ids fall back to unfiltered and drop the param (T-4-01).
   useEffect(() => {
     if (rawParam !== null && !isKnownHospitalId(fixture, rawParam)) {
-      router.replace(pathname);
+      router.replace(pathname, { scroll: false });
     }
   }, [rawParam, router, pathname]);
 
   // Single-selection cross-filter with toggle; URL is the source of truth
   // so refresh, back/forward and shared links all restore context (D-16).
+  // scroll:false keeps the one-screen position while cards refilter.
   const selectHospital = (id: string | null) => {
     if (id !== null && !isKnownHospitalId(fixture, id)) return;
     const next = id === selectedId ? null : id;
-    router.push(next ? `${pathname}?hospital=${encodeURIComponent(next)}` : pathname);
+    router.push(
+      next ? `${pathname}?hospital=${encodeURIComponent(next)}` : pathname,
+      { scroll: false },
+    );
   };
 
   const hospitalNameById = useMemo(
