@@ -1,0 +1,159 @@
+---
+status: testing
+phase: 04-dashboard-ui
+source: [04-01-SUMMARY.md, 04-02-SUMMARY.md, 04-03-SUMMARY.md]
+started: 2026-10-08T18:40:00Z
+updated: 2026-10-08T19:00:00Z
+---
+
+## Current Test
+
+number: 1
+name: Cold start smoke test
+expected: |
+  Dev server boots without errors and the homepage loads live data: run `npm run dev`, open http://localhost:3000, all six dashboard cards render with fixture numbers (no blank page, no build error overlay).
+awaiting: user response
+
+## Tests
+
+### 1. Cold start smoke test
+expected: Dev server boots without errors; http://localhost:3000 loads all six dashboard cards with fixture numbers (no blank page, no error overlay).
+result: [pending]
+
+### 2. Six-card grid layout
+expected: One screen shows six equal cards — inventory, forecast, shortage risk, expiry risk, recommended moves, priority hospitals — with red/amber badges, small trend lines, ranked 1..N priorities with reason chips, and move action rows ("Send X units Med Y from A to B, arrives in N days") plus emergency order rows. At 1280px+ a full grid; on a narrow window a vertical stack with scroll.
+result: [pending]
+
+### 3. Hospital cross-filter and deep link
+expected: Clicking a hospital in any card filters ALL SIX cards to it with a visible clear control. Reloading /?hospital=<id> restores the filter; back/forward navigates selection history; a pasted link opens pre-filtered; an unknown id falls back to the unfiltered dashboard with the param dropped.
+result: [pending]
+
+### 4. Header timestamp, Refresh, loading and empty states
+expected: Header shows "Updated X min ago" plus a manual Refresh button; Refresh reloads data once with no auto-polling. While loading, skeleton cards show. (Empty state only when the fixture holds zero hospitals: guided copy "No hospitals seeded yet - upload CSV in data entry" linking to data entry.)
+result: [pending]
+
+### 5. Drill-in side panel and hospital switcher
+expected: Clicking a hospital opens a side panel without leaving the dashboard, showing per-medicine stock with expiry dates, 30-day forecast line, shortage/expiry warnings, its moves in/out, and priority score reasons. Panel header is stock-only (no patient load or emergency share stats). Panel contains no editable fields. The hospital switcher refilters the main cards and updates ?hospital=id exactly like card clicks.
+result: [pending]
+
+### 6. Expandable medicine rows and move rationale
+expected: Every medicine row expands to forecast, days-to-stockout, waste quantity, and suggested moves for that medicine. Every move row states transit days and the shelf-life-on-arrival check plus a short sender rationale (buffer, need cap, waste-first, or nearest-sender preference).
+result: [pending]
+
+### 7. Role-filtered views
+expected: Flipping the role toggle changes visible actions in both dashboard and panel: hospital_admin sees own hospital full and other hospitals read-only with moves actions hidden; network_admin sees the full dashboard with approve/order actions visible. (Display-only prototype gating; server enforcement belongs to Phase 3.)
+result: [pending]
+
+### 8. Chat dock, risk chips, answers, fallback
+expected: Chat docks right; opening the drill-in collapses chat to a floating button that restores it with scroll and draft intact. Three risk-question chips ("Most at risk next week?", "What expires unused?", "Which transfers first?") each return a plain 1-2 sentence answer quoting system numbers with a reason and no source tags; stockout timing is reachable via the composer. Unanswerable questions return "I can only answer from system results". History survives panel toggles but clears on refresh with nothing persisted.
+result: [pending]
+
+### 9. Advisory horizon, MAPE badge, Outbreak chip
+expected: Forecast card greys days 15-30 with an advisory tag plus a MAPE badge (e.g. 6%) beside the forecast; days 1-14 read as the actionable window. Outbreak-flagged hospitals carry a red Outbreak banner chip and the forecast card notes trend mode while flagged; non-flagged hospitals show neither.
+result: [pending]
+
+### 10. App shell, theme tokens, mock fixture (auto)
+expected: Next.js app shell with P1 theme tokens and mock ResultsJSON fixture (3 hospitals x 5 medicines, envelope with generatedAt/MAPE/advisory/outbreak) — build plus fixture-shape check passed.
+result: pass
+source: automated
+coverage_id: 04-01/D1
+
+### 11. Stable panel and chat shells (auto)
+expected: HospitalPanel and ChatPanel mount behind stable prop interfaces — build passed with module paths resolving.
+result: pass
+source: automated
+coverage_id: 04-01/D5
+
+### 12. Mock Q&A engine quote post-check (auto)
+expected: Canned four-intent answers with numeric quote post-check and safe fallback — quote harness passed (12 intent/fallback + sentence-count + no-source-tags checks, zero non-fixture numbers).
+result: pass
+source: automated
+coverage_id: 04-03/D2
+
+## Summary
+
+total: 12
+passed: 3
+issues: 0
+pending: 9
+skipped: 0
+blocked: 0
+
+## Gaps
+
+- gap_id: G-04-1
+  truth: "Clicking a hospital filters ALL SIX cards to it (04-01 must-have #4)"
+  status: failed
+  reason: "User: fix them all (confirms 04-VERIFICATION.md G-01, source 04-REVIEW.md H-01)"
+  severity: blocker
+  test: 3
+  root_cause: "buildInventoryRows (app/page.tsx:46-80) never filters by selectedId; networkTotal (InventoryCard.tsx:27) stays global"
+  artifacts:
+    - path: "app/page.tsx"
+      issue: "buildInventoryRows ignores selectedId"
+    - path: "components/cards/InventoryCard.tsx"
+      issue: "networkTotal unscoped when filtered"
+  missing:
+    - "Filter hospitals by selectedId in buildInventoryRows; scope or relabel networkTotal when filtered"
+- gap_id: G-04-2
+  truth: "Dashboard and drill-in show consistent risk badges for the same stock (04-02 must-have #2)"
+  status: failed
+  reason: "User: fix them all (confirms 04-VERIFICATION.md G-02, source 04-REVIEW.md H-02)"
+  severity: major
+  test: 5
+  root_cause: "Page uses global-max lead/buffer for row risk (app/page.tsx:53-66) while panel uses per-medicine inputs (HospitalPanel.tsx:107-120); h-city/m-cefix 16d renders warning vs ok"
+  artifacts:
+    - path: "app/page.tsx"
+      issue: "global-max risk derivation diverges from panel"
+  missing:
+    - "Single shared per-row risk derivation (panel logic) used by both surfaces"
+- gap_id: G-04-3
+  truth: "Chat respects the active hospital cross-filter (04-03 D-04 claim)"
+  status: failed
+  reason: "User: fix them all (confirms 04-VERIFICATION.md G-03, source 04-REVIEW.md M-01)"
+  severity: major
+  test: 8
+  root_cause: "answerMostAtRisk/answerWaste/answerTransfers (mock-answers.ts:69-122) take no scope; only answerStockoutTiming accepts contextHospitalId (:125)"
+  artifacts:
+    - path: "components/chat/mock-answers.ts"
+      issue: "3 of 4 intents answer network-globally under ?hospital filter"
+  missing:
+    - "Thread validated knownHospitalId scope into all four intents; prefix scoped answers with hospital name"
+- gap_id: G-04-4
+  truth: "Most-at-risk answer pairs the worst shortage with its own hospital and quotes actual priority reasons"
+  status: failed
+  reason: "User: fix them all (confirms 04-VERIFICATION.md G-04, source 04-REVIEW.md M-02)"
+  severity: minor
+  test: 8
+  root_cause: "answerMostAtRisk (mock-answers.ts:69-86) pairs entities across hospitals and hardcodes flag vocabulary instead of quoting priorities[].reasons"
+  artifacts:
+    - path: "components/chat/mock-answers.ts"
+      issue: "cross-hospital pairing + hardcoded flags"
+  missing:
+    - "Pick worst shortage for top.hospitalId; quote top.reasons vocabulary"
+- gap_id: G-04-5
+  truth: "Chat quote gate rejects answers containing non-fixture numbers"
+  status: failed
+  reason: "User: fix them all (confirms 04-VERIFICATION.md G-05, source 04-REVIEW.md M-03)"
+  severity: minor
+  test: 8
+  root_cause: "Token-presence gate over polluted FIXTURE_NUMERIC_TOKENS (mock-answers.ts:44-52): dosage fragments, date parts, loads, transport days all quotable"
+  artifacts:
+    - path: "components/chat/mock-answers.ts"
+      issue: "gate passes wrong-quantity answers when digits coincide"
+  missing:
+    - "Per-answer allow-set from cited rows; at minimum strip name-dosage fragments and date parts"
+- gap_id: G-04-6
+  truth: "Unknown-owner panel hides move/order actions (fail closed)"
+  status: failed
+  reason: "User: fix them all (confirms 04-VERIFICATION.md G-06, source 04-REVIEW.md M-04)"
+  severity: minor
+  test: 7
+  root_cause: "isOwnHospital(null) returns true (roles.tsx:30-36) with panel default ownHospitalId=null (HospitalPanel.tsx:56, MovesCard.tsx:41); inline copy at HospitalPanel.tsx:136 same shape"
+  artifacts:
+    - path: "components/roles.tsx"
+      issue: "fail-open on null owner"
+    - path: "components/panel/HospitalPanel.tsx"
+      issue: "inline fail-open copy at :136"
+  missing:
+    - "Return false on null; pass explicit non-null ownHospitalId on network_admin path; fix inline copy"
