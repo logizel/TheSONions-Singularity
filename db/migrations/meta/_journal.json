@@ -8,6 +8,13 @@
       "when": 1791457732114,
       "tag": "0000_sour_maggott",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791495143969,
+      "tag": "0001_hospital_coordinates",
+      "breakpoints": true
     }
   ]
 }

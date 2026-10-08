@@ -2,6 +2,7 @@ import {
   boolean,
   check,
   date,
+  doublePrecision,
   integer,
   pgTable,
   primaryKey,
@@ -22,10 +23,21 @@ export const medicines = pgTable("medicines", {
   substituteIds: text("substitute_ids").array().notNull().default([]),
 });
 
+// Map position (Phase 6, D-04): WGS84 decimal degrees + display address.
+// Nullable so hospitals without a known location still load; the map
+// drops them instead of guessing.
 export const hospitals = pgTable("hospitals", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-});
+  latitude: doublePrecision("latitude"),
+  longitude: doublePrecision("longitude"),
+  address: text("address"),
+}, (t) => [
+  check(
+    "hospitals_latlng_check",
+    sql`(${t.latitude} is null or ${t.latitude} between -90 and 90) and (${t.longitude} is null or ${t.longitude} between -180 and 180)`,
+  ),
+]);
 
 // Ownership columns live here from day one (D-24); enforcement hardens in
 // Phase 3 middleware. role is hospital_admin (own hospital) or network_admin.

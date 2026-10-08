@@ -20,6 +20,7 @@ import type {
   TransportRow,
   UserRow,
 } from "../lib/contracts";
+import { DEMO_COORDINATES } from "./demo-coordinates";
 
 // Deterministic PRNG (mulberry32) so re-runs produce identical data.
 function rng(seed: number) {
@@ -33,10 +34,11 @@ function rng(seed: number) {
   };
 }
 
+// DEMO DATA coordinates (fictional points in Mangaluru): see demo-coordinates.ts.
 const HOSPITALS: HospitalRow[] = [
-  { id: "h-civil", name: "City Civil Hospital" },
-  { id: "h-stmary", name: "St Mary Clinic" },
-  { id: "h-north", name: "Northgate General" },
+  { id: "h-civil", name: "City Civil Hospital", ...DEMO_COORDINATES["h-civil"] },
+  { id: "h-stmary", name: "St Mary Clinic", ...DEMO_COORDINATES["h-stmary"] },
+  { id: "h-north", name: "Northgate General", ...DEMO_COORDINATES["h-north"] },
 ];
 
 const MEDICINES: MedicineRow[] = [
