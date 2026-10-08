@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 
 export const runtime = "nodejs";
 
 import { chat } from "@/lib/chat";
-import type { ResultsJSON } from "@/lib/contracts";
+import { getResults } from "@/lib/network";
 
-// POST /api/chat — accepts {question: string}, answers from precomputed
-// ResultsJSON only. Auth enforced by middleware.ts (D-05); no session logic here.
+// POST /api/chat — accepts {question: string}, answers only from the same
+// ResultsJSON snapshot /api/results serves (Phase 6, D-11). Auth enforced by
+// middleware.ts (D-05); no session logic here.
 export async function POST(req: NextRequest): Promise<NextResponse> {
   let body: unknown;
   try {
@@ -22,13 +21,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Missing question" }, { status: 400 });
   }
 
-  const blobPath = path.join(process.cwd(), "data", "results.json");
-  let resultsJson: ResultsJSON;
-  try {
-    resultsJson = JSON.parse(await readFile(blobPath, "utf8")) as ResultsJSON;
-  } catch {
+  if (question.length > 500) {
+    return NextResponse.json({ error: "Question too long" }, { status: 400 });
+  }
+
+  const envelope = await getResults();
+  if (envelope === null) {
     return NextResponse.json({ error: "Results not available" }, { status: 503 });
   }
 
-  return NextResponse.json(chat(question, resultsJson));
+  return NextResponse.json(chat(question, envelope.results), {
+    headers: { "Cache-Control": "private, no-store" },
+  });
 }

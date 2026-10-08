@@ -1,4 +1,4 @@
-import type { ResultsJSON } from "../contracts";
+import type { QuoteView } from "./quotes";
 
 export const REJECTION_SENTENCE =
   "I can only answer questions about hospital risk, stockouts, waste, and transfers using current system data.";
@@ -26,8 +26,8 @@ function num(v: unknown): number | string | undefined {
 
 // Candidate data rows: every top-level collection we might quote from, plus
 // per-hospital medicine rows if the blob nests them.
-function candidateRows(resultsJson: ResultsJSON): Record<string, unknown>[] {
-  const r = asRecord(resultsJson);
+function candidateRows(view: QuoteView): Record<string, unknown>[] {
+  const r = asRecord(view);
   if (r === null) return [];
   const rows: Record<string, unknown>[] = [];
   for (const key of ["hospitals", "stockouts", "waste", "wastes", "expiry", "transfers", "moves", "orders"]) {
@@ -67,13 +67,13 @@ function matchesParam(row: Record<string, unknown>, param: unknown, fields: stri
 export function fillTemplate(
   intent: string,
   params: object,
-  resultsJson: ResultsJSON,
+  view: QuoteView,
 ): string {
-  if (resultsJson === null || typeof resultsJson !== "object") {
+  if (view === null || typeof view !== "object") {
     return REJECTION_SENTENCE;
   }
 
-  const rows = candidateRows(resultsJson);
+  const rows = candidateRows(view);
   const p = asRecord(params) ?? {};
 
   if (intent === "most-at-risk") {

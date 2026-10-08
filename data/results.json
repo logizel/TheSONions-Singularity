@@ -1,157 +1,3171 @@
 {
-  "generatedAt": "2026-10-08T16:35:40.183Z",
-  "mape": 0.3860260631526384,
-  "advisoryFlags": [
-    "15-30d advisory"
-  ],
-  "outbreakMarkers": [],
+  "generatedAt": "2026-10-08T21:40:34.664Z",
+  "asOf": "2026-10-08",
+  "historyWindow": {
+    "from": "2026-08-09",
+    "to": "2026-10-07"
+  },
+  "mapePct": 7.5,
+  "advisory": {
+    "fromDay": 15,
+    "toDay": 30,
+    "label": "advisory"
+  },
   "hospitals": [
     {
-      "hospitalId": "h1",
-      "hospitalName": "h1",
-      "riskScore": 21,
-      "daysUntilStockout": 11
+      "hospitalId": "h-civil",
+      "hospitalName": "City Civil Hospital",
+      "patientLoad": 81,
+      "emergencyPct": 20,
+      "outbreak": false,
+      "riskScore": 17,
+      "daysUntilStockout": 20
+    },
+    {
+      "hospitalId": "h-north",
+      "hospitalName": "Northgate General",
+      "patientLoad": 78,
+      "emergencyPct": 17,
+      "outbreak": false,
+      "riskScore": 35,
+      "daysUntilStockout": 10
+    },
+    {
+      "hospitalId": "h-stmary",
+      "hospitalName": "St Mary Clinic",
+      "patientLoad": 78,
+      "emergencyPct": 19,
+      "outbreak": false,
+      "riskScore": 26,
+      "daysUntilStockout": 15
+    }
+  ],
+  "medicines": [
+    {
+      "medicineId": "m-amox",
+      "medicineName": "Amoxicillin",
+      "isCritical": true,
+      "baseUnit": "capsule",
+      "substituteIds": []
+    },
+    {
+      "medicineId": "m-ibu",
+      "medicineName": "Ibuprofen",
+      "isCritical": false,
+      "baseUnit": "tablet",
+      "substituteIds": [
+        "m-para"
+      ]
+    },
+    {
+      "medicineId": "m-ins",
+      "medicineName": "Insulin",
+      "isCritical": true,
+      "baseUnit": "vial",
+      "substituteIds": []
+    },
+    {
+      "medicineId": "m-ors",
+      "medicineName": "ORS",
+      "isCritical": false,
+      "baseUnit": "sachet",
+      "substituteIds": []
+    },
+    {
+      "medicineId": "m-para",
+      "medicineName": "Paracetamol",
+      "isCritical": true,
+      "baseUnit": "tablet",
+      "substituteIds": [
+        "m-ibu"
+      ]
+    }
+  ],
+  "transport": [
+    {
+      "fromHospital": "h-civil",
+      "toHospital": "h-civil",
+      "days": 0
+    },
+    {
+      "fromHospital": "h-civil",
+      "toHospital": "h-north",
+      "days": 1
+    },
+    {
+      "fromHospital": "h-civil",
+      "toHospital": "h-stmary",
+      "days": 1
+    },
+    {
+      "fromHospital": "h-north",
+      "toHospital": "h-civil",
+      "days": 2
+    },
+    {
+      "fromHospital": "h-north",
+      "toHospital": "h-north",
+      "days": 0
+    },
+    {
+      "fromHospital": "h-north",
+      "toHospital": "h-stmary",
+      "days": 2
+    },
+    {
+      "fromHospital": "h-stmary",
+      "toHospital": "h-civil",
+      "days": 1
+    },
+    {
+      "fromHospital": "h-stmary",
+      "toHospital": "h-north",
+      "days": 1
+    },
+    {
+      "fromHospital": "h-stmary",
+      "toHospital": "h-stmary",
+      "days": 0
+    }
+  ],
+  "leads": [
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-amox",
+      "leadDays": 18
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ibu",
+      "leadDays": 10
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ins",
+      "leadDays": 20
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ors",
+      "leadDays": 9
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-para",
+      "leadDays": 7
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-amox",
+      "leadDays": 11
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ibu",
+      "leadDays": 7
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ins",
+      "leadDays": 16
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ors",
+      "leadDays": 9
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-para",
+      "leadDays": 21
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-amox",
+      "leadDays": 10
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ibu",
+      "leadDays": 12
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ins",
+      "leadDays": 12
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ors",
+      "leadDays": 21
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-para",
+      "leadDays": 19
+    }
+  ],
+  "inventory": [
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-amox",
+      "stock": 881,
+      "daysUntilStockout": 55,
+      "leadDays": 18,
+      "bufferDays": 7,
+      "dailyDemand": 16,
+      "trend": [
+        18,
+        20,
+        11,
+        11,
+        17,
+        18,
+        15
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ibu",
+      "stock": 558,
+      "daysUntilStockout": 26,
+      "leadDays": 10,
+      "bufferDays": 7,
+      "dailyDemand": 21.5,
+      "trend": [
+        23,
+        22,
+        14,
+        16,
+        28,
+        29,
+        27
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ins",
+      "stock": 339,
+      "daysUntilStockout": 48,
+      "leadDays": 20,
+      "bufferDays": 7,
+      "dailyDemand": 6.9,
+      "trend": [
+        8,
+        8,
+        4,
+        4,
+        7,
+        8,
+        7
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ors",
+      "stock": 735,
+      "daysUntilStockout": 28,
+      "leadDays": 9,
+      "bufferDays": 7,
+      "dailyDemand": 26.3,
+      "trend": [
+        30,
+        27,
+        15,
+        19,
+        28,
+        33,
+        30
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-para",
+      "stock": 800,
+      "daysUntilStockout": 20,
+      "leadDays": 7,
+      "bufferDays": 7,
+      "dailyDemand": 39.8,
+      "trend": [
+        51,
+        50,
+        24,
+        26,
+        43,
+        45,
+        45
+      ],
+      "nearestExpiry": "2026-10-25",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-amox",
+      "stock": 796,
+      "daysUntilStockout": 50,
+      "leadDays": 11,
+      "bufferDays": 7,
+      "dailyDemand": 15.8,
+      "trend": [
+        17,
+        19,
+        11,
+        9,
+        16,
+        20,
+        20
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ibu",
+      "stock": 905,
+      "daysUntilStockout": 40,
+      "leadDays": 7,
+      "bufferDays": 7,
+      "dailyDemand": 22.2,
+      "trend": [
+        24,
+        26,
+        12,
+        13,
+        26,
+        28,
+        24
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ins",
+      "stock": 357,
+      "daysUntilStockout": 50,
+      "leadDays": 16,
+      "bufferDays": 7,
+      "dailyDemand": 7,
+      "trend": [
+        8,
+        9,
+        5,
+        4,
+        7,
+        9,
+        8
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ors",
+      "stock": 445,
+      "daysUntilStockout": 16,
+      "leadDays": 9,
+      "bufferDays": 7,
+      "dailyDemand": 26.6,
+      "trend": [
+        34,
+        27,
+        17,
+        14,
+        26,
+        29.5,
+        33
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-para",
+      "stock": 399,
+      "daysUntilStockout": 10,
+      "leadDays": 21,
+      "bufferDays": 7,
+      "dailyDemand": 39.9,
+      "trend": [
+        41,
+        43,
+        23,
+        25,
+        32,
+        39,
+        49
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "critical"
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-amox",
+      "stock": 699,
+      "daysUntilStockout": 44,
+      "leadDays": 10,
+      "bufferDays": 7,
+      "dailyDemand": 15.8,
+      "trend": [
+        19,
+        18,
+        9,
+        10,
+        17,
+        21,
+        15
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ibu",
+      "stock": 418,
+      "daysUntilStockout": 19,
+      "leadDays": 12,
+      "bufferDays": 7,
+      "dailyDemand": 22.3,
+      "trend": [
+        27,
+        26,
+        13,
+        12,
+        23,
+        23,
+        24
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ins",
+      "stock": 577,
+      "daysUntilStockout": 82,
+      "leadDays": 12,
+      "bufferDays": 7,
+      "dailyDemand": 7,
+      "trend": [
+        8,
+        8,
+        4,
+        4,
+        8,
+        9,
+        9
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ors",
+      "stock": 892,
+      "daysUntilStockout": 34,
+      "leadDays": 21,
+      "bufferDays": 7,
+      "dailyDemand": 26.2,
+      "trend": [
+        30,
+        26,
+        16,
+        18,
+        26,
+        30,
+        30
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "ok"
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-para",
+      "stock": 621,
+      "daysUntilStockout": 15,
+      "leadDays": 19,
+      "bufferDays": 7,
+      "dailyDemand": 39.2,
+      "trend": [
+        44,
+        45,
+        26,
+        28,
+        51,
+        49.5,
+        48
+      ],
+      "nearestExpiry": "2027-06-30",
+      "severity": "critical"
     }
   ],
   "forecasts": [
     {
-      "hospitalId": "h1",
-      "medicineId": "m1",
+      "hospitalId": "h-civil",
+      "medicineId": "m-amox",
+      "mode": "base",
       "forecast": [
         {
+          "date": "2026-10-08",
+          "demand": 17.3,
+          "advisory": false
+        },
+        {
           "date": "2026-10-09",
-          "demand": 48.3
+          "demand": 18,
+          "advisory": false
         },
         {
           "date": "2026-10-10",
-          "demand": 24.8
+          "demand": 10.3,
+          "advisory": false
         },
         {
           "date": "2026-10-11",
-          "demand": 20.4
+          "demand": 9.9,
+          "advisory": false
         },
         {
           "date": "2026-10-12",
-          "demand": 42
+          "demand": 18.3,
+          "advisory": false
         },
         {
           "date": "2026-10-13",
-          "demand": 38
+          "demand": 19.1,
+          "advisory": false
         },
         {
           "date": "2026-10-14",
-          "demand": 45
+          "demand": 18.2,
+          "advisory": false
         },
         {
           "date": "2026-10-15",
-          "demand": 40
+          "demand": 17.3,
+          "advisory": false
         },
         {
           "date": "2026-10-16",
-          "demand": 48.3
+          "demand": 18,
+          "advisory": false
         },
         {
           "date": "2026-10-17",
-          "demand": 24.8
+          "demand": 10.3,
+          "advisory": false
         },
         {
           "date": "2026-10-18",
-          "demand": 20.4
+          "demand": 9.9,
+          "advisory": false
         },
         {
           "date": "2026-10-19",
-          "demand": 42
+          "demand": 18.3,
+          "advisory": false
         },
         {
           "date": "2026-10-20",
-          "demand": 38
+          "demand": 19.1,
+          "advisory": false
         },
         {
           "date": "2026-10-21",
-          "demand": 45
+          "demand": 18.2,
+          "advisory": false
         },
         {
           "date": "2026-10-22",
-          "demand": 40
+          "demand": 17.3,
+          "advisory": true
         },
         {
           "date": "2026-10-23",
-          "demand": 48.3
+          "demand": 18,
+          "advisory": true
         },
         {
           "date": "2026-10-24",
-          "demand": 24.8
+          "demand": 10.3,
+          "advisory": true
         },
         {
           "date": "2026-10-25",
-          "demand": 20.4
+          "demand": 9.9,
+          "advisory": true
         },
         {
           "date": "2026-10-26",
-          "demand": 42
+          "demand": 18.3,
+          "advisory": true
         },
         {
           "date": "2026-10-27",
-          "demand": 38
+          "demand": 19.1,
+          "advisory": true
         },
         {
           "date": "2026-10-28",
-          "demand": 45
+          "demand": 18.2,
+          "advisory": true
         },
         {
           "date": "2026-10-29",
-          "demand": 40
+          "demand": 17.3,
+          "advisory": true
         },
         {
           "date": "2026-10-30",
-          "demand": 48.3
+          "demand": 18,
+          "advisory": true
         },
         {
           "date": "2026-10-31",
-          "demand": 24.8
+          "demand": 10.3,
+          "advisory": true
         },
         {
           "date": "2026-11-01",
-          "demand": 20.4
+          "demand": 9.9,
+          "advisory": true
         },
         {
           "date": "2026-11-02",
-          "demand": 42
+          "demand": 18.3,
+          "advisory": true
         },
         {
           "date": "2026-11-03",
-          "demand": 38
+          "demand": 19.1,
+          "advisory": true
         },
         {
           "date": "2026-11-04",
-          "demand": 45
+          "demand": 18.2,
+          "advisory": true
         },
         {
           "date": "2026-11-05",
-          "demand": 40
+          "demand": 17.3,
+          "advisory": true
         },
         {
           "date": "2026-11-06",
-          "demand": 48.3
-        },
-        {
-          "date": "2026-11-07",
-          "demand": 24.8
+          "demand": 18,
+          "advisory": true
         }
       ],
-      "mape": 0.3860260631526384
+      "mapePct": 7.8,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ibu",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 24.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 23.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 14.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 13.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 24.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 25.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 23.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 24.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 23.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 14.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 13.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 24.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 25.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 23.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 24.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 23.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 14.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 13.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 24.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 25.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 23.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 24.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 23.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 14.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 13.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 24.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 25.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 23.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 24.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 23.2,
+          "advisory": true
+        }
+      ],
+      "mapePct": 8.6,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ins",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 7.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 7.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 7.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 7.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 7.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 7.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 7.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 7.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 7.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 7.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 7.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 7.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 7.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 7.4,
+          "advisory": true
+        }
+      ],
+      "mapePct": 8.8,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-ors",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 29,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 27.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 18.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 18.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 30.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 30.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 28.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 29,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 27.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 18.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 18.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 30.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 30.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 28.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 29,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 27.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 18.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 18.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 30.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 30.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 28.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 29,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 27.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 18.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 18.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 30.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 30.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 28.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 29,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 27.6,
+          "advisory": true
+        }
+      ],
+      "mapePct": 8.4,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-civil",
+      "medicineId": "m-para",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 47.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 44.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 24,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 25.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 45.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 44.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 44.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 47.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 44.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 24,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 25.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 45.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 44.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 44.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 47.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 44.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 24,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 25.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 45.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 44.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 44.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 47.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 44.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 24,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 25.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 45.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 44.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 44.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 47.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 44.8,
+          "advisory": true
+        }
+      ],
+      "mapePct": 5.9,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-amox",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 18.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 18.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 9.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 10,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 17.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 18,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 17.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 18.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 18.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 9.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 10,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 17.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 18,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 17.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 18.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 18.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 9.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 10,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 17.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 18,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 17.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 18.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 18.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 9.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 10,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 17.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 18,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 17.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 18.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 18.4,
+          "advisory": true
+        }
+      ],
+      "mapePct": 8.3,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ibu",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 24.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 25.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 13.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 13.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 25.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 26.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 24.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 24.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 25.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 13.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 13.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 25.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 26.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 24.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 24.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 25.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 13.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 13.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 25.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 26.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 24.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 24.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 25.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 13.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 13.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 25.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 26.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 24.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 24.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 25.5,
+          "advisory": true
+        }
+      ],
+      "mapePct": 6.5,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ins",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 8.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 4.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 8.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 4.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 8.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 8.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 4.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 8.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 4.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 8.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 8.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 7.7,
+          "advisory": true
+        }
+      ],
+      "mapePct": 7,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-ors",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 29.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 30.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 17,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 16.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 29.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 30.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 29.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 29.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 30.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 17,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 16.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 29.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 30.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 29.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 29.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 30.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 17,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 16.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 29.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 30.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 29.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 29.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 30.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 17,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 16.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 29.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 30.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 29.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 29.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 30.9,
+          "advisory": true
+        }
+      ],
+      "mapePct": 7.5,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-para",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 45.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 44.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 24.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 24.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 45.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 44.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 47.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 45.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 44.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 24.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 24.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 45.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 44.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 47.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 45.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 44.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 24.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 24.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 45.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 44.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 47.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 45.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 44.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 24.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 24.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 45.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 44.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 47.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 45.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 44.5,
+          "advisory": true
+        }
+      ],
+      "mapePct": 8.9,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-amox",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 18.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 17.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 9.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 9.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 18.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 18.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 17.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 18.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 17.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 9.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 9.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 18.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 18.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 17.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 18.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 17.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 9.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 9.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 18.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 18.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 17.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 18.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 17.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 9.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 9.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 18.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 18.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 17.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 18.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 17.3,
+          "advisory": true
+        }
+      ],
+      "mapePct": 7.5,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ibu",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 26.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 24.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 13.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 13.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 24.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 25.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 26.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 26.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 24.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 13.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 13.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 24.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 25.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 26.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 26.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 24.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 13.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 13.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 24.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 25.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 26.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 26.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 24.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 13.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 13.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 24.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 25.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 26.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 26.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 24.5,
+          "advisory": true
+        }
+      ],
+      "mapePct": 5.5,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ins",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 7.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 4.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 8.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 8.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 7.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 4.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 4.3,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 8.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 8.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 7.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 7.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 4.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 8.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 8.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 7.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 4.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 4.3,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 8.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 8.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 7.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 7.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 7.7,
+          "advisory": true
+        }
+      ],
+      "mapePct": 8.8,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ors",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 29.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 29.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 16.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 16.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 30.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 29.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 29.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 29.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 29.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 16.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 16.4,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 30.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 29.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 29.8,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 29.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 29.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 16.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 16.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 30.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 29.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 29.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 29.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 29.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 16.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 16.4,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 30.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 29.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 29.8,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 29.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 29.2,
+          "advisory": true
+        }
+      ],
+      "mapePct": 7.2,
+      "outbreak": false
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-para",
+      "mode": "base",
+      "forecast": [
+        {
+          "date": "2026-10-08",
+          "demand": 43.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-09",
+          "demand": 45,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 25.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 24.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 46.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 44.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 42.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 43.6,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 45,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 25.5,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 24.7,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 46.1,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 44.9,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 42.2,
+          "advisory": false
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 43.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 45,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 25.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 24.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 46.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 44.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 42.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 43.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 45,
+          "advisory": true
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 25.5,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 24.7,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 46.1,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 44.9,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 42.2,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 43.6,
+          "advisory": true
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 45,
+          "advisory": true
+        }
+      ],
+      "mapePct": 6.2,
+      "outbreak": false
     }
   ],
   "stockoutWarnings": [
     {
-      "hospitalId": "h1",
-      "medicineId": "m1",
-      "daysUntilStockout": 11,
-      "leadDays": 14
+      "hospitalId": "h-north",
+      "medicineId": "m-para",
+      "daysUntilStockout": 10,
+      "leadDays": 21
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-para",
+      "daysUntilStockout": 15,
+      "leadDays": 19
     }
   ],
   "wasteWarnings": [],
-  "transfers": [],
-  "emergencyOrders": [],
-  "priorities": []
+  "transfers": [
+    {
+      "fromHospital": "h-civil",
+      "toHospital": "h-north",
+      "medicineId": "m-para",
+      "qty": 521.4,
+      "transportDays": 1,
+      "checksPassed": [
+        "Arrives in 1d, before Northgate General runs out in 10d",
+        "Shelf life 17d at City Civil Hospital, longer than 1d in transit",
+        "City Civil Hospital keeps its 7-day buffer of 278.6 units",
+        "Within Northgate General's need of 709 units",
+        "Nearest qualifying sender: 1d away"
+      ]
+    }
+  ],
+  "emergencyOrders": [
+    {
+      "hospitalId": "h-north",
+      "medicineId": "m-para",
+      "qty": 187.6,
+      "leadDays": 21,
+      "reason": "Emergency supplier order for the 187.6u remainder transfers could not cover"
+    },
+    {
+      "hospitalId": "h-stmary",
+      "medicineId": "m-para",
+      "qty": 379.9,
+      "leadDays": 19,
+      "reason": "Emergency supplier order for the 379.9u remainder transfers could not cover"
+    }
+  ],
+  "priorities": [
+    {
+      "rank": 1,
+      "hospitalId": "h-north",
+      "medicineId": "m-para",
+      "score": 35,
+      "factors": {
+        "soonness": 40,
+        "emergencyShare": 4,
+        "patientLoad": 1.2,
+        "substitute": -10
+      },
+      "reasons": [
+        "h-north / m-para: stockout in 10d, emergency 16% — score 35."
+      ]
+    },
+    {
+      "rank": 2,
+      "hospitalId": "h-north",
+      "medicineId": "m-ors",
+      "score": 34,
+      "factors": {
+        "soonness": 28,
+        "emergencyShare": 4.5,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-north / m-ors: stockout in 16d, emergency 18% — score 34."
+      ]
+    },
+    {
+      "rank": 3,
+      "hospitalId": "h-stmary",
+      "medicineId": "m-para",
+      "score": 26,
+      "factors": {
+        "soonness": 30,
+        "emergencyShare": 4.5,
+        "patientLoad": 1.2,
+        "substitute": -10
+      },
+      "reasons": [
+        "h-stmary / m-para: stockout in 15d, emergency 18% — score 26."
+      ]
+    },
+    {
+      "rank": 4,
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ibu",
+      "score": 19,
+      "factors": {
+        "soonness": 22,
+        "emergencyShare": 5.8,
+        "patientLoad": 1.2,
+        "substitute": -10
+      },
+      "reasons": [
+        "h-stmary / m-ibu: stockout in 19d, emergency 23% — score 19."
+      ]
+    },
+    {
+      "rank": 5,
+      "hospitalId": "h-civil",
+      "medicineId": "m-para",
+      "score": 17,
+      "factors": {
+        "soonness": 20,
+        "emergencyShare": 5.5,
+        "patientLoad": 1.2,
+        "substitute": -10
+      },
+      "reasons": [
+        "h-civil / m-para: stockout in 20d, emergency 22% — score 17."
+      ]
+    },
+    {
+      "rank": 6,
+      "hospitalId": "h-civil",
+      "medicineId": "m-ors",
+      "score": 10,
+      "factors": {
+        "soonness": 4,
+        "emergencyShare": 4.8,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-civil / m-ors: stockout in 28d, emergency 19% — score 10."
+      ]
+    },
+    {
+      "rank": 7,
+      "hospitalId": "h-civil",
+      "medicineId": "m-ins",
+      "score": 7,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 5.3,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-civil / m-ins: stockout in 48d, emergency 21% — score 7."
+      ]
+    },
+    {
+      "rank": 8,
+      "hospitalId": "h-stmary",
+      "medicineId": "m-amox",
+      "score": 7,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 5.8,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-stmary / m-amox: stockout in 44d, emergency 23% — score 7."
+      ]
+    },
+    {
+      "rank": 9,
+      "hospitalId": "h-north",
+      "medicineId": "m-amox",
+      "score": 6,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 4.5,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-north / m-amox: stockout in 50d, emergency 18% — score 6."
+      ]
+    },
+    {
+      "rank": 10,
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ins",
+      "score": 6,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 4.3,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-stmary / m-ins: stockout in 82d, emergency 17% — score 6."
+      ]
+    },
+    {
+      "rank": 11,
+      "hospitalId": "h-civil",
+      "medicineId": "m-ibu",
+      "score": 5,
+      "factors": {
+        "soonness": 8,
+        "emergencyShare": 5.8,
+        "patientLoad": 1.2,
+        "substitute": -10
+      },
+      "reasons": [
+        "h-civil / m-ibu: stockout in 26d, emergency 23% — score 5."
+      ]
+    },
+    {
+      "rank": 12,
+      "hospitalId": "h-civil",
+      "medicineId": "m-amox",
+      "score": 5,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 3.8,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-civil / m-amox: stockout in 55d, emergency 15% — score 5."
+      ]
+    },
+    {
+      "rank": 13,
+      "hospitalId": "h-north",
+      "medicineId": "m-ins",
+      "score": 5,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 4,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-north / m-ins: stockout in 50d, emergency 16% — score 5."
+      ]
+    },
+    {
+      "rank": 14,
+      "hospitalId": "h-stmary",
+      "medicineId": "m-ors",
+      "score": 5,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 3.8,
+        "patientLoad": 1.2,
+        "substitute": 0
+      },
+      "reasons": [
+        "h-stmary / m-ors: stockout in 34d, emergency 15% — score 5."
+      ]
+    },
+    {
+      "rank": 15,
+      "hospitalId": "h-north",
+      "medicineId": "m-ibu",
+      "score": 0,
+      "factors": {
+        "soonness": 0,
+        "emergencyShare": 3.8,
+        "patientLoad": 1.2,
+        "substitute": -10
+      },
+      "reasons": [
+        "h-north / m-ibu: stockout in 40d, emergency 15% — score 0."
+      ]
+    }
+  ]
 }

@@ -1,26 +1,23 @@
 import { NextResponse } from "next/server";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 
 export const runtime = "nodejs";
 
 import type { ResultsJSON } from "@/lib/contracts";
+import { getResults } from "@/lib/network";
 
-// GET /api/results — serves the precomputed ResultsJSON blob verbatim.
+// GET /api/results: the one ResultsJSON v2 snapshot the dashboard, chat and
+// cart read (Phase 6, D-02). Live Neon -> engine, cached briefly; falls back
+// to the last written blob (X-Results-Source: snapshot) when the DB is down.
 // Auth enforced by middleware.ts (D-05); no session logic here.
-// D-02: read the blob the engine job wrote; D-03: rich envelope fields
-// (generatedAt, mape, advisoryFlags, outbreakMarkers) ride inside the blob;
-// D-04: shape comes from the frozen lib/contracts.ts type.
-export async function GET(): Promise<NextResponse> {
-  const blobPath = path.join(process.cwd(), "data", "results.json");
-  let resultsJson: ResultsJSON;
-  try {
-    resultsJson = JSON.parse(await readFile(blobPath, "utf8")) as ResultsJSON;
-  } catch {
+export async function GET(): Promise<NextResponse<ResultsJSON | { error: string }>> {
+  const envelope = await getResults();
+  if (envelope === null) {
     return NextResponse.json({ error: "Results not available" }, { status: 503 });
   }
-
-  return NextResponse.json(resultsJson, {
-    headers: { "Content-Type": "application/json" },
+  return NextResponse.json(envelope.results, {
+    headers: {
+      "Cache-Control": "private, no-store",
+      "X-Results-Source": envelope.source,
+    },
   });
 }

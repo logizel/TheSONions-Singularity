@@ -1,5 +1,6 @@
 import type { ResultsJSON } from "../contracts";
 import { matchIntent } from "./intents";
+import { quoteView } from "./quotes";
 import { fillTemplate, REJECTION_SENTENCE } from "./templates";
 import { validateAnswer } from "./validator";
 
@@ -19,7 +20,9 @@ export function chat(
       return { answer: REJECTION_SENTENCE };
     }
 
-    const answer = fillTemplate(match.intent, match.params, resultsJson);
+    // Templates read the name-joined quote view; the validator checks the
+    // answer against the raw ResultsJSON snapshot (D-11).
+    const answer = fillTemplate(match.intent, match.params, quoteView(resultsJson));
     if (answer === REJECTION_SENTENCE) {
       return { answer };
     }
