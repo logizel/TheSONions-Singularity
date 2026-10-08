@@ -2,16 +2,17 @@
 
 > Agents: update this file every work session. Keep Status current, append to Log. Never edit another member's file.
 
-- **Track:** TBD (claim in `docs/TEAM.md`)
-- **Branch:** TBD
-- **Owned dirs:** per track in `docs/TEAM.md`
+- **Track:** P2 Data (Phase 1)
+- **Branch:** `p2/data`
+- **Owned dirs:** `db/`, `scripts/` (+ freezes `lib/contracts.ts` in Phase 1)
 
 ## Status
 
 | Date | Phase | State | Notes |
 |------|-------|-------|-------|
-| 2026-10-08 | — | Not started | Init complete, track unclaimed |
+| 2026-10-08 | 1 | Not started | Track P2 claimed |
 
 ## Log
 
 - 2026-10-08: Project initialized (PROJECT.md, config, REQUIREMENTS, ROADMAP). Awaiting track claim.
+- 2026-10-08: Claimed track P2 Data, branch `p2/data`. Starts Phase 1.

@@ -8,10 +8,10 @@ No one edits another track's directories. Need a change elsewhere → open a Git
 
 | Track | Owns (only these dirs) | Phase | Member | Branch |
 |-------|------------------------|-------|--------|--------|
-| P1 UI principal (theme final) | `app/` except `app/api/`, `components/`, `theme/` | 4 | TBD — claim below | `p1/ui` |
-| P2 Data | `db/`, `scripts/` (+ freezes `lib/contracts.ts` in Phase 1) | 1 | TBD — claim below | `p2/data` |
-| P3 Engine | `lib/engine/` only | 2 | TBD — claim below | `p3/engine` |
-| P4 API/Chat/Auth | `app/api/`, `lib/chat/`, `middleware.ts` | 3 | TBD — claim below | `p4/api` |
+| P1 UI principal (theme final) | `app/` except `app/api/`, `components/`, `theme/` | 4 | Likith M Shetty (likhith992) | `p1/ui` |
+| P2 Data | `db/`, `scripts/` (+ freezes `lib/contracts.ts` in Phase 1) | 1 | Jovian Wilson Simon (velo4705) | `p2/data` |
+| P3 Engine | `lib/engine/` only | 2 | Anirudh Rao B (ANI-CPU-TECH) | `p3/engine` |
+| P4 API/Chat/Auth | `app/api/`, `lib/chat/`, `middleware.ts` | 3 | Jizel Prince D'Souza (logizel) | `p4/api` |
 | Integration (Phase 5) | No new dirs; fixes inside owning track's dirs only | 5 | All, coordinated via contracts | `integrate/phase-5` |
 
 Shared contracts (frozen in Phase 1, changes need all-track agreement):
@@ -21,10 +21,13 @@ Shared contracts (frozen in Phase 1, changes need all-track agreement):
 
 ## Claim your track
 
-Members (from README): Jizel Prince D'Souza (logizel), Jovian Wilson Simon (velo4705),
-Anirudh Rao B (ANI-CPU-TECH), Likith M Shetty (likhith992).
+Tracks are claimed (2026-10-08):
 
-Edit this file in your first PR: put your name in the Member column. One track per person.
+- P1 UI principal — Likith M Shetty (likhith992)
+- P2 Data — Jovian Wilson Simon (velo4705)
+- P3 Engine — Anirudh Rao B (ANI-CPU-TECH)
+- P4 API/Chat/Auth — Jizel Prince D'Souza (logizel)
+
 The UI principal (P1) has final say on theme — no theme debates in other tracks' PRs.
 
 ## MCPs (same set for all 4)
