@@ -85,11 +85,19 @@ function validateRequest(input: MoveRequest): void {
     );
   if (!Array.isArray(input.senders) || input.senders.length === 0)
     fail('senders must be a non-empty array');
+  // MJ-02 (D-09, D-20, T-02-04): sender identities must be unique and must
+  // not include the receiver — duplicate entries would each offer the full
+  // surplus and silently defeat the 7-day keep-back buffer.
+  const seen = new Set<string>();
   for (let i = 0; i < input.senders.length; i++) {
     const s = input.senders[i] as MoveSender;
     if (!s || typeof s !== 'object') fail(`senders[${i}] must be an object`);
     if (!s.hospitalId || typeof s.hospitalId !== 'string')
       fail(`senders[${i}].hospitalId must be a non-empty string`);
+    if (s.hospitalId === input.receiverHospitalId)
+      fail(`senders[${i}] is the receiver itself (${s.hospitalId})`);
+    if (seen.has(s.hospitalId)) fail(`duplicate sender ${s.hospitalId}`);
+    seen.add(s.hospitalId);
     for (const [k, v] of [
       ['stock', s.stock],
       ['dailyDemand', s.dailyDemand],

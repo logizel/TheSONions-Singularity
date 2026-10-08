@@ -289,4 +289,37 @@ describe('suggestMoves', () => {
       EngineInputError,
     );
   });
+
+  it('rejects duplicate sender IDs and self-send with EngineInputError (MJ-02, D-09/D-20)', () => {
+    // Verifier reproduction: two entries for one sender (stock 100,
+    // dailyDemand 10 → D-09 max sendable 30) against a need of 60 must
+    // throw instead of shipping 60 and leaving 40 of the required 70 buffer.
+    const sender: MoveSender = {
+      hospitalId: 'H-S',
+      stock: 100,
+      dailyDemand: 10,
+      wasteUnits: 0,
+      transportDays: 1,
+      daysToExpiry: 30,
+    };
+    expect(() =>
+      suggestMoves({
+        receiverHospitalId: 'H-R',
+        medicine: 'DrugX',
+        needUnits: 60,
+        receiverDaysUntilStockout: 9,
+        senders: [sender, { ...sender }],
+      }),
+    ).toThrow(EngineInputError);
+    // A sender equal to the receiver (self-send) must also throw.
+    expect(() =>
+      suggestMoves({
+        receiverHospitalId: 'H-R',
+        medicine: 'DrugX',
+        needUnits: 10,
+        receiverDaysUntilStockout: 9,
+        senders: [{ ...sender, hospitalId: 'H-R' }],
+      }),
+    ).toThrow(EngineInputError);
+  });
 });
