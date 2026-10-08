@@ -11,6 +11,13 @@
  * history is display-only in ChatPanel and is never passed in here (D-22,
  * T-4-13).
  *
+ * All four intents honor the active hospital cross-filter (G-04-3): the
+ * validated scope threads through answerMostAtRisk, answerWaste,
+ * answerTransfers, and answerStockoutTiming via knownHospitalId. Scoped
+ * answers name the hospital so the filter is visible in the reply; an
+ * empty scoped slice degrades to the global answer, or to SAFE_FALLBACK
+ * where no honest scoped answer exists.
+ *
  * Answers are plain text with no source tags (D-20) and carry no
  * Approve/Order affordances — the chat never renders move-approval actions
  * under any role (D-26 holds trivially in v1).
@@ -65,10 +72,21 @@ function knownHospitalId(id: string | null): string | null {
   return fixture.hospitals.some((h) => h.id === id) ? id : null;
 }
 
+/** Lowercase the first letter so a scoped "At X, …" prefix reads naturally. */
+function lcfirst(text: string): string {
+  return text.length === 0 ? text : text.charAt(0).toLowerCase() + text.slice(1);
+}
+
 /** Intent 1 — most-at-risk hospital (chip 1). */
-function answerMostAtRisk(): string {
+function answerMostAtRisk(contextHospitalId: string | null): string {
+  const scoped = knownHospitalId(contextHospitalId);
   const top = [...fixture.priorities].sort((a, b) => a.rank - b.rank)[0];
-  const worst = [...fixture.shortages].sort(
+  const pool = scoped
+    ? fixture.shortages.filter((s) => s.hospitalId === scoped)
+    : fixture.shortages;
+  // Empty scoped slice degrades to the global answer (G-04-3).
+  const rows = pool.length > 0 ? pool : fixture.shortages;
+  const worst = [...rows].sort(
     (a, b) => a.daysToStockout - b.daysToStockout,
   )[0];
   if (!top || !worst) return SAFE_FALLBACK;
@@ -86,8 +104,14 @@ function answerMostAtRisk(): string {
 }
 
 /** Intent 2 — waste quantities (chip 2). */
-function answerWaste(): string {
-  const top = [...fixture.expiries].sort((a, b) => b.qty - a.qty);
+function answerWaste(contextHospitalId: string | null): string {
+  const scoped = knownHospitalId(contextHospitalId);
+  const pool = scoped
+    ? fixture.expiries.filter((e) => e.hospitalId === scoped)
+    : fixture.expiries;
+  // Empty scoped slice degrades to the global answer (G-04-3).
+  const rows = pool.length > 0 ? pool : fixture.expiries;
+  const top = [...rows].sort((a, b) => b.qty - a.qty);
   const first = top[0];
   const second = top[1];
   if (!first) return SAFE_FALLBACK;
@@ -95,16 +119,25 @@ function answerWaste(): string {
     ? `, and ${second.qty} units of ${medicineName(second.medicineId)} at ` +
       `${hospitalName(second.hospitalId)} expire on ${second.expiryDate}`
     : "";
-  return (
+  const body =
     `${first.qty} units of ${medicineName(first.medicineId)} at ` +
     `${hospitalName(first.hospitalId)} expire on ${first.expiryDate}` +
-    `${secondClause}. Without a transfer these batches expire unused.`
-  );
+    `${secondClause}. Without a transfer these batches expire unused.`;
+  // The filter stays visible in the reply when scoping applied (G-04-3).
+  const prefix =
+    scoped && pool.length > 0 ? `At ${hospitalName(scoped)}, ` : "";
+  return prefix === "" ? body : prefix + lcfirst(body);
 }
 
 /** Intent 3 — transfer reasons (chip 3). */
-function answerTransfers(): string {
-  const first = fixture.moves[0];
+function answerTransfers(contextHospitalId: string | null): string {
+  const scoped = knownHospitalId(contextHospitalId);
+  const pool = scoped
+    ? fixture.moves.filter((m) => m.fromId === scoped || m.toId === scoped)
+    : fixture.moves;
+  // Empty scoped slice degrades to the global answer (G-04-3).
+  const rows = pool.length > 0 ? pool : fixture.moves;
+  const first = rows[0];
   if (!first) return SAFE_FALLBACK;
   const shortage = fixture.shortages.find(
     (s) => s.hospitalId === first.toId && s.medicineId === first.medicineId,
@@ -113,12 +146,15 @@ function answerTransfers(): string {
     ? ` This covers the ${shortage.daysToStockout}-day stockout at ` +
       `${hospitalName(first.toId)}.`
     : "";
-  return (
+  const body =
     `Send ${first.qty} units of ${medicineName(first.medicineId)} from ` +
     `${hospitalName(first.fromId)} to ${hospitalName(first.toId)}, ` +
     `arriving in ${first.arrivesInDays} day${first.arrivesInDays === 1 ? "" : "s"}.` +
-    `${reason}`
-  );
+    `${reason}`;
+  // The filter stays visible in the reply when scoping applied (G-04-3).
+  const prefix =
+    scoped && pool.length > 0 ? `At ${hospitalName(scoped)}, ` : "";
+  return prefix === "" ? body : prefix + lcfirst(body);
 }
 
 /** Intent 4 — stockout timing, reachable via the composer (D-21). */
@@ -151,9 +187,12 @@ export function answerQuestion(
   const q = question.trim().toLowerCase();
 
   // Exact chip taps resolve directly to their intent (D-21).
-  if (q === RISK_CHIPS[0].toLowerCase()) return checked(answerMostAtRisk());
-  if (q === RISK_CHIPS[1].toLowerCase()) return checked(answerWaste());
-  if (q === RISK_CHIPS[2].toLowerCase()) return checked(answerTransfers());
+  if (q === RISK_CHIPS[0].toLowerCase())
+    return checked(answerMostAtRisk(contextHospitalId));
+  if (q === RISK_CHIPS[1].toLowerCase())
+    return checked(answerWaste(contextHospitalId));
+  if (q === RISK_CHIPS[2].toLowerCase())
+    return checked(answerTransfers(contextHospitalId));
 
   // Free-text composer: keyword routing across all four v1 intents (D-09).
   if (
@@ -161,7 +200,7 @@ export function answerQuestion(
     q.includes("unused") ||
     q.includes("waste")
   ) {
-    return checked(answerWaste());
+    return checked(answerWaste(contextHospitalId));
   }
   if (
     q.includes("transfer") ||
@@ -171,7 +210,7 @@ export function answerQuestion(
     q.includes("which first") ||
     q.includes("supplier order")
   ) {
-    return checked(answerTransfers());
+    return checked(answerTransfers(contextHospitalId));
   }
   if (
     q.includes("stockout") ||
@@ -191,7 +230,7 @@ export function answerQuestion(
     q.includes("critical") ||
     q.includes("outbreak")
   ) {
-    return checked(answerMostAtRisk());
+    return checked(answerMostAtRisk(contextHospitalId));
   }
 
   return { text: SAFE_FALLBACK };
