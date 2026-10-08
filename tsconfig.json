@@ -36,6 +36,11 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "scripts",
+    "db",
+    "drizzle.config.ts",
+    "vitest.config.ts",
+    "lib/engine/*.test.ts"
   ]
 }

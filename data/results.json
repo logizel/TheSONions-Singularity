@@ -1,1 +1,157 @@
-{"generatedAt":"2026-10-08T00:00:00Z","mape":7.5,"advisoryFlags":["15-30d advisory"],"outbreakMarkers":[],"hospitals":[{"hospitalId":"h1","hospitalName":"General","riskScore":82,"daysUntilStockout":6}]}
+{
+  "generatedAt": "2026-10-08T16:35:40.183Z",
+  "mape": 0.3860260631526384,
+  "advisoryFlags": [
+    "15-30d advisory"
+  ],
+  "outbreakMarkers": [],
+  "hospitals": [
+    {
+      "hospitalId": "h1",
+      "hospitalName": "h1",
+      "riskScore": 21,
+      "daysUntilStockout": 11
+    }
+  ],
+  "forecasts": [
+    {
+      "hospitalId": "h1",
+      "medicineId": "m1",
+      "forecast": [
+        {
+          "date": "2026-10-09",
+          "demand": 48.3
+        },
+        {
+          "date": "2026-10-10",
+          "demand": 24.8
+        },
+        {
+          "date": "2026-10-11",
+          "demand": 20.4
+        },
+        {
+          "date": "2026-10-12",
+          "demand": 42
+        },
+        {
+          "date": "2026-10-13",
+          "demand": 38
+        },
+        {
+          "date": "2026-10-14",
+          "demand": 45
+        },
+        {
+          "date": "2026-10-15",
+          "demand": 40
+        },
+        {
+          "date": "2026-10-16",
+          "demand": 48.3
+        },
+        {
+          "date": "2026-10-17",
+          "demand": 24.8
+        },
+        {
+          "date": "2026-10-18",
+          "demand": 20.4
+        },
+        {
+          "date": "2026-10-19",
+          "demand": 42
+        },
+        {
+          "date": "2026-10-20",
+          "demand": 38
+        },
+        {
+          "date": "2026-10-21",
+          "demand": 45
+        },
+        {
+          "date": "2026-10-22",
+          "demand": 40
+        },
+        {
+          "date": "2026-10-23",
+          "demand": 48.3
+        },
+        {
+          "date": "2026-10-24",
+          "demand": 24.8
+        },
+        {
+          "date": "2026-10-25",
+          "demand": 20.4
+        },
+        {
+          "date": "2026-10-26",
+          "demand": 42
+        },
+        {
+          "date": "2026-10-27",
+          "demand": 38
+        },
+        {
+          "date": "2026-10-28",
+          "demand": 45
+        },
+        {
+          "date": "2026-10-29",
+          "demand": 40
+        },
+        {
+          "date": "2026-10-30",
+          "demand": 48.3
+        },
+        {
+          "date": "2026-10-31",
+          "demand": 24.8
+        },
+        {
+          "date": "2026-11-01",
+          "demand": 20.4
+        },
+        {
+          "date": "2026-11-02",
+          "demand": 42
+        },
+        {
+          "date": "2026-11-03",
+          "demand": 38
+        },
+        {
+          "date": "2026-11-04",
+          "demand": 45
+        },
+        {
+          "date": "2026-11-05",
+          "demand": 40
+        },
+        {
+          "date": "2026-11-06",
+          "demand": 48.3
+        },
+        {
+          "date": "2026-11-07",
+          "demand": 24.8
+        }
+      ],
+      "mape": 0.3860260631526384
+    }
+  ],
+  "stockoutWarnings": [
+    {
+      "hospitalId": "h1",
+      "medicineId": "m1",
+      "daysUntilStockout": 11,
+      "leadDays": 14
+    }
+  ],
+  "wasteWarnings": [],
+  "transfers": [],
+  "emergencyOrders": [],
+  "priorities": []
+}
