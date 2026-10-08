@@ -50,12 +50,13 @@ Notes:
   4. Administrator is warned per hospital/medicine with expiring-unused quantities computed as stock minus realistic demand before expiry (capped at 90 days)
   5. Administrator receives transfer suggestions passing all 5 checks plus emergency supplier orders for the remainder, with competing hospitals visibly ranked and justified
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans executed + 1 gap-closure plan
 
 Plans:
 - [x] 02-01-PLAN.md — Tracer: harness plus forecast/stockout history-to-warning slice on deterministic seeds
 - [x] 02-02-PLAN.md — Outbreak detection with trend switching plus expiry-waste risk
 - [x] 02-03-PLAN.md — Transfer suggestions with remainder orders plus global priority ranking
+- [ ] 02-04-PLAN.md — Gap closure: BL-01 waste exactness, MJ-02 sender identity guards, MJ-01 soonness tiebreak
 
 Notes:
 - Pure statistical TypeScript (weekday averages + trend switch), no ML training. Verified by unit tests against seeded data; no DB or UI code in this phase.
