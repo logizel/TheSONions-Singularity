@@ -58,6 +58,28 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 
 async function main() {
   const rand = rng(42);
+  const force = process.argv.includes("--force");
+
+  // WR-04: never wipe real admin-entered data. Re-runs over our own seed rows
+  // are safe to clear; anything else refuses unless --force is passed.
+  if (!force) {
+    const knownH = new Set(HOSPITALS.map((h) => h.id));
+    const knownM = new Set(MEDICINES.map((m) => m.id));
+    const knownU = new Set(USERS.map((u) => u.id));
+    const hids = (await db.select({ id: hospitals.id }).from(hospitals)).map((r) => r.id);
+    const mids = (await db.select({ id: medicines.id }).from(medicines)).map((r) => r.id);
+    const uids = (await db.select({ id: users.id }).from(users)).map((r) => r.id);
+    const bids = (await db.select({ id: stockBatches.id }).from(stockBatches)).map((r) => r.id);
+    const foreign =
+      hids.filter((id) => !knownH.has(id)).length > 0 ||
+      mids.filter((id) => !knownM.has(id)).length > 0 ||
+      uids.filter((id) => !knownU.has(id)).length > 0 ||
+      bids.filter((id) => !id.startsWith("seed-b")).length > 0;
+    if (foreign) {
+      console.error("refusing: database holds non-seed rows (real admin data). Re-run with --force to wipe and reseed.");
+      process.exit(3);
+    }
+  }
 
   // Clear first (FK order) for idempotency.
   await db.delete(dailyUsage);

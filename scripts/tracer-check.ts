@@ -55,14 +55,15 @@ async function main() {
   await db.insert(transportDays).values(T);
   await db.insert(supplierLeads).values(L);
 
-  const batches = await db.select().from(stockBatches);
+  // WR-05: scope every assertion to tracer rows so this passes on a seeded DB.
+  const batches = await db.select().from(stockBatches).where(eq(stockBatches.hospitalId, H.id));
   const live = batches.filter((b) => !b.archived);
   assert(live.length === 2, "expected 2 live batches");
   const fifo = [...live].sort((a, b) => a.expiryDate.localeCompare(b.expiryDate));
   assert(fifo[0].id === "__tracer_b2", "FIFO must pick earliest expiry first");
   assert(fifo[0].qty === 50, "FIFO batch qty mismatch");
 
-  const usage = await db.select().from(dailyUsage);
+  const usage = await db.select().from(dailyUsage).where(eq(dailyUsage.hospitalId, H.id));
   assert(usage.length === 1 && usage[0].usedQty === null, "NULL-missing day must round-trip as NULL");
 
   // Cleanup — leave the DB clean for the seed plan.
@@ -74,7 +75,7 @@ async function main() {
   await db.delete(medicines).where(eq(medicines.id, M2.id));
   await db.delete(hospitals).where(eq(hospitals.id, H.id));
 
-  const leftovers = await db.select().from(stockBatches);
+  const leftovers = await db.select().from(stockBatches).where(eq(stockBatches.hospitalId, H.id));
   assert(leftovers.length === 0, "tracer rows must be cleaned up");
 
   console.log("all assertions passed");
