@@ -17,8 +17,8 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Forecast
 
-- [ ] **FCAST-01**: System forecasts demand per hospital/medicine for next 30 days from weekly pattern (60 days history)
-- [ ] **FCAST-02**: System reports forecast error (MAPE) against history, target band 3-11%
+- [x] **FCAST-01**: System forecasts demand per hospital/medicine for next 30 days from weekly pattern (60 days history)
+- [x] **FCAST-02**: System reports forecast error (MAPE) against history, target band 3-11%
 
 ### Outbreak
 
@@ -27,8 +27,8 @@ Requirements for prototype release. Each maps to roadmap phases.
 
 ### Stock-out Risk
 
-- [ ] **RISK-01**: System computes days-until-stockout (stock ÷ forecast demand) per hospital/medicine
-- [ ] **RISK-02**: System warns when days-until-stockout is shorter than supplier lead time (e.g. runs out in 10 days, supplier needs 14)
+- [x] **RISK-01**: System computes days-until-stockout (stock ÷ forecast demand) per hospital/medicine
+- [x] **RISK-02**: System warns when days-until-stockout is shorter than supplier lead time (e.g. runs out in 10 days, supplier needs 14)
 
 ### Waste Risk
 
@@ -102,12 +102,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-03 | Phase 1 | Pending |
 | DATA-04 | Phase 1 | Pending |
 | DATA-05 | Phase 1 | Pending |
-| FCAST-01 | Phase 2 | Pending |
-| FCAST-02 | Phase 2 | Pending |
+| FCAST-01 | Phase 2 | Complete |
+| FCAST-02 | Phase 2 | Complete |
 | OUTBK-01 | Phase 2 | Pending |
 | OUTBK-02 | Phase 2 | Pending |
-| RISK-01 | Phase 2 | Pending |
-| RISK-02 | Phase 2 | Pending |
+| RISK-01 | Phase 2 | Complete |
+| RISK-02 | Phase 2 | Complete |
 | WASTE-01 | Phase 2 | Pending |
 | WASTE-02 | Phase 2 | Pending |
 | MOVE-01 | Phase 2 | Pending |
