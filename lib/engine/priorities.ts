@@ -130,6 +130,7 @@ export function rankPriorities(signals: PrioritySignal[]): Priority[] {
   entries.sort(
     (a, b) =>
       b.score - a.score ||
+      b.factors.soonness - a.factors.soonness ||
       a.hospitalId.localeCompare(b.hospitalId) ||
       a.medicine.localeCompare(b.medicine),
   );

@@ -141,4 +141,35 @@ describe('rankPriorities', () => {
       EngineInputError,
     );
   });
+
+  it('breaks tied scores by soonness before hospital/medicine identity (MJ-01, D-13)', () => {
+    // Verifier reproduction: pinned fixtures both scoring exactly 50 —
+    // H-Zed (0d, 0% emergency, 0 load, substitute: 60+0+0-10=50, out now)
+    // vs H-Alp (20d, 60% emergency, 1000 load, no substitute:
+    // 20+15+15+0=50, out in 20d). Soonness must win, not the alphabet.
+    const ranked = rankPriorities([
+      sig({
+        hospitalId: 'H-Alp',
+        medicine: 'DrugX',
+        daysUntilStockout: 20,
+        emergencySharePct: 60,
+        patientLoad: 1000,
+        hasSubstitute: false,
+      }),
+      sig({
+        hospitalId: 'H-Zed',
+        medicine: 'DrugX',
+        daysUntilStockout: 0,
+        emergencySharePct: 0,
+        patientLoad: 0,
+        hasSubstitute: true,
+      }),
+    ]);
+    expect(ranked[0]?.score).toBe(50);
+    expect(ranked[1]?.score).toBe(50);
+    expect(ranked[0]?.factors.soonness).toBeGreaterThan(
+      ranked[1]?.factors.soonness ?? 0,
+    );
+    expect(ranked[0]?.hospitalId).toBe('H-Zed'); // soonness-first, not alphabetical
+  });
 });
