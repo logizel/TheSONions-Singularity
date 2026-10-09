@@ -1,9 +1,12 @@
 // Demo network seed (D-21): ~3 hospitals x 5 medicines x 60 days.
 // Re-runnable: clears Phase-1 tables first (FK order), then inserts.
 // All rows built through lib/contracts.ts row types.
+import { like } from "drizzle-orm";
+
 import {
   dailyUsage,
   hospitals,
+  localEvents,
   medicines,
   stockBatches,
   supplierLeads,
@@ -21,6 +24,7 @@ import type {
   UserRow,
 } from "../lib/contracts";
 import { DEMO_COORDINATES } from "./demo-coordinates";
+import { demoEvents } from "./demo-events";
 
 // Deterministic PRNG (mulberry32) so re-runs produce identical data.
 function rng(seed: number) {
@@ -166,10 +170,15 @@ async function main() {
   }
   await db.insert(supplierLeads).values(leads);
 
+  // Demo local events (EVT-01): only our own seed-ev-* rows are replaced.
+  const events = demoEvents(iso(new Date()));
+  await db.delete(localEvents).where(like(localEvents.id, "seed-ev-%"));
+  await db.insert(localEvents).values(events);
+
   console.log(JSON.stringify({
     hospitals: HOSPITALS.length, medicines: MEDICINES.length, users: USERS.length,
     batches: batches.length, usage: usage.length,
-    transport: transport.length, leads: leads.length,
+    transport: transport.length, leads: leads.length, events: events.length,
     nullGaps: usage.filter((u) => u.usedQty === null).length,
   }));
 }

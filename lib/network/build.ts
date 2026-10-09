@@ -12,11 +12,13 @@
  *  - need: demand over (lead + buffer) days minus stock, for pairs that
  *    stock out before a supplier order can land (RISK-02);
  *  - senders: other hospitals without their own warning for the medicine,
- *    with allocated units deducted so two receivers never share a surplus.
+ *    with allocated units deducted so two receivers never share a surplus;
+ *  - events: rulebook uplift on the chosen forecast (lib/engine/events.ts).
  */
 import type {
   EmergencyOrderSuggestion,
   EngineInput,
+  HospitalEventFlag,
   HospitalMedicineForecast,
   HospitalSummary,
   InventoryEntry,
@@ -29,6 +31,7 @@ import type {
   TransferSuggestion,
   WasteWarning,
 } from '../contracts';
+import { applyEventUplift, eventsAffecting, type AffectingEvent } from '../engine/events';
 import { forecast, mape, networkMean } from '../engine/forecast';
 import { SENDER_BUFFER_DAYS, suggestMoves, type MoveSender } from '../engine/moves';
 import { detectOutbreak, trendForecast } from '../engine/outbreak';
@@ -81,6 +84,8 @@ interface PairState {
   medicineId: string;
   history: number[];
   fc: ForecastDay[];
+  /** Quotable local-event reasons behind any uplift in fc (EVT-03). */
+  eventReasons: string[];
   mode: 'base' | 'trend';
   outbreak: boolean;
   mapePct: number;
@@ -141,15 +146,23 @@ export function buildResults(input: EngineInput, opts: BuildOptions): ResultsJSO
   const leadDays = new Map(input.leads.map((l) => [key(l.hospitalId, l.medicineId), l.leadDays]));
   const transportDays = new Map(input.transport.map((t) => [`${t.fromHospital}>${t.toHospital}`, t.days]));
 
-  // ---- per pair: forecast, outbreak, stock, stock-out, waste ---------------
+  // Forecast day 0 is the day after the last usage row (may precede asOf).
+  const firstForecastDay = dayNumber(window.to) + 1;
+  const forecastStart = isoFromDayNumber(firstForecastDay);
+
+  // ---- per pair: forecast, outbreak, events, stock, stock-out, waste -------
   const pairs = new Map<string, PairState>();
+  const affectingByHospital = new Map<string, AffectingEvent[]>();
   for (const h of hospitals) {
+    const affecting = eventsAffecting(h, input.events ?? [], opts.asOf);
+    affectingByHospital.set(h.id, affecting);
     for (const m of medicines) {
       const k = key(h.id, m.id);
       const history = interpolateGaps(usageSeries.get(k) ?? new Array(HISTORY_DAYS).fill(null));
       const baseline = forecast(history);
       const outbreak = detectOutbreak(history).flagged;
-      const fc = outbreak ? trendForecast(history) : baseline;
+      const selected = outbreak ? trendForecast(history) : baseline;
+      const { fc, reasons: eventReasons } = applyEventUplift(selected, m.category, affecting, forecastStart);
 
       const usable = input.batches
         .filter(
@@ -180,6 +193,7 @@ export function buildResults(input: EngineInput, opts: BuildOptions): ResultsJSO
         medicineId: m.id,
         history,
         fc,
+        eventReasons,
         mode: outbreak ? 'trend' : 'base',
         outbreak,
         mapePct: inSampleMapePct(history, baseline),
@@ -323,6 +337,16 @@ export function buildResults(input: EngineInput, opts: BuildOptions): ResultsJSO
       outbreak: own.some((p) => p.outbreak),
       riskScore: Math.max(0, ...priorities.filter((p) => p.hospitalId === h.id).map((p) => p.score)),
       daysUntilStockout: own.length > 0 ? Math.min(...own.map((p) => p.daysUntilStockout)) : 0,
+      events: (affectingByHospital.get(h.id) ?? []).map(
+        (e): HospitalEventFlag => ({
+          eventId: e.id,
+          type: e.type,
+          severity: e.severity,
+          distanceKm: e.distanceKm,
+          startsOn: e.startsOn,
+          endsOn: e.endsOn,
+        }),
+      ),
     };
   });
 
@@ -347,7 +371,6 @@ export function buildResults(input: EngineInput, opts: BuildOptions): ResultsJSO
     severity: severityOf(p),
   }));
 
-  const firstForecastDay = dayNumber(window.to) + 1;
   const forecasts: HospitalMedicineForecast[] = pairList.map((p) => ({
     hospitalId: p.hospitalId,
     medicineId: p.medicineId,
@@ -359,6 +382,7 @@ export function buildResults(input: EngineInput, opts: BuildOptions): ResultsJSO
     })),
     mapePct: p.mapePct,
     outbreak: p.outbreak,
+    eventReasons: [...p.eventReasons],
   }));
 
   const stockoutWarnings: StockoutWarning[] = pairList

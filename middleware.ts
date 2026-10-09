@@ -137,6 +137,17 @@ export default async function middleware(req: NextRequest): Promise<NextResponse
     return forbidden();
   }
 
+  // EVT-04: local events are readable by every admin; add/end are
+  // network_admin-only (the handlers check again).
+  if (
+    session.role !== "network_admin" &&
+    path.startsWith("/api/events") &&
+    req.method !== "GET" &&
+    req.method !== "HEAD"
+  ) {
+    return forbidden();
+  }
+
   // network_admin: full access, including moves/orders (D-08).
   return NextResponse.next();
 }

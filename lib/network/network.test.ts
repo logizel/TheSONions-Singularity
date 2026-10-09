@@ -4,6 +4,7 @@
  * so these tests pin the wiring, not the engine maths.
  */
 import { describe, expect, it } from 'vitest';
+import type { EngineInput, LocalEventRow } from '../contracts';
 import { forecast } from '../engine/forecast';
 import { stockoutRisk } from '../engine/stockout';
 import { trendForecast } from '../engine/outbreak';
@@ -148,5 +149,73 @@ describe('buildResults', () => {
 
   it('is deterministic for the same input', () => {
     expect(run()).toEqual(run());
+  });
+});
+
+describe('local-event uplift wiring (EVT-03)', () => {
+  const COORDS: Record<string, { latitude: number; longitude: number }> = {
+    'h-a': { latitude: 12.933, longitude: 74.818 }, // ~1 km from the flood
+    'h-b': { latitude: 12.8703, longitude: 74.8436 }, // ~7.7 km: outside
+    'h-c': { latitude: 12.8605, longitude: 74.8835 }, // outside
+  };
+  const flood: LocalEventRow = {
+    id: 'ev-000000000001',
+    type: 'flood',
+    latitude: 12.94,
+    longitude: 74.825,
+    radiusKm: 4,
+    startsOn: '2026-10-08', // forecast day 0 (day after the last usage row)
+    endsOn: '2026-10-22', // forecast day 14
+    severity: 2,
+    source: 'manual',
+    note: null,
+  };
+  const located = (events: LocalEventRow[] = []): EngineInput => {
+    const base = baseInput();
+    return {
+      ...base,
+      hospitals: base.hospitals.map((h) => ({ ...h, ...COORDS[h.id] })),
+      medicines: base.medicines.map((m) => (m.id === 'm-x' ? { ...m, category: 'rehydration' } : m)),
+      events,
+    };
+  };
+  const fcOf = (r: ReturnType<typeof run>, h: string, m: string) =>
+    r.forecasts.find((f) => f.hospitalId === h && f.medicineId === m)!;
+
+  it('no events: identical output, with empty eventReasons and events', () => {
+    const plain = run();
+    expect(run({ ...baseInput(), events: [] })).toEqual(plain);
+    expect(plain.forecasts.every((f) => Array.isArray(f.eventReasons) && f.eventReasons.length === 0)).toBe(true);
+    expect(plain.hospitals.every((h) => Array.isArray(h.events) && h.events.length === 0)).toBe(true);
+  });
+
+  it('a nearby flood multiplies only the covered days and pulls the stock-out earlier', () => {
+    const without = run(located());
+    const withFlood = run(located([flood]));
+    const a0 = fcOf(without, 'h-a', 'm-x');
+    const a1 = fcOf(withFlood, 'h-a', 'm-x');
+    a1.forecast.forEach((d, i) => {
+      const expected = i <= 14 ? Math.round(a0.forecast[i].demand * 1.8 * 10) / 10 : a0.forecast[i].demand;
+      expect(d.demand).toBe(expected);
+      expect(d.advisory).toBe(a0.forecast[i].advisory);
+    });
+    expect(a1.eventReasons).toHaveLength(1);
+    expect(a1.eventReasons![0]).toMatch(/^\+80% rehydration demand: Flood, \d+(\.\d)? km away, until 2026-10-22$/);
+    expect(inv(withFlood, 'h-a', 'm-x').daysUntilStockout).toBeLessThan(inv(without, 'h-a', 'm-x').daysUntilStockout);
+    const ha = withFlood.hospitals.find((h) => h.hospitalId === 'h-a')!;
+    expect(ha.events).toHaveLength(1);
+    expect(ha.events![0]).toMatchObject({ eventId: flood.id, type: 'flood', severity: 2 });
+    // Outside the radius: unchanged.
+    for (const h of ['h-b', 'h-c']) {
+      expect(fcOf(withFlood, h, 'm-x')).toEqual(fcOf(without, h, 'm-x'));
+      expect(withFlood.hospitals.find((x) => x.hospitalId === h)!.events).toEqual([]);
+    }
+    // Non-rehydration medicine at h-a: unchanged.
+    expect(fcOf(withFlood, 'h-a', 'm-y')).toEqual(fcOf(without, 'h-a', 'm-y'));
+  });
+
+  it('an ended event changes nothing', () => {
+    const ended = { ...flood, startsOn: '2026-09-20', endsOn: '2026-10-08' };
+    expect(run(located([ended]))).toEqual(run(located()));
   });
 });

@@ -193,3 +193,36 @@ export const stockMovements = pgTable("stock_movements", {
   created: boolean("created").notNull().default(false),
   at: timestamp("at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
 }, (t) => [index("stock_movements_order_idx").on(t.orderId)]);
+
+// ---- Local events (EVT-01) -----------------------------------------------------
+
+// Floods, heat waves, epidemics, ... near hospitals. Aggregate geo + dates
+// only, no PHI. Rows are never deleted: ending an event sets ends_on, so the
+// history of what moved a forecast stays auditable. source = 'feed' is
+// reserved for future auto feeds; only 'manual' is written today.
+export const localEvents = pgTable("local_events", {
+  id: text("id").primaryKey(),
+  type: text("type").notNull(),
+  latitude: doublePrecision("latitude").notNull(),
+  longitude: doublePrecision("longitude").notNull(),
+  radiusKm: doublePrecision("radius_km").notNull(),
+  startsOn: date("starts_on").notNull(),
+  endsOn: date("ends_on").notNull(),
+  severity: integer("severity").notNull(),
+  source: text("source").notNull().default("manual"),
+  note: text("note"),
+}, (t) => [
+  index("local_events_ends_on_idx").on(t.endsOn),
+  check(
+    "local_events_type_check",
+    sql`${t.type} in ('flood','heatwave','cyclone','earthquake','epidemic','festival','other')`,
+  ),
+  check("local_events_source_check", sql`${t.source} in ('manual','feed')`),
+  check("local_events_severity_check", sql`${t.severity} between 1 and 3`),
+  check("local_events_radius_check", sql`${t.radiusKm} > 0 and ${t.radiusKm} <= 200`),
+  check("local_events_dates_check", sql`${t.endsOn} >= ${t.startsOn}`),
+  check(
+    "local_events_latlng_check",
+    sql`${t.latitude} between -90 and 90 and ${t.longitude} between -180 and 180`,
+  ),
+]);
