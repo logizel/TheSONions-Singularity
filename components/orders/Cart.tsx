@@ -12,7 +12,6 @@ import { useDash } from "../dashboard/context";
 import rows from "../dashboard/rows.module.css";
 import { SheetHeader } from "../dashboard/SheetHeader";
 import { LocalTime } from "../ui/LocalTime";
-import { DecisionBriefBlock } from "./DecisionBrief";
 import { ChecksDisclosure, OrderStatusTag, days } from "./OrderBits";
 import styles from "./orders.module.css";
 import { SupplierTimeline } from "./SupplierTimeline";
@@ -155,12 +154,7 @@ export function Cart({
                           : "Road: loading route"}
                     </span>
                   </div>
-                  <DecisionBriefBlock
-                    input={{ kind: "transfer", fromHospital: t.fromHospital, toHospital: t.toHospital, medicineId: t.medicineId, qty: t.qty, arriveDays: t.transportDays }}
-                    status={status}
-                    testId={`brief-${key}`}
-                  />
-                  <ChecksDisclosure checks={t.checksPassed} defaultOpen />
+                  <ChecksDisclosure checks={t.checksPassed} />
                   <div className={styles.lineActions}>
                     {match ? (
                       <>
@@ -220,10 +214,6 @@ export function Cart({
               </span>
               <span className={rows.caption}>{o.reason}</span>
               <SupplierTimeline order={o} />
-              <DecisionBriefBlock
-                input={{ kind: "supplier", toHospital: o.hospitalId, medicineId: o.medicineId, qty: o.qty, arriveDays: o.leadDays }}
-                testId={`brief-supplier-${o.hospitalId}-${o.medicineId}`}
-              />
             </li>
           ))}
         </ul>
