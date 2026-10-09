@@ -12,7 +12,7 @@ const body = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "600"], variabl
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Sanjeevni",
+  title: "Sanjeevini",
   description: "Network stock balancer: stock-outs, waste, transfers and priorities on one map.",
 };
 

@@ -1,4 +1,4 @@
-# Sanjeevni (TheSONions-Singularity)
+# Sanjeevini (TheSONions-Singularity)
 
 ## What This Is
 

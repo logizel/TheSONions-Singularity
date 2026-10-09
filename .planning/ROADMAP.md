@@ -1,4 +1,4 @@
-# Roadmap: Sanjeevni (TheSONions-Singularity)
+# Roadmap: Sanjeevini (TheSONions-Singularity)
 
 ## Overview
 

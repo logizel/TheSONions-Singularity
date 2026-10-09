@@ -1,7 +1,7 @@
 {
-  "name": "sanjeevni",
+  "name": "sanjeevini",
   "version": "1.0.0",
-  "description": "Sanjeevni: hospital network stock balancer",
+  "description": "Sanjeevini: hospital network stock balancer",
   "private": true,
   "type": "module",
   "scripts": {

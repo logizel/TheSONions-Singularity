@@ -1,4 +1,4 @@
-# Requirements: Sanjeevni (TheSONions-Singularity)
+# Requirements: Sanjeevini (TheSONions-Singularity)
 
 **Defined:** 2026-10-08
 **Core Value:** Administrator knows before it happens who runs out, what wastes, and which transfer or order fixes it.

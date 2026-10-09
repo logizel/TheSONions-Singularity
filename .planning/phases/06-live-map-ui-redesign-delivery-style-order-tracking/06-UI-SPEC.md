@@ -280,8 +280,8 @@ The app sets four CSS variables on the map wrapper from the current layout: `--m
 
 | Breakpoint | Left | Right |
 |------------|------|-------|
-| ≥768 | Title `Sanjeevni` (Heading role) on line 1. Line 2 (Caption, ink-2): `header-timestamp` text + source tag `LIVE` (ink outline) or `SNAPSHOT` | View toggle `Map` / `List` (segmented, ink outline, `aria-pressed`) · Role switcher · `Refresh` (ink outline button, refresh glyph + text) |
-| XS | Title `Sanjeevni` (Heading role) on line 1; timestamp (Caption) on line 2 | `Refresh` icon button (44px, `aria-label="Refresh results"`) · `Menu` icon button (44px, `aria-label="Menu"`). The menu holds the View toggle and the Role switcher |
+| ≥768 | Title `Sanjeevini` (Heading role) on line 1. Line 2 (Caption, ink-2): `header-timestamp` text + source tag `LIVE` (ink outline) or `SNAPSHOT` | View toggle `Map` / `List` (segmented, ink outline, `aria-pressed`) · Role switcher · `Refresh` (ink outline button, refresh glyph + text) |
+| XS | Title `Sanjeevini` (Heading role) on line 1; timestamp (Caption) on line 2 | `Refresh` icon button (44px, `aria-label="Refresh results"`) · `Menu` icon button (44px, `aria-label="Menu"`). The menu holds the View toggle and the Role switcher |
 
 ### Network panel (the 6 data sections) — `data-testid="dashboard-grid"`
 
@@ -468,7 +468,7 @@ Voice: terse, operational, real units, sentence case, no exclamation marks, no "
 | Primary CTA (06-03) | `Accept transfer` · bulk: `Accept all ({n})` |
 | Primary CTA (sign-in) | `Sign in` |
 | Secondary CTAs | `Refresh` · `Review transfers ({n})` · `Track` · `Mark packed` · `Dispatch` · `Mark delivered` · `Retry` · `Retry live` · `Clear` · `Back to network` · `Back` · `Close` · `Show {n} OK positions` · `Show all {n} forecasts` · `Expand` / `Collapse` · `Key` |
-| App title | `Sanjeevni` (all breakpoints) |
+| App title | `Sanjeevini` (all breakpoints) |
 | Timestamp (`header-timestamp`) | `Updated just now` / `Updated {m} min ago` / `Updated 1 hour ago` / `Updated {h} hours ago` + `· as of {asOf date}`. Title attribute: `Generated {date} {time}` |
 | Source tag | `LIVE` / `SNAPSHOT` |
 | Role switcher trigger (`role-switcher`) | `Role: Network admin` / `Role: Hospital admin, {hospital}` ▾. Menu heading `Demo role`. Options: `Network admin`, `Hospital admin, {hospital}` ×3 |
