@@ -17,6 +17,7 @@ import rows from "../dashboard/rows.module.css";
 import { SheetHeader } from "../dashboard/SheetHeader";
 import { LocalTime } from "../ui/LocalTime";
 import { Tag } from "../ui/Tag";
+import { DecisionBriefBlock } from "./DecisionBrief";
 import { OrderStatusTag, days } from "./OrderBits";
 import styles from "./orders.module.css";
 import { Stepper } from "./Stepper";
@@ -123,6 +124,22 @@ export function Tracking(p: TrackingProps) {
         <span>Status</span>
       </h3>
       <Stepper order={order} />
+
+      <h3 className={`${rows.subhead} ${rows.label}`}>
+        <span>Decision brief</span>
+      </h3>
+      <div className={styles.briefWrap}>
+        {order.lines.map((l) => (
+          <div key={l.id}>
+            {order.lines.length > 1 ? <p className={rows.strong}>{medName(l.medicineId)}</p> : null}
+            <DecisionBriefBlock
+              input={{ kind: "transfer", fromHospital: order.fromHospital, toHospital: order.toHospital, medicineId: l.medicineId, qty: l.qty, arriveDays: order.transportDays }}
+              status={order.status}
+              testId={`brief-${order.id}-${l.medicineId}`}
+            />
+          </div>
+        ))}
+      </div>
 
       {order.status !== "cancelled" && order.status !== "delivered" ? (
         <div className={styles.clock} data-testid="sim-speed">

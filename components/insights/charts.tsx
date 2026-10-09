@@ -6,7 +6,7 @@
  * in text tokens, status colours only with glyph + label, hover tooltip on
  * every plot, and a visually-hidden sentence plus a table view per chart.
  */
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { Severity } from "@/lib/contracts";
 import type { HistoryPoint, RunDownPoint } from "@/lib/insights/view";
@@ -181,16 +181,22 @@ export function DemandChart({
   asOf,
   advisoryFromDay,
   unit,
+  pastLabel = "Last 60 days",
+  height = 240,
 }: {
   history: HistoryPoint[];
   forecast: { date: string; demand: number; advisory: boolean }[];
   asOf: string;
   advisoryFromDay: number;
   unit: string;
+  /** Axis text over the history part. */
+  pastLabel?: string;
+  height?: number;
 }) {
   const { ref, width } = useWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
-  const H = 240;
+  const hatchId = `dm-hatch-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  const H = height;
   const pad = { l: 44, r: 12, t: 16, b: 30 };
   const nH = history.length;
   const pts = [
@@ -223,12 +229,12 @@ export function DemandChart({
         onPointerLeave={() => setHover(null)}
       >
         <defs>
-          <pattern id="dm-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <pattern id={hatchId} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <line x1="0" y1="0" x2="0" y2="6" stroke="var(--color-rule-strong)" strokeWidth="1" />
           </pattern>
         </defs>
         {forecast.length ? (
-          <rect x={X(advStart)} y={pad.t} width={X(n - 1) - X(advStart)} height={H - pad.t - pad.b} fill="url(#dm-hatch)" />
+          <rect x={X(advStart)} y={pad.t} width={X(n - 1) - X(advStart)} height={H - pad.t - pad.b} fill={`url(#${hatchId})`} />
         ) : null}
         {ticks(yMax).map((t) => (
           <g key={t}>
@@ -240,7 +246,7 @@ export function DemandChart({
         ))}
         <line x1={todayX} x2={todayX} y1={pad.t - 6} y2={H - pad.b} className={styles.today} />
         <text x={todayX - 4} y={pad.t - 4} className={styles.axis} textAnchor="end">
-          Last 60 days
+          {pastLabel}
         </text>
         <text x={todayX + 4} y={pad.t - 4} className={styles.axis}>
           Next 30 days

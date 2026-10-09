@@ -16,8 +16,8 @@ export function OrderStatusTag({ status }: { status: OrderStatus | "suggested" }
 }
 
 /** "{k} checks passed" disclosure listing checksPassed verbatim. */
-export function ChecksDisclosure({ checks }: { checks: readonly string[] }) {
-  const [open, setOpen] = useState(false);
+export function ChecksDisclosure({ checks, defaultOpen = false }: { checks: readonly string[]; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   const id = useId();
   return (
     <div>
