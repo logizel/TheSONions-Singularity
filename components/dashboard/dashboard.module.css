@@ -501,31 +501,6 @@
   font-weight: 600;
 }
 
-/* ---- skeleton (static) ------------------------------------------------------------ */
-
-.skeletonBoard {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--color-rule-strong);
-}
-
-.skeletonBoard span {
-  height: 56px;
-  background: var(--color-sunk);
-}
-
-.skeletonRows {
-  display: grid;
-  gap: var(--space-3);
-  padding: var(--space-4);
-}
-
-.skeletonRows span {
-  height: 28px;
-  background: var(--color-sunk);
-}
-
 .liveRegion {
   position: fixed;
   z-index: var(--z-toast);

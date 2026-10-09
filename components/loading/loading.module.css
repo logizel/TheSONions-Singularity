@@ -1,0 +1,307 @@
+/*
+ * Loading screen motion (06-UI-SPEC tokens). Resting state of every element
+ * is its finished, still pose; the keyframes only describe how it gets
+ * there, so prefers-reduced-motion (animation: none) shows the calm scene.
+ */
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6) var(--space-4);
+  background: var(--color-paper);
+  overflow: auto;
+}
+
+.stage {
+  width: min(420px, 100%);
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+}
+
+.scene {
+  width: min(360px, 100%);
+  height: auto;
+  overflow: hidden;
+}
+
+.route {
+  width: min(360px, 100%);
+  height: auto;
+  overflow: visible;
+}
+
+.contours ellipse {
+  stroke: var(--color-rule-strong);
+  stroke-width: 1;
+}
+
+/* ---- the herb grows ------------------------------------------------------- */
+
+.stem,
+.branch1,
+.branch2,
+.branch3,
+.branch4 {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.stem {
+  animation: draw 1.1s var(--ease-out) 0.2s both;
+}
+
+.branch1 {
+  animation: draw 0.45s var(--ease-out) 0.85s both;
+}
+
+.branch2 {
+  animation: draw 0.45s var(--ease-out) 1s both;
+}
+
+.branch3 {
+  animation: draw 0.4s var(--ease-out) 1.15s both;
+}
+
+.branch4 {
+  animation: draw 0.4s var(--ease-out) 1.3s both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.leaf {
+  animation: unfurl 0.5s var(--ease-out) both;
+}
+
+.l1 {
+  animation-delay: 1.3s;
+}
+
+.l2 {
+  animation-delay: 1.35s;
+}
+
+.l3 {
+  animation-delay: 1.5s;
+}
+
+.l4 {
+  animation-delay: 1.6s;
+}
+
+.l5 {
+  animation-delay: 1.75s;
+}
+
+@keyframes unfurl {
+  from {
+    transform: scale(0);
+  }
+}
+
+/* A ring leaves the herb tip every few seconds, like the outbreak marker. */
+.pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: ring 2.6s ease-out 2.3s infinite;
+}
+
+@keyframes ring {
+  from {
+    transform: scale(0.7);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* ---- the herb is carried to the hospital that needs it (4.8 s loop) --------- */
+
+.carry {
+  transform: translateX(108px);
+  animation: carry 4.8s ease-in-out infinite;
+}
+
+@keyframes carry {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  6% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  60% {
+    transform: translateX(212px);
+    opacity: 1;
+  }
+  64% {
+    transform: translateX(212px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
+
+.needs {
+  animation: needs 4.8s linear infinite;
+}
+
+.covered {
+  opacity: 0;
+  animation: covered 4.8s linear infinite;
+}
+
+@keyframes needs {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  66%,
+  92% {
+    opacity: 0;
+  }
+  98%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes covered {
+  0%,
+  60% {
+    opacity: 0;
+  }
+  66%,
+  92% {
+    opacity: 1;
+  }
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---- words ----------------------------------------------------------------------- */
+
+.words {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: center;
+  text-align: center;
+  animation: rise 0.7s var(--ease-out) 0.1s both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.wordmark {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 85%;
+  font-size: var(--text-40);
+  line-height: var(--leading-40);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.deva {
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  color: var(--color-accent);
+}
+
+.meaning {
+  margin-top: var(--space-1);
+  color: var(--color-ink-2);
+}
+
+.story {
+  max-width: 40ch;
+  margin-top: var(--space-2);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-3);
+}
+
+/* ---- status ---------------------------------------------------------------------------- */
+
+.status {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  margin-top: var(--space-2);
+}
+
+.statusLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-2);
+}
+
+.track {
+  position: relative;
+  width: 128px;
+  height: 2px;
+  overflow: hidden;
+  background: var(--color-rule-strong);
+}
+
+.bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: var(--color-accent);
+  animation: slide 1.5s ease-in-out infinite;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stem,
+  .branch1,
+  .branch2,
+  .branch3,
+  .branch4,
+  .leaf,
+  .pulse,
+  .carry,
+  .needs,
+  .covered,
+  .words,
+  .bar {
+    animation: none;
+  }
+
+  /* One calm frame: herb grown, leaf mid-route, the hospital still needs stock. */
+  .bar {
+    width: 100%;
+  }
+}
