@@ -264,8 +264,7 @@ export function DemandChart({
             <circle key={p.i} cx={X(p.i)} cy={Y(p.v)} r={4} className={styles.filledDot} />
           ))}
         {[0, nH - 1, n - 1]
-          // Short history (e.g. 7 days in the order brief): drop the first date when it would collide with today's.
-          .filter((i, k, a) => i >= 0 && a.indexOf(i) === k && pts[i] && !(i === 0 && nH > 1 && X(nH - 1) - X(0) < 110))
+          .filter((i, k, a) => i >= 0 && a.indexOf(i) === k && pts[i])
           .map((i) => (
             <text key={i} x={X(i)} y={H - 10} className={styles.axis} textAnchor={i === 0 ? "start" : i === n - 1 ? "end" : "middle"}>
               {niceDate(pts[i].date)}

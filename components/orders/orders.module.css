@@ -272,23 +272,15 @@
 }
 
 /* Order decision brief (receiver | sender, without/with, demand chart). */
-/* min-width: 0 keeps the chart (measured width) from widening the sheet. */
 .brief {
   display: grid;
   gap: var(--space-1);
-  min-width: 0;
 }
 
 .briefBody {
   display: grid;
   gap: var(--space-2);
-  min-width: 0;
   padding: var(--space-2) 0 var(--space-1);
-}
-
-.briefItem,
-.briefChart {
-  min-width: 0;
 }
 
 .briefGrid {
@@ -299,7 +291,6 @@
 
 .briefCol {
   display: grid;
-  min-width: 0;
   align-content: start;
   gap: var(--space-1);
   padding: var(--space-2);

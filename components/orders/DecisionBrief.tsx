@@ -171,7 +171,7 @@ export function DecisionBriefBlock({ input, status, testId }: { input: BriefInpu
                 </div>
               )}
 
-              <div className={styles.briefChart} data-testid="brief-chart">
+              <div data-testid="brief-chart">
                 <DemandChart
                   history={rc.trend}
                   forecast={rc.forecast}
