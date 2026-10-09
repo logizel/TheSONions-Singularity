@@ -130,7 +130,7 @@ export function Tracking(p: TrackingProps) {
       </h3>
       <div className={styles.briefWrap}>
         {order.lines.map((l) => (
-          <div key={l.id}>
+          <div key={l.id} className={styles.briefItem}>
             {order.lines.length > 1 ? <p className={rows.strong}>{medName(l.medicineId)}</p> : null}
             <DecisionBriefBlock
               input={{ kind: "transfer", fromHospital: order.fromHospital, toHospital: order.toHospital, medicineId: l.medicineId, qty: l.qty, arriveDays: order.transportDays }}
