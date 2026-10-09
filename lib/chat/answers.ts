@@ -143,7 +143,45 @@ function makeAnswerer(r: ResultsJSON) {
     return { text, allowed: citedAllowSet(worst.daysUntilStockout, r.advisory.fromDay, r.advisory.toDay) };
   }
 
-  return { known, mostAtRisk, waste, transfers, stockoutTiming };
+  /**
+   * EVT-05: quote an engine-emitted event reason verbatim (no arithmetic).
+   * Narrowed to the scope hospital and, when the question names one, to a
+   * medicine. The allow-set is built from the reason string itself.
+   */
+  function eventReasons(scope: string | null, question: string): CitedAnswer {
+    const none: CitedAnswer = { text: 'No local events are raising forecast demand right now.', allowed: new Set() };
+    let pool = r.forecasts.filter(
+      (f) => (f.eventReasons?.length ?? 0) > 0 && (scope === null || f.hospitalId === scope),
+    );
+    const named = r.medicines.filter((m) => {
+      const name = m.medicineName.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return name.length > 0 && new RegExp(`(^|[^a-z0-9])${name}([^a-z0-9]|$)`).test(question);
+    });
+    if (named.length > 0) {
+      const ids = new Set(named.map((m) => m.medicineId));
+      pool = pool.filter((f) => ids.has(f.medicineId));
+    }
+    const first = [...pool].sort((a, b) =>
+      a.hospitalId === b.hospitalId
+        ? a.medicineId.localeCompare(b.medicineId)
+        : a.hospitalId.localeCompare(b.hospitalId),
+    )[0];
+    const reason = first?.eventReasons?.[0];
+    if (!first || !reason) return none;
+    return {
+      text: `${mName(first.medicineId)} demand at ${hName(first.hospitalId)} is expected to rise: ${reason}.`,
+      allowed: citedAllowSet(reason),
+    };
+  }
+
+  return { known, mostAtRisk, waste, transfers, stockoutTiming, eventReasons };
+}
+
+/** Questions about local events / demand rises route to the event answer (EVT-05). */
+const EVENT_WORDS = ['event', 'flood', 'heat', 'cyclone', 'earthquake', 'epidemic', 'festival', 'demand up', 'demand rising'];
+
+function asksAboutEvents(q: string): boolean {
+  return EVENT_WORDS.some((w) => q.includes(w)) || (q.includes('why is') && q.includes('demand'));
 }
 
 /** Single-shot answer; `results` null (not loaded) always falls back. */
@@ -165,6 +203,7 @@ export function answerQuestion(
   if (q === RISK_CHIPS[1].toLowerCase()) return done(a.waste(scope));
   if (q === RISK_CHIPS[2].toLowerCase()) return done(a.transfers(scope));
 
+  if (asksAboutEvents(q)) return done(a.eventReasons(scope, q));
   if (q.includes('expir') || q.includes('unused') || q.includes('waste')) return done(a.waste(scope));
   if (
     q.includes('transfer') ||

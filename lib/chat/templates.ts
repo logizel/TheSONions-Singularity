@@ -30,7 +30,7 @@ function candidateRows(view: QuoteView): Record<string, unknown>[] {
   const r = asRecord(view);
   if (r === null) return [];
   const rows: Record<string, unknown>[] = [];
-  for (const key of ["hospitals", "stockouts", "waste", "wastes", "expiry", "transfers", "moves", "orders"]) {
+  for (const key of ["hospitals", "stockouts", "waste", "wastes", "expiry", "transfers", "moves", "orders", "events"]) {
     const v = r[key];
     if (Array.isArray(v)) {
       for (const item of v) {
@@ -136,6 +136,19 @@ export function fillTemplate(
     const sender = str(hit.senderHospital) ?? str(hit.sender);
     const receiver = str(hit.receiverHospital) ?? str(hit.receiver);
     return `Transfer ${hit.transferUnits} units of ${hit.medicineName} from ${sender} to ${receiver} because ${hit.reason}.`;
+  }
+
+  if (intent === "event-reasons") {
+    const hit = rows.find(
+      (r) =>
+        str(r.eventReason) !== undefined &&
+        str(r.hospitalName) !== undefined &&
+        str(r.medicineName) !== undefined &&
+        matchesParam(r, p.hospitalName, ["hospitalName"]) &&
+        matchesParam(r, p.medicineName, ["medicineName"]),
+    );
+    if (!hit) return REJECTION_SENTENCE;
+    return `Demand for ${hit.medicineName} at ${hit.hospitalName} is expected to rise: ${hit.eventReason}.`;
   }
 
   return REJECTION_SENTENCE;

@@ -54,6 +54,35 @@ describe('answerQuestion', () => {
   });
 });
 
+describe('event reasons (EVT-05: quote-only)', () => {
+  const REASON = '+80% rehydration demand: Flood, 1.2 km away, until 2026-10-23';
+  const withEvent: ResultsJSON = {
+    ...results,
+    forecasts: results.forecasts.map((f) =>
+      f.hospitalId === 'h-a' && f.medicineId === 'm-x' ? { ...f, eventReasons: [REASON] } : { ...f, eventReasons: [] },
+    ),
+  };
+
+  it('quotes the reason verbatim and passes both gates', () => {
+    const { text } = answerQuestion('Why is Xamol demand up?', 'h-a', withEvent);
+    expect(text).toBe(`Xamol demand at Alpha General is expected to rise: ${REASON}.`);
+    expect(validateAnswer(text, withEvent)).toBe(true);
+    expect(passesQuoteCheck(text, new Set(['80', '1.2', '2026-10-23']))).toBe(true);
+  });
+
+  it('routes flood / event questions without a medicine name', () => {
+    expect(answerQuestion('Any flood nearby?', null, withEvent).text).toContain(REASON);
+    expect(answerQuestion('Which events affect demand?', 'h-a', withEvent).text).toContain(REASON);
+  });
+
+  it('says so plainly when no event raises demand (no numbers)', () => {
+    const none = 'No local events are raising forecast demand right now.';
+    expect(answerQuestion('Why is Xamol demand up?', 'h-a', results).text).toBe(none);
+    expect(answerQuestion('Why is Xamol demand up?', 'h-b', withEvent).text).toBe(none);
+    expect(answerQuestion('Why is Yorin demand up?', 'h-a', withEvent).text).toBe(none);
+  });
+});
+
 describe('passesQuoteCheck', () => {
   it('rejects numbers outside the cited rows and accepts dosage fragments', () => {
     expect(passesQuoteCheck('Send 240 units', new Set(['240']))).toBe(true);

@@ -8,7 +8,7 @@ interface IntentDef {
   keywords: string[];
 }
 
-// All 4 intents per D-09. Hospitals/medicines are matched by scanning the
+// The 4 D-09 intents plus event-reasons (EVT-05). Hospitals/medicines are matched by scanning the
 // ResultsJSON-free question text for quoted or capitalized names; extraction
 // is best-effort entity capture only — matching stays keyword-scored.
 const INTENT_DEFS: IntentDef[] = [
@@ -27,6 +27,10 @@ const INTENT_DEFS: IntentDef[] = [
   {
     intent: "transfer-reasons",
     keywords: ["transfer", "move", "send", "why.*transfer", "reason"],
+  },
+  {
+    intent: "event-reasons",
+    keywords: ["event", "flood", "heat wave", "heatwave", "cyclone", "earthquake", "epidemic", "demand up"],
   },
 ];
 

@@ -67,6 +67,40 @@ export interface SupplierLeadRow {
   leadDays: number;
 }
 
+export const LOCAL_EVENT_TYPES = [
+  "flood",
+  "heatwave",
+  "cyclone",
+  "earthquake",
+  "epidemic",
+  "festival",
+  "other",
+] as const;
+
+export type LocalEventType = (typeof LOCAL_EVENT_TYPES)[number];
+
+/** manual = added by the network admin; feed = reserved for future auto feeds. */
+export type LocalEventSource = "manual" | "feed";
+
+/** A local event near hospitals (EVT-01). Aggregate geo + dates only, no PHI. */
+export interface LocalEventRow {
+  id: string;
+  type: LocalEventType;
+  /** WGS84 decimal degrees of the event centre. */
+  latitude: number;
+  longitude: number;
+  /** Radius around the centre, km (0, 200]. */
+  radiusKm: number;
+  /** ISO date (YYYY-MM-DD), inclusive. */
+  startsOn: string;
+  /** ISO date (YYYY-MM-DD), inclusive. Ending an event sets this. */
+  endsOn: string;
+  /** 1 minor, 2 moderate, 3 severe. */
+  severity: number;
+  source: LocalEventSource;
+  note: string | null;
+}
+
 // ---- Engine input (what Phase 2 consumes) -----------------------------------
 
 export interface EngineInput {
@@ -76,6 +110,8 @@ export interface EngineInput {
   usage: DailyUsageRow[];
   transport: TransportRow[];
   leads: SupplierLeadRow[];
+  /** Local events (EVT-03). Optional so older fixtures still compile. */
+  events?: LocalEventRow[];
 }
 
 // ---- Engine output (ResultsJSON v2, Phase 6) ---------------------------------
@@ -103,6 +139,23 @@ export interface HospitalMedicineForecast {
   /** In-sample MAPE over the last 30 history days, percent (1 decimal). */
   mapePct: number;
   outbreak: boolean;
+  /**
+   * Engine-emitted, quotable reasons for any local-event uplift on this
+   * forecast, e.g. "+80% rehydration demand: Flood, 1.2 km away, until
+   * 2026-10-23". Empty/absent = no event uplift.
+   */
+  eventReasons?: string[];
+}
+
+/** A local event reaching a hospital (engine-emitted, quotable). */
+export interface HospitalEventFlag {
+  eventId: string;
+  type: LocalEventType;
+  severity: number;
+  /** Hospital-to-event-centre distance, km (1 decimal). */
+  distanceKm: number;
+  startsOn: string;
+  endsOn: string;
 }
 
 /** Per-hospital header numbers. */
@@ -119,6 +172,8 @@ export interface HospitalSummary {
   riskScore: number;
   /** Lowest days-until-stockout among this hospital's medicines. */
   daysUntilStockout: number;
+  /** Engine-emitted local events reaching this hospital (EVT-03). */
+  events?: HospitalEventFlag[];
 }
 
 export interface MedicineSummary {

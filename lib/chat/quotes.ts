@@ -9,6 +9,8 @@ export interface QuoteView {
   stockouts: Record<string, unknown>[];
   waste: Record<string, unknown>[];
   transfers: Record<string, unknown>[];
+  /** EVT-05: one row per engine-emitted event reason, copied verbatim. */
+  events: Record<string, unknown>[];
 }
 
 function comparison(a: number, b: number): string {
@@ -59,5 +61,12 @@ export function quoteView(results: ResultsJSON): QuoteView {
         .map(lowerFirst)
         .join(", and "),
     })),
+    events: results.forecasts.flatMap((f) =>
+      (f.eventReasons ?? []).map((eventReason) => ({
+        hospitalName: hName(f.hospitalId),
+        medicineName: mName(f.medicineId),
+        eventReason,
+      })),
+    ),
   };
 }
