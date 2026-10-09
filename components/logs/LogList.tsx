@@ -20,6 +20,9 @@ const TONE: Record<LogEntry["action"], TagTone> = {
   demo_reset: "ink",
   event_added: "accent",
   event_ended: "dashed",
+  stock_added: "accent",
+  stock_removed: "dashed",
+  usage_recorded: "outline",
 };
 
 export function LogList({ logs, testId }: { logs: LogEntry[]; testId?: string }) {
