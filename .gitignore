@@ -28,3 +28,6 @@ npm-debug.log*
 # OS / editor
 .DS_Store
 *.swp
+
+# Browser verification artifacts (playwright MCP)
+.playwright-mcp/
