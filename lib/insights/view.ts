@@ -45,6 +45,8 @@ export interface MedicineInsight {
   mapePct: number | null;
   mode: 'base' | 'trend' | null;
   outbreak: boolean;
+  /** Engine-emitted local-event reasons, quoted verbatim (EVT-04). */
+  eventReasons: string[];
   runDown: RunDownPoint[];
   transfersIn: TransferSuggestion[];
   transfersOut: TransferSuggestion[];
@@ -125,6 +127,7 @@ export function buildHospitalInsight(
         mapePct: fc?.mapePct ?? null,
         mode: fc?.mode ?? null,
         outbreak: fc?.outbreak ?? false,
+        eventReasons: fc?.eventReasons ?? [],
         runDown: [],
         transfersIn: r.transfers.filter((t) => t.toHospital === hospitalId && t.medicineId === e.medicineId),
         transfersOut: r.transfers.filter((t) => t.fromHospital === hospitalId && t.medicineId === e.medicineId),

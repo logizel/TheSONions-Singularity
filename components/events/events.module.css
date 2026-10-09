@@ -1,0 +1,37 @@
+/* Layout only (EVT-04): everything else reuses rows/logs module classes. */
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.field {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+@media (max-width: 479px) {
+  .form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

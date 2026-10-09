@@ -4,7 +4,8 @@
  * beyond picking/ordering engine numbers; formatting never changes a value
  * except for display rounding stated in each formatter.
  */
-import type { HospitalSummary, InventoryEntry, ResultsJSON, Severity } from '../contracts';
+import type { HospitalEventFlag, HospitalSummary, InventoryEntry, ResultsJSON, Severity } from '../contracts';
+import { EVENT_LABEL } from '../engine/events';
 import type { HospitalLocation } from '../hospital-locations/types';
 
 /** Map/legend risk scale: critical (cover < lead), low (< lead + buffer), ok. */
@@ -42,6 +43,8 @@ export interface MapHospital extends HospitalLocation {
   risk: RiskLevel;
   worst: InventoryEntry | null;
   outbreak: boolean;
+  /** Engine-emitted local events reaching this hospital (EVT-04 badge). */
+  events: HospitalEventFlag[];
   /** Screen-reader label, e.g. "City Civil Hospital, critical: Paracetamol 10 days cover". */
   label: string;
 }
@@ -62,6 +65,8 @@ export function joinMapHospitals(locations: readonly HospitalLocation[], results
     const summary = results.hospitals.find((h) => h.hospitalId === loc.id) ?? null;
     const { level, worst } = hospitalRisk(results, loc.id);
     const outbreak = summary?.outbreak ?? false;
+    const events = summary?.events ?? [];
+    const eventWords = events.map((e) => `, ${EVENT_LABEL[e.type].toLowerCase()} nearby`).join('');
     const detail = worst ? `: ${medicineName(results, worst.medicineId)} ${fmtDays(worst.daysUntilStockout)} cover` : '';
     return {
       ...loc,
@@ -69,7 +74,8 @@ export function joinMapHospitals(locations: readonly HospitalLocation[], results
       risk: level,
       worst,
       outbreak,
-      label: `${loc.name}, ${RISK_WORD[level]}${detail}${outbreak ? ', outbreak' : ''}`,
+      events,
+      label: `${loc.name}, ${RISK_WORD[level]}${detail}${outbreak ? ', outbreak' : ''}${eventWords}`,
     };
   });
 }

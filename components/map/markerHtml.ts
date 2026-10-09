@@ -1,4 +1,5 @@
 import type { MapHospital } from "@/lib/dashboard/view";
+import { EVENT_LABEL } from "@/lib/engine/events";
 import { colors, risk } from "@/theme/tokens";
 
 // Marker markup for L.divIcon (06-UI-SPEC Map Contract). A 44x44 hit box,
@@ -32,8 +33,15 @@ function glyphSvg(level: MapHospital["risk"]): string {
 export function markerHtml(h: MapHospital, cls: Record<string, string>): string {
   const ring = `<svg class="${cls.selRing}" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18.5" fill="none" stroke="${colors.surface}" stroke-width="2"/><circle cx="22" cy="22" r="20" fill="none" stroke="${colors.accent}" stroke-width="3"/></svg>`;
   const pulse = h.outbreak ? `<span class="${cls.pulse}" aria-hidden="true"></span>` : "";
-  const tag = `${esc(h.name)}${h.outbreak ? " · OUTBREAK" : ""}`;
-  return `${pulse}${ring}<svg class="${cls.glyph}" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">${glyphSvg(h.risk)}</svg><span class="${cls.nameTag}" aria-hidden="true">${tag}</span>`;
+  const first = h.events[0];
+  const eventTag = first ? ` · ${esc(EVENT_LABEL[first.type].toUpperCase())}` : "";
+  const tag = `${esc(h.name)}${h.outbreak ? " · OUTBREAK" : ""}${eventTag}`;
+  // EVT-04: local-event badge in the top-right corner, outside the glyph and
+  // click-through (pointer-events: none) so the 44x44 hit box is unchanged.
+  const badge = first
+    ? `<span class="${cls.eventBadge}" data-testid="map-event-badge-${esc(h.id)}" aria-hidden="true">!</span>`
+    : "";
+  return `${pulse}${ring}<svg class="${cls.glyph}" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">${glyphSvg(h.risk)}</svg>${badge}<span class="${cls.nameTag}" aria-hidden="true">${tag}</span>`;
 }
 
 export function vehicleHtml(cls: Record<string, string>): string {

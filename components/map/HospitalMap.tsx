@@ -70,12 +70,13 @@ function HospitalMarker({
   onSelect: (id: string) => void;
 }) {
   const ref = useRef<L.Marker | null>(null);
-  // The icon depends only on risk/outbreak/name; selection toggles a class on
-  // the same element so keyboard focus survives a selection change.
+  // The icon depends only on risk/outbreak/name/events; selection toggles a
+  // class on the same element so keyboard focus survives a selection change.
+  const eventsKey = h.events.map((e) => `${e.eventId}:${e.type}`).join(",");
   const icon = useMemo(
     () => L.divIcon({ className: styles.marker, html: markerHtml(h, styles), iconSize: [44, 44], iconAnchor: [22, 22] }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [h.risk, h.outbreak, h.name],
+    [h.risk, h.outbreak, h.name, eventsKey],
   );
   const sync = useCallback(() => {
     const el = ref.current?.getElement();

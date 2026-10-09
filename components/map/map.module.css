@@ -128,6 +128,28 @@
   border-color: var(--color-ink);
 }
 
+/* EVT-04: local event nearby. Ink on the warning colour, top-right corner,
+   clear of the glyph (10..34px) and click-through. */
+.eventBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 50%;
+  background: var(--risk-low);
+  color: var(--color-ink);
+  box-shadow: 0 0 0 2px var(--color-surface);
+  font-family: var(--font-body), sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  pointer-events: none;
+}
+
 .pulse {
   position: absolute;
   left: 50%;

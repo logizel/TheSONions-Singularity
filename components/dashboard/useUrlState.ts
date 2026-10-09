@@ -3,11 +3,11 @@
 import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export type UrlPatch = Partial<Record<"hospital" | "tab" | "view" | "order" | "cart" | "logs", string | null>>;
+export type UrlPatch = Partial<Record<"hospital" | "tab" | "view" | "order" | "cart" | "logs" | "events", string | null>>;
 
 /**
  * The URL is the source of truth for selection and views (?hospital, ?tab,
- * ?view, ?order, ?cart), so reload, back/forward and shared links restore
+ * ?view, ?order, ?cart, ?logs, ?events), so reload, back/forward and shared links restore
  * them. Every update copies the existing params (fixes L-04 clobbering).
  */
 export function useUrlState() {
@@ -37,6 +37,7 @@ export function useUrlState() {
     order: params.get("order"),
     cart: params.get("cart"),
     logs: params.get("logs"),
+    events: params.get("events"),
     update,
   };
 }

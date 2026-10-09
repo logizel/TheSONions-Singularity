@@ -51,6 +51,8 @@ export function demandSentences(m: MedicineInsight, hospitalName: string): strin
     if (filled > 0) out.push(`${plural(filled, 'day')} had no record and ${filled === 1 ? 'was' : 'were'} filled in from the days either side.`);
   }
   out.push(`For the next 30 days the forecast expects about ${qty(m.dailyDemand)} ${unit} a day.`);
+  // Quoted verbatim from the engine: never recomputed here.
+  for (const reason of m.eventReasons) out.push(`A nearby event raises this forecast: ${reason}.`);
   if (m.mode === 'trend') {
     out.push('Usage jumped sharply in the last few days (an outbreak), so the forecast follows the recent trend instead of the usual weekly pattern.');
   }

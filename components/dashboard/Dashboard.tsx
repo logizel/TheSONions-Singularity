@@ -9,6 +9,7 @@
  *   ?view=list      list instead of map
  *   ?cart=1         transfer checkout
  *   ?order=<id>     tracking sheet
+ *   ?logs=1         activity log;  ?events=1  local events (EVT-04)
  */
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -46,6 +47,7 @@ import { NetworkPanel } from "./NetworkPanel";
 import rows from "./rows.module.css";
 import { TopBar } from "./TopBar";
 import { LogsSheet } from "../logs/LogsSheet";
+import { EventsSheet } from "../events/EventsSheet";
 import { hasRightSheet, useLayout, type Breakpoint } from "./useLayout";
 import { useUrlState } from "./useUrlState";
 
@@ -134,7 +136,18 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
   const trackedOrder = url.order ? (orders?.find((o) => o.id === url.order) ?? null) : null;
   const cartOpen = url.cart === "1";
   const logsOpen = url.logs === "1";
-  const mode: "tracking" | "cart" | "logs" | "hospital" | null = trackedOrder ? "tracking" : cartOpen ? "cart" : logsOpen ? "logs" : selectedId ? "hospital" : null;
+  const eventsOpen = url.events === "1";
+  const mode: "tracking" | "cart" | "logs" | "events" | "hospital" | null = trackedOrder
+    ? "tracking"
+    : cartOpen
+      ? "cart"
+      : logsOpen
+        ? "logs"
+        : eventsOpen
+          ? "events"
+          : selectedId
+            ? "hospital"
+            : null;
 
   // Unknown ?hospital= / ?order= ids fall back to no selection, param dropped.
   useEffect(() => {
@@ -152,7 +165,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
     (id: string) => {
       remember();
       const next = id === selectedId && !cartOpen && !url.order ? null : id;
-      url.update({ hospital: next, cart: null, order: null, logs: null });
+      url.update({ hospital: next, cart: null, order: null, logs: null, events: null });
       if (next) setSnap((s) => (s === "peek" ? "half" : s));
     },
     [selectedId, cartOpen, url],
@@ -162,6 +175,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
     if (mode === "tracking") url.update({ order: null });
     else if (mode === "cart") url.update({ cart: null });
     else if (mode === "logs") url.update({ logs: null });
+    else if (mode === "events") url.update({ events: null });
     else url.update({ hospital: null });
     const back = invoker.current;
     invoker.current = null;
@@ -252,7 +266,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
       orderFor: (t) => (orders ? orderForTransfer(orders, t, results.asOf) : null),
       openCart: () => {
         remember();
-        url.update({ cart: "1", order: null, logs: null });
+        url.update({ cart: "1", order: null, logs: null, events: null });
       },
       track: (id) => {
         remember();
@@ -452,9 +466,14 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
           onRoleError={setLive}
           onLogs={() => {
             remember();
-            url.update({ logs: logsOpen ? null : "1", order: null, cart: null });
+            url.update({ logs: logsOpen ? null : "1", events: null, order: null, cart: null });
           }}
           logsOpen={logsOpen}
+          onEvents={() => {
+            remember();
+            url.update({ events: eventsOpen ? null : "1", logs: null, order: null, cart: null });
+          }}
+          eventsOpen={eventsOpen}
         />
 
         {view === "map" && mapAvailable ? (
@@ -515,7 +534,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
 
         {mode ? (
           <section key={mode} className={styles.sheet} role="region" aria-labelledby="detail-heading">
-            {handle(mode === "tracking" ? "Tracking" : mode === "cart" ? "Transfers" : mode === "logs" ? "Activity" : "Hospital")}
+            {handle(mode === "tracking" ? "Tracking" : mode === "cart" ? "Transfers" : mode === "logs" ? "Activity" : mode === "events" ? "Events" : "Hospital")}
             <div className={styles.scroll}>
               {mode === "hospital" && selectedId ? (
                 <HospitalDetail
@@ -533,6 +552,15 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
                   onReset={(msg) => {
                     setOrders((o) => (o === null ? null : []));
                     setLive(msg);
+                    router.refresh();
+                  }}
+                />
+              ) : null}
+              {mode === "events" ? (
+                <EventsSheet
+                  onClose={closeDetail}
+                  locations={locations?.hospitals ?? []}
+                  onChanged={() => {
                     router.refresh();
                   }}
                 />

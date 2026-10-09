@@ -64,6 +64,30 @@ describe('hospital insight', () => {
   });
 });
 
+describe('local-event reasons (EVT-04)', () => {
+  const REASON = '+80% rehydration demand: Flood, 1.1 km away, until 2026-10-23';
+  const withEvent: ResultsJSON = {
+    ...r,
+    forecasts: r.forecasts.map((f) =>
+      f.hospitalId === 'h-north' && f.medicineId === 'm-ors' ? { ...f, eventReasons: [REASON] } : f,
+    ),
+  };
+
+  it('quotes the engine reason verbatim in the demand sentences', () => {
+    const h = buildHospitalInsight(withEvent, 'h-north', null)!;
+    const ors = h.medicines.find((m) => m.medicineId === 'm-ors')!;
+    expect(ors.eventReasons).toEqual([REASON]);
+    expect(demandSentences(ors, h.name)).toContain(`A nearby event raises this forecast: ${REASON}.`);
+    const other = h.medicines.find((m) => m.medicineId !== 'm-ors')!;
+    expect(demandSentences(other, h.name).join(' ')).not.toContain('A nearby event');
+  });
+
+  it('old snapshots without eventReasons read as no events', () => {
+    const h = buildHospitalInsight(r, 'h-north', null)!;
+    expect(h.medicines.every((m) => Array.isArray(m.eventReasons))).toBe(true);
+  });
+});
+
 describe('network cards', () => {
   const cards = buildHospitalCards(r);
   it('one card per hospital, worst first, with a sentence each', () => {

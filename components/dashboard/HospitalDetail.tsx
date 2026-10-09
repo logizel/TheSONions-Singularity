@@ -11,6 +11,7 @@ import { useState } from "react";
 import type { HospitalLocation } from "@/lib/hospital-locations";
 import { dShort, fmtDate, shortName, signed } from "@/lib/dashboard/panel";
 import { fmtUnits, hospitalRisk } from "@/lib/dashboard/view";
+import { EVENT_LABEL } from "@/lib/engine/events";
 import { Glyph, RiskGlyph } from "../icons/Glyph";
 import { ChecksDisclosure, TransferRow } from "../orders/OrderBits";
 import { SupplierTimeline } from "../orders/SupplierTimeline";
@@ -53,6 +54,11 @@ export function HospitalDetail({
   const supplier = results.emergencyOrders.filter((o) => o.hospitalId === hospitalId);
   const readOnly = role === "hospital_admin" && ownHospitalId !== hospitalId;
   const { fromDay, toDay } = results.advisory;
+  // EVT-04: engine-emitted event flags and reasons, quoted as-is.
+  const events = summary?.events ?? [];
+  const eventReasons = results.forecasts
+    .filter((f) => f.hospitalId === hospitalId && (f.eventReasons?.length ?? 0) > 0)
+    .flatMap((f) => (f.eventReasons ?? []).map((reason) => ({ medicineId: f.medicineId, reason })));
 
   return (
     <div data-testid="hospital-panel">
@@ -69,6 +75,11 @@ export function HospitalDetail({
         <div className={rows.inlineRow}>
           <RiskTag severity={SEV_FROM_RISK[risk.level]} />
           {summary?.outbreak ? <OutbreakTag /> : null}
+          {events.map((e) => (
+            <Tag key={e.eventId} tone="ink" testId="hospital-event-badge">
+              {EVENT_LABEL[e.type]} {e.distanceKm} km · until {fmtDate(e.endsOn).replace(/ \d{4}$/, "")}
+            </Tag>
+          ))}
           {summary ? (
             <span className={rows.caption}>
               {summary.patientLoad} patients a day · emergency {summary.emergencyPct}%
@@ -76,6 +87,17 @@ export function HospitalDetail({
           ) : null}
         </div>
       </SheetHeader>
+
+      {eventReasons.length > 0 ? (
+        <div className={rows.note} role="note" data-testid="hospital-event-reasons">
+          <p className={rows.label}>Local events raising demand</p>
+          {eventReasons.map(({ medicineId, reason }) => (
+            <p key={`${medicineId}|${reason}`}>
+              {medName(medicineId)}: {reason}
+            </p>
+          ))}
+        </div>
+      ) : null}
 
       {readOnly ? (
         <p className={rows.note} role="note">
