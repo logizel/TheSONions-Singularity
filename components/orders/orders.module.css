@@ -252,3 +252,21 @@
 .blockLine {
   display: block;
 }
+
+.confirmDeliver {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--color-accent-tint);
+  box-shadow: inset 4px 0 0 var(--color-accent);
+}
+
+.stockDone {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--color-sunk);
+  box-shadow: inset 4px 0 0 var(--color-ink);
+}

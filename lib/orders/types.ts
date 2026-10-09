@@ -39,5 +39,7 @@ export interface Order {
   inTransitAt: string | null;
   deliveredAt: string | null;
   cancelledAt: string | null;
+  /** Set when delivery moved the units in stock records. */
+  stockAppliedAt?: string | null;
   lines: OrderLine[];
 }

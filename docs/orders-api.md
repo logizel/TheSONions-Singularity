@@ -1,8 +1,10 @@
 # Transfer orders API (Phase 6)
 
 Engine transfers (`ResultsJSON.transfers`) become orders when a network admin accepts them.
-State lives in Neon `orders` + `order_lines` (migration `0002_orders`). Delivery changes
-status only; `stock_batches` is never written.
+State lives in Neon `orders` + `order_lines` (migration `0002_orders`). Confirming delivery moves the
+units in `stock_batches` (sender FEFO -> new receiver batches, same expiry) in one transaction,
+recorded in `stock_movements`. `POST /api/admin/demo-reset` (network admin, `{"confirm":"RESET"}`)
+reverses every movement and clears orders and logs.
 
 Lifecycle: `accepted -> packed -> in_transit -> delivered`, or `cancelled` from any open state.
 Each step stamps its own timestamp. "Suggested" is the snapshot the order came from

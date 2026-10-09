@@ -526,7 +526,17 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
                   activityBump={orders}
                 />
               ) : null}
-              {mode === "logs" ? <LogsSheet onClose={closeDetail} bump={orders} /> : null}
+              {mode === "logs" ? (
+                <LogsSheet
+                  onClose={closeDetail}
+                  bump={orders}
+                  onReset={(msg) => {
+                    setOrders((o) => (o === null ? null : []));
+                    setLive(msg);
+                    router.refresh();
+                  }}
+                />
+              ) : null}
               {mode === "cart" ? (
                 <Cart
                   onClose={closeDetail}

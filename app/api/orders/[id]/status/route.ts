@@ -4,7 +4,8 @@ export const runtime = "nodejs";
 
 import { isApiError, isOrderStatus, parseStatusBody } from "@/lib/orders";
 import { getOrder, updateStatus } from "@/lib/orders/store";
-import { getResults } from "@/lib/network";
+import { getResults, resetResultsCache } from "@/lib/network";
+import { deliverWithStock } from "@/lib/orders/stockdb";
 import { logActivity, type LogAction } from "@/lib/logs";
 import { actorOf, canActForSender, describeOrder, errorResponse, NO_STORE, notSender, ORDER_ID, ordersUnavailable, readJson, sessionOf } from "../../_shared";
 
@@ -43,15 +44,26 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       });
       return errorResponse(notSender);
     }
-    const result = await updateStatus(id, parsed.status, new Date().toISOString());
+    // Delivery also moves the units in stock records (one transaction).
+    const now = new Date().toISOString();
+    const result =
+      parsed.status === "delivered"
+        ? await deliverWithStock(id, now, names?.asOf ?? now.slice(0, 10))
+        : await updateStatus(id, parsed.status, now);
     if (result.kind === "not_found") return errorResponse({ status: 404, error: "Order not found" });
     if (result.kind === "invalid") {
       await logActivity(actor, "action_rejected", `${result.reason}: ${describeOrder(existing, names)}`, { orderId: id, hospitals });
       return errorResponse({ status: 409, error: result.reason });
     }
+    if (result.changed && parsed.status === "delivered") resetResultsCache();
     if (result.changed) {
       const verb = { packed: "Packed", in_transit: "Dispatched", delivered: "Delivered", cancelled: "Cancelled" }[parsed.status];
-      await logActivity(actor, ACTION[parsed.status], `${verb} ${describeOrder(result.order, names)}`, { orderId: id, hospitals });
+      await logActivity(
+        actor,
+        ACTION[parsed.status],
+        `${verb} ${describeOrder(result.order, names)}${parsed.status === "delivered" ? " (stock records updated)" : ""}`,
+        { orderId: id, hospitals },
+      );
     }
     return NextResponse.json({ order: result.order, changed: result.changed }, { headers: NO_STORE });
   } catch {

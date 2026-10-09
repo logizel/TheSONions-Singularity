@@ -41,6 +41,7 @@ export function Tracking(p: TrackingProps) {
   const { medName, hospName, unit, role, ownHospitalId } = useDash();
   const { order } = p;
   const [confirming, setConfirming] = useState(false);
+  const [confirmDeliver, setConfirmDeliver] = useState(false);
   const keepRef = useRef<HTMLButtonElement>(null);
   // Network admin, or the admin of the sending hospital.
   const isAdmin = role === "network_admin" || ownHospitalId === order.fromHospital;
@@ -149,7 +150,39 @@ export function Tracking(p: TrackingProps) {
         </p>
       ) : null}
 
-      {isAdmin && order.status !== "delivered" && order.status !== "cancelled" ? (
+      {isAdmin && order.status === "in_transit" && confirmDeliver ? (
+        <div className={styles.confirmDeliver} data-testid="deliver-confirm">
+          <p className={rows.strong}>Deliver and update stock?</p>
+          <ul className={rows.checks}>
+            {order.lines.map((l) => (
+              <li key={l.id}>
+                <span />
+                <span>
+                  {medName(l.medicineId)} {Math.round(l.qty)} {unit(l.medicineId, Math.round(l.qty))}: out of {hospName(order.fromHospital)}, into{" "}
+                  {hospName(order.toHospital)} (earliest expiry first).
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className={rows.caption}>The engine recalculates both hospitals right after. A network admin can undo it with Reset demo.</p>
+          <div className={styles.lineActions}>
+            <button
+              type="button"
+              className={rows.accentButton}
+              onClick={() => {
+                setConfirmDeliver(false);
+                p.onAdvance("delivered");
+              }}
+              data-testid="confirm-deliver"
+            >
+              Deliver and update stock
+            </button>
+            <button type="button" className={rows.outlineButton} onClick={() => setConfirmDeliver(false)}>
+              Not yet
+            </button>
+          </div>
+        </div>
+      ) : isAdmin && order.status !== "delivered" && order.status !== "cancelled" ? (
         confirming ? (
           <div className={styles.confirm}>
             <p>Cancel this transfer? Stock records do not change.</p>
@@ -176,7 +209,7 @@ export function Tracking(p: TrackingProps) {
               <button
                 type="button"
                 className={next.to === "delivered" && arrived ? rows.accentButton : rows.outlineButton}
-                onClick={() => p.onAdvance(next.to)}
+                onClick={() => (next.to === "delivered" ? setConfirmDeliver(true) : p.onAdvance(next.to))}
                 disabled={p.busy}
                 data-testid={`advance-${next.to}`}
               >
@@ -191,7 +224,20 @@ export function Tracking(p: TrackingProps) {
       ) : !isAdmin ? (
         <p className={rows.note}>Read only. The sending hospital or a network admin updates this transfer.</p>
       ) : null}
-      <p className={`${rows.sectionHead} ${rows.caption}`}>Delivery updates status only. Stock records do not change.</p>
+      {order.status === "delivered" && order.stockAppliedAt ? (
+        <div className={styles.stockDone} data-testid="stock-applied">
+          <span className={rows.label}>Stock records updated</span>
+          {order.lines.map((l) => (
+            <span key={l.id}>
+              {hospName(order.fromHospital)} <span className={rows.strong}>−{Math.round(l.qty)}</span> · {hospName(order.toHospital)}{" "}
+              <span className={rows.strong}>+{Math.round(l.qty)}</span> {unit(l.medicineId, Math.round(l.qty))} of {medName(l.medicineId)}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      <p className={`${rows.sectionHead} ${rows.caption}`}>
+        {order.status === "delivered" ? "Both hospitals now show the recalculated cover." : "Confirming delivery moves the units between the two hospitals' stock records."}
+      </p>
     </div>
   );
 }

@@ -17,6 +17,7 @@ const TONE: Record<LogEntry["action"], TagTone> = {
   order_delivered: "ink",
   order_cancelled: "dashed",
   action_rejected: "dashed",
+  demo_reset: "ink",
 };
 
 export function LogList({ logs, testId }: { logs: LogEntry[]; testId?: string }) {

@@ -132,6 +132,8 @@ export const orders = pgTable("orders", {
   inTransitAt: timestamp("in_transit_at", { withTimezone: true, mode: "string" }),
   deliveredAt: timestamp("delivered_at", { withTimezone: true, mode: "string" }),
   cancelledAt: timestamp("cancelled_at", { withTimezone: true, mode: "string" }),
+  // Set when delivery moved the units in stock_batches (see stock_movements).
+  stockAppliedAt: timestamp("stock_applied_at", { withTimezone: true, mode: "string" }),
 }, (t) => [
   uniqueIndex("orders_idempotency_key_uq").on(t.idempotencyKey),
   index("orders_lane_idx").on(t.fromHospital, t.toHospital),
@@ -177,3 +179,17 @@ export const activityLog = pgTable("activity_log", {
   index("activity_log_hospitals_idx").using("gin", t.hospitalIds),
   check("activity_log_role_check", sql`${t.actorRole} in ('hospital_admin','network_admin')`),
 ]);
+
+// Every stock_batches change made by a delivery, so it is auditable and the
+// demo reset can undo it exactly: delta < 0 = taken from a sender batch,
+// created = a new receiver batch (deleted on reset).
+export const stockMovements = pgTable("stock_movements", {
+  id: text("id").primaryKey(),
+  orderId: text("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  batchId: text("batch_id").notNull(),
+  hospitalId: text("hospital_id").notNull().references(() => hospitals.id),
+  medicineId: text("medicine_id").notNull().references(() => medicines.id),
+  delta: integer("delta").notNull(),
+  created: boolean("created").notNull().default(false),
+  at: timestamp("at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+}, (t) => [index("stock_movements_order_idx").on(t.orderId)]);

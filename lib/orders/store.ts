@@ -37,6 +37,7 @@ type OrderRow = {
   inTransitAt: string | null;
   deliveredAt: string | null;
   cancelledAt: string | null;
+  stockAppliedAt: string | null;
 };
 
 function toOrder(row: OrderRow, lines: OrderLine[]): Order {
@@ -53,6 +54,7 @@ function toOrder(row: OrderRow, lines: OrderLine[]): Order {
     inTransitAt: iso(row.inTransitAt),
     deliveredAt: iso(row.deliveredAt),
     cancelledAt: iso(row.cancelledAt),
+    stockAppliedAt: iso(row.stockAppliedAt),
     lines,
   };
 }
@@ -70,6 +72,7 @@ const orderColumns = (s: Awaited<ReturnType<typeof dbAndSchema>>['s']) => ({
   inTransitAt: s.orders.inTransitAt,
   deliveredAt: s.orders.deliveredAt,
   cancelledAt: s.orders.cancelledAt,
+  stockAppliedAt: s.orders.stockAppliedAt,
 });
 
 /** All orders, newest first, with their lines. Throws on DB failure. */

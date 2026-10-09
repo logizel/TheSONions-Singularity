@@ -10,6 +10,7 @@ export const LOG_ACTIONS = [
   'order_delivered',
   'order_cancelled',
   'action_rejected',
+  'demo_reset',
 ] as const;
 export type LogAction = (typeof LOG_ACTIONS)[number];
 
@@ -23,6 +24,7 @@ export const ACTION_LABEL: Record<LogAction, string> = {
   order_delivered: 'Delivered',
   order_cancelled: 'Cancelled',
   action_rejected: 'Rejected',
+  demo_reset: 'Demo reset',
 };
 
 export interface LogEntry {

@@ -21,7 +21,9 @@ export interface ResultsEnvelope {
   source: ResultsSource;
 }
 
-let cached: { at: number; results: ResultsJSON } | null = null;
+// Shared via globalThis: route handlers and pages can load separate module
+// copies, and a delivery must invalidate the snapshot for both.
+const store = globalThis as unknown as { __resultsCache?: { at: number; results: ResultsJSON } | null };
 
 /** Structural check for a v2 blob; rejects the pre-Phase-6 shape. */
 export function isResultsV2(v: unknown): v is ResultsJSON {
@@ -52,13 +54,14 @@ async function readSnapshot(): Promise<ResultsJSON | null> {
 }
 
 export async function getResults(now: Date = new Date()): Promise<ResultsEnvelope | null> {
+  const cached = store.__resultsCache;
   if (cached && now.getTime() - cached.at < RESULTS_TTL_MS) {
     return { results: cached.results, source: 'live' };
   }
   try {
     const input = await loadEngineInput();
     const results = buildResults(input, { asOf: todayIso(now), generatedAt: now.toISOString() });
-    cached = { at: now.getTime(), results };
+    store.__resultsCache = { at: now.getTime(), results };
     return { results, source: 'live' };
   } catch {
     const snapshot = await readSnapshot();
@@ -68,5 +71,5 @@ export async function getResults(now: Date = new Date()): Promise<ResultsEnvelop
 
 /** Test hook: drop the in-memory cache. */
 export function resetResultsCache(): void {
-  cached = null;
+  store.__resultsCache = null;
 }
