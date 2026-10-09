@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-10-08)
 Phase: 04 (Dashboard UI) — complete, 5/5 plans, re-verified 29/29 must-haves
 Plan: 5 of 5 executed (04-01 dashboard tracer; 04-02 drill-in panel; 04-03 chat panel; 04-04 dashboard gap closure, commits 5081898/41d1a1a; 04-05 chat+roles gap closure, commits eaebbc5/d94412d/21e32a2)
 Status: Complete — re-verification passed (29/29), gaps G-04-1..G-04-6 closed, UI-01/UI-02 earned
-Last activity: 2026-10-09 - Completed quick task 261009-cfq: order decision brief
+Last activity: 2026-10-09 - Completed quick task 261009-bt7: local event demand uplift
 
 Progress: [██████████] 100% (phase complete)
 
@@ -87,7 +87,6 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 261009-3hj | hospital locations api for react-leaflet map | 2026-10-08 | 4b24c67 | [261009-3hj-hospital-locations-api-for-react-leaflet](./quick/261009-3hj-hospital-locations-api-for-react-leaflet/) |
 | 261009-bt7 | local event demand uplift (rulebook, local_events, badges, chat) | 2026-10-09 | 57264cf | [261009-bt7-local-event-demand-uplift](./quick/261009-bt7-local-event-demand-uplift/) |
-| 261009-cfq | order decision brief on checkout, supplier orders, tracking | 2026-10-09 | e43f957 | [261009-cfq-order-decision-brief](./quick/261009-cfq-order-decision-brief/) |
 
 ## Deferred Items
 
