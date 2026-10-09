@@ -161,6 +161,9 @@ export function TopBar(p: Props) {
             </div>
           ) : null}
         </div>
+        <a className={styles.outlineButton} href="/insights" data-testid="insights-link">
+          Insights
+        </a>
         <button type="button" className={styles.outlineButton} onClick={p.onLogs} aria-pressed={p.logsOpen} data-testid="logs-button">
           Logs
         </button>
@@ -193,6 +196,9 @@ export function TopBar(p: Props) {
               <div className={styles.menuRule} />
               {p.demoAuth ? roleItems : <p className={styles.menuHeading}>Role: {roleLabel(p.role, p.ownHospitalId, p.hospitals)}</p>}
               <div className={styles.menuRule} />
+              <a role="menuitem" className={styles.menuItem} href="/insights">
+                Insights (charts)
+              </a>
               <button type="button" role="menuitem" className={styles.menuItem} onClick={() => { setMenu(null); p.onLogs(); }}>
                 Activity log
               </button>

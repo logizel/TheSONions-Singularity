@@ -143,5 +143,5 @@ export default async function middleware(req: NextRequest): Promise<NextResponse
 
 export const config = {
   // "/" is the dashboard page; /sign-in stays public.
-  matcher: ["/api/:path*", "/"],
+  matcher: ["/api/:path*", "/", "/insights", "/insights/:path*"],
 };

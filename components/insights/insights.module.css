@@ -1,0 +1,505 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-16);
+  display: grid;
+  gap: var(--space-8);
+}
+
+.crumbs {
+  display: flex;
+  gap: var(--space-4);
+  font-weight: 600;
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.kicker,
+.explainKicker {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.h1 {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-40);
+  line-height: var(--leading-40);
+  font-weight: 600;
+}
+
+.h2 {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+}
+
+.sub {
+  color: var(--color-ink-2);
+  max-width: 72ch;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  border-top: 2px solid var(--color-ink);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.stats > div {
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+}
+
+.stats dt {
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  color: var(--color-ink-2);
+}
+
+.stats dd {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-1);
+  max-width: 80ch;
+}
+
+.section {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-rule-strong);
+}
+
+.sectionHead {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.split {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .split {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  }
+}
+
+.explain {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  box-shadow: inset 4px 0 0 var(--color-accent);
+  max-width: 64ch;
+}
+
+.note {
+  padding: var(--space-3);
+  background: var(--color-sunk);
+}
+
+.medTabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.medTab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--button-h);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-2);
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.medTab[aria-selected="true"] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+/* ---- charts ---------------------------------------------------------------- */
+
+.chart {
+  position: relative;
+  min-width: 0;
+}
+
+.chart svg {
+  display: block;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--color-rule);
+  stroke-width: 1;
+}
+
+.baseline {
+  stroke: var(--color-ink);
+  stroke-width: 1;
+}
+
+.axis {
+  font-size: 12px;
+  fill: var(--color-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.rowLabel {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--color-ink);
+}
+
+.value {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--color-ink);
+}
+
+.valueStrong {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--risk-critical-text);
+}
+
+.advisory {
+  font-family: var(--font-display), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  fill: var(--color-ink-3);
+}
+
+.track {
+  fill: var(--color-sunk);
+}
+
+.leadTick {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+}
+
+.rowHit {
+  fill: transparent;
+}
+
+.rowHot {
+  fill: var(--color-accent-tint);
+}
+
+.clickRow {
+  cursor: pointer;
+}
+
+.today {
+  stroke: var(--color-ink);
+  stroke-width: 1;
+}
+
+.lineActual,
+.lineForecast,
+.lineStock {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.lineActual {
+  stroke: var(--color-ink-2);
+}
+
+.lineForecast,
+.lineStock {
+  stroke: var(--color-accent);
+}
+
+.area {
+  fill: var(--color-accent);
+  opacity: 0.1;
+}
+
+.filledDot {
+  fill: var(--color-paper);
+  stroke: var(--color-ink-3);
+  stroke-width: 1.5;
+}
+
+.crosshair {
+  stroke: var(--color-ink-3);
+  stroke-width: 1;
+}
+
+.dotActual,
+.dotForecast {
+  stroke: var(--color-surface);
+  stroke-width: 2;
+}
+
+.dotActual {
+  fill: var(--color-ink);
+}
+
+.dotForecast {
+  fill: var(--color-accent);
+}
+
+.markSupplier {
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.markTransfer {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+}
+
+.factorPos {
+  fill: var(--color-accent);
+}
+
+.factorNeg {
+  fill: var(--color-ink-3);
+}
+
+.tip {
+  position: absolute;
+  z-index: 3;
+  left: var(--tx);
+  top: var(--ty);
+  display: grid;
+  gap: 2px;
+  min-width: 160px;
+  max-width: 220px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  box-shadow: var(--elev-2);
+  border-radius: var(--radius-2);
+  font-size: var(--text-12);
+  line-height: var(--leading-12);
+  pointer-events: none;
+}
+
+.tipHead {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 600;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-2);
+  font-size: var(--text-12);
+  color: var(--color-ink-2);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swBar {
+  width: 16px;
+  height: 8px;
+  border-radius: 0 2px 2px 0;
+  background: var(--risk-critical);
+}
+
+.swTick {
+  width: 2px;
+  height: 14px;
+  background: var(--color-ink);
+}
+
+.swHatch {
+  width: 16px;
+  height: 10px;
+  background: var(--color-sunk);
+  border: 1px solid var(--color-rule-strong);
+}
+
+.swLineActual,
+.swLineForecast {
+  width: 18px;
+  height: 2px;
+}
+
+.swLineActual {
+  background: var(--color-ink-2);
+}
+
+.swLineForecast {
+  background: var(--color-accent);
+}
+
+.swDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-ink-3);
+}
+
+.tableWrap {
+  margin-top: var(--space-2);
+}
+
+.tableToggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tableScroll {
+  max-height: 280px;
+  overflow: auto;
+  margin-top: var(--space-2);
+  border-top: 2px solid var(--color-ink);
+}
+
+.table th,
+.table td {
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--color-rule);
+  text-align: left;
+  font-size: var(--text-12);
+  white-space: nowrap;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: var(--color-sunk);
+}
+
+/* ---- network cards ----------------------------------------------------------- */
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-rule-strong);
+  border-top: 4px solid var(--risk-ok);
+  border-radius: var(--radius-1);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.card:hover {
+  border-color: var(--color-ink);
+}
+
+.card_critical {
+  border-top-color: var(--risk-critical);
+}
+
+.card_warning {
+  border-top-color: var(--risk-low);
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cardName {
+  font-family: var(--font-display), sans-serif;
+  font-stretch: 75%;
+  font-size: var(--text-20);
+  line-height: var(--leading-20);
+  font-weight: 600;
+}
+
+.cardRank {
+  font-family: var(--font-mono), monospace;
+  font-weight: 600;
+  color: var(--color-ink-2);
+}
+
+.mini {
+  display: block;
+  width: 100%;
+  height: 60px;
+}
+
+.cardMeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+  font-size: var(--text-12);
+  color: var(--color-ink-3);
+}
+
+.cardText {
+  font-size: var(--text-14);
+}
+
+.cardFoot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-rule);
+  font-size: var(--text-12);
+  color: var(--color-ink-2);
+}
+
+.cardCta {
+  color: var(--color-accent);
+  font-weight: 600;
+}

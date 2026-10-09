@@ -520,3 +520,7 @@
 .menuOpen {
   z-index: var(--z-menu);
 }
+
+a.outlineButton {
+  text-decoration: none;
+}

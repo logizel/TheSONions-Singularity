@@ -83,6 +83,13 @@ export function HospitalDetail({
         </p>
       ) : null}
 
+      {role === "network_admin" || ownHospitalId === hospitalId ? (
+        <p className={rows.block}>
+          <a className={rows.linkButton} href={`/insights/${hospitalId}`} data-testid="open-insights">
+            Open charts and forecasts →
+          </a>
+        </p>
+      ) : null}
       <div className={rows.block} data-testid="hospital-panel-header-stock">
         <p>
           <span className={rows.strong}>{fmtUnits(units)} units</span> · {inv.length} medicines · {crit} critical · {low} low
