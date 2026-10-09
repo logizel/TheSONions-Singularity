@@ -1,4 +1,4 @@
-# TheSONions-Singularity — Hospital Stock Balancer
+# Sanjeevni (TheSONions-Singularity)
 
 ## What This Is
 

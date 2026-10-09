@@ -2,7 +2,7 @@
 
 ## Project
 
-**TheSONions-Singularity — Hospital Stock Balancer**
+**Sanjeevni** (repo: TheSONions-Singularity): hospital stock balancer
 
 Network inventory balancer for hospitals. It watches stock and demand per hospital and medicine, warns who will run out and what will expire unused, and tells the administrator exactly which hospital should send how much to which one. Single-screen dashboard with drill-in per hospital, plus a quote-only chatbot that answers from system results.
 

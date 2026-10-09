@@ -122,8 +122,7 @@ export function TopBar(p: Props) {
     <header className={`${styles.topbar} ${menu ? styles.menuOpen : ""}`} data-testid="dashboard-header">
       <div className={styles.titleBlock}>
         <h1 className={styles.title}>
-          <span className={styles.titleLong}>Hospital Stock Balancer</span>
-          <span className={styles.titleShort}>Stock Balancer</span>
+          Sanjeevni
         </h1>
         {p.generatedAt ? (
           <p className={styles.stamp}>

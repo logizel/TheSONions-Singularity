@@ -1,7 +1,7 @@
 {
-  "name": "thesonions-singularity",
+  "name": "sanjeevni",
   "version": "1.0.0",
-  "description": "Hospital Stock Balancer",
+  "description": "Sanjeevni: hospital network stock balancer",
   "private": true,
   "type": "module",
   "scripts": {

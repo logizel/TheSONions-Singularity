@@ -6,7 +6,7 @@ import { getSession } from "@/lib/session/server";
 import { SignInForm } from "./SignInForm";
 import styles from "./sign-in.module.css";
 
-export const metadata = { title: "Demo sign-in · Hospital Stock Balancer" };
+export const metadata = { title: "Demo sign-in · Sanjeevni" };
 
 // Demo sign-in (D-13): role + hospital, no password. Enabled only with
 // DEMO_AUTH=true; otherwise the page explains how to turn it on.
@@ -38,7 +38,7 @@ export default async function SignInPage({
   return (
     <main className={styles.page}>
       <section className={styles.card} aria-labelledby="signin-heading">
-        <p className={styles.kicker}>Hospital Stock Balancer</p>
+        <p className={styles.kicker}>Sanjeevni</p>
         <h1 id="signin-heading" className={styles.heading}>
           Demo sign-in
         </h1>

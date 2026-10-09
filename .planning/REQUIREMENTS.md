@@ -1,4 +1,4 @@
-# Requirements: TheSONions-Singularity — Hospital Stock Balancer
+# Requirements: Sanjeevni (TheSONions-Singularity)
 
 **Defined:** 2026-10-08
 **Core Value:** Administrator knows before it happens who runs out, what wastes, and which transfer or order fixes it.
