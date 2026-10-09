@@ -75,16 +75,30 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
  * Stock left at the end of each day, depleting against the forecast exactly
  * like the engine (lib/engine/stockout.ts); past day 30 it continues at the
  * forecast's mean daily rate. Stops at zero or at `horizon` days.
+ *
+ * Optional `arrival`: `qty` units become available at the START of day
+ * `arrival.day` (day 0 = already on the shelf today, so point 0 includes
+ * them). Before the arrival day the series does not stop at zero, so the
+ * empty stretch before help arrives is visible; after it, it stops at the
+ * first zero as usual.
  */
-export function runDown(stock: number, forecast: readonly ForecastPoint[], horizon: number): RunDownPoint[] {
-  const out: RunDownPoint[] = [{ day: 0, stock: round1(stock) }];
+export function runDown(
+  stock: number,
+  forecast: readonly ForecastPoint[],
+  horizon: number,
+  arrival?: { day: number; qty: number },
+): RunDownPoint[] {
+  const arriveDay = arrival ? arrival.day : -1;
+  const arriveQty = arrival ? arrival.qty : 0;
+  let left = arriveDay === 0 ? stock + arriveQty : stock;
+  const out: RunDownPoint[] = [{ day: 0, stock: round1(left) }];
   const mean = forecast.length ? forecast.reduce((s, p) => s + p.demand, 0) / forecast.length : 0;
-  let left = stock;
   for (let d = 1; d <= horizon; d++) {
+    if (d === arriveDay) left += arriveQty;
     const use = d <= forecast.length ? forecast[d - 1].demand : mean;
     left = Math.max(0, left - use);
     out.push({ day: d, stock: round1(left) });
-    if (left === 0) break;
+    if (left === 0 && d >= arriveDay) break;
   }
   return out;
 }
