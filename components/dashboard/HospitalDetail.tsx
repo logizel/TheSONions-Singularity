@@ -38,7 +38,7 @@ export function HospitalDetail({
   onClose: () => void;
   onBack?: () => void;
 }) {
-  const { results, medName, hospName, unit, selectHospital, role, ownHospitalId, openCart } = useDash();
+  const { results, medName, hospName, unit, selectHospital, role, ownHospitalId, openCart, openStock } = useDash();
   const [open, setOpen] = useState<string | null>(null);
   const summary = results.hospitals.find((h) => h.hospitalId === hospitalId);
   const name = summary?.hospitalName ?? hospitalId;
@@ -107,6 +107,14 @@ export function HospitalDetail({
 
       {role === "network_admin" || ownHospitalId === hospitalId ? (
         <p className={rows.block}>
+          <button
+            type="button"
+            className={rows.accentButton}
+            onClick={() => openStock(hospitalId)}
+            data-testid="hospital-enter-stock"
+          >
+            Enter stock
+          </button>{" "}
           <a className={rows.linkButton} href={`/insights/${hospitalId}`} data-testid="open-insights">
             Open charts and forecasts →
           </a>

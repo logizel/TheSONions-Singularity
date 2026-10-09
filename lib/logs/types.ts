@@ -13,6 +13,9 @@ export const LOG_ACTIONS = [
   'demo_reset',
   'event_added',
   'event_ended',
+  'stock_added',
+  'stock_removed',
+  'usage_recorded',
 ] as const;
 export type LogAction = (typeof LOG_ACTIONS)[number];
 
@@ -29,6 +32,9 @@ export const ACTION_LABEL: Record<LogAction, string> = {
   demo_reset: 'Demo reset',
   event_added: 'Event added',
   event_ended: 'Event ended',
+  stock_added: 'Stock added',
+  stock_removed: 'Stock removed',
+  usage_recorded: 'Usage recorded',
 };
 
 export interface LogEntry {

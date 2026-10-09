@@ -48,6 +48,7 @@ import rows from "./rows.module.css";
 import { TopBar } from "./TopBar";
 import { LogsSheet } from "../logs/LogsSheet";
 import { EventsSheet } from "../events/EventsSheet";
+import { StockSheet } from "../stock/StockSheet";
 import { hasRightSheet, useLayout, type Breakpoint } from "./useLayout";
 import { useUrlState } from "./useUrlState";
 
@@ -137,7 +138,8 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
   const cartOpen = url.cart === "1";
   const logsOpen = url.logs === "1";
   const eventsOpen = url.events === "1";
-  const mode: "tracking" | "cart" | "logs" | "events" | "hospital" | null = trackedOrder
+  const stockOpen = url.stock === "1";
+  const mode: "tracking" | "cart" | "logs" | "events" | "stock" | "hospital" | null = trackedOrder
     ? "tracking"
     : cartOpen
       ? "cart"
@@ -145,9 +147,11 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
         ? "logs"
         : eventsOpen
           ? "events"
-          : selectedId
-            ? "hospital"
-            : null;
+          : stockOpen
+            ? "stock"
+            : selectedId
+              ? "hospital"
+              : null;
 
   // Unknown ?hospital= / ?order= ids fall back to no selection, param dropped.
   useEffect(() => {
@@ -176,6 +180,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
     else if (mode === "cart") url.update({ cart: null });
     else if (mode === "logs") url.update({ logs: null });
     else if (mode === "events") url.update({ events: null });
+    else if (mode === "stock") url.update({ stock: null });
     else url.update({ hospital: null });
     const back = invoker.current;
     invoker.current = null;
@@ -267,6 +272,17 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
       openCart: () => {
         remember();
         url.update({ cart: "1", order: null, logs: null, events: null });
+      },
+      openStock: (hospitalId?: string) => {
+        remember();
+        url.update({
+          stock: "1",
+          order: null,
+          cart: null,
+          logs: null,
+          events: null,
+          ...(hospitalId ? { hospital: hospitalId } : {}),
+        });
       },
       track: (id) => {
         remember();
@@ -474,6 +490,11 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
             url.update({ events: eventsOpen ? null : "1", logs: null, order: null, cart: null });
           }}
           eventsOpen={eventsOpen}
+          onStock={() => {
+            remember();
+            url.update({ stock: stockOpen ? null : "1", order: null, cart: null, logs: null, events: null });
+          }}
+          stockOpen={stockOpen}
         />
 
         {view === "map" && mapAvailable ? (
@@ -534,7 +555,7 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
 
         {mode ? (
           <section key={mode} className={styles.sheet} role="region" aria-labelledby="detail-heading">
-            {handle(mode === "tracking" ? "Tracking" : mode === "cart" ? "Transfers" : mode === "logs" ? "Activity" : mode === "events" ? "Events" : "Hospital")}
+            {handle(mode === "tracking" ? "Tracking" : mode === "cart" ? "Transfers" : mode === "logs" ? "Activity" : mode === "events" ? "Events" : mode === "stock" ? "Enter stock" : "Hospital")}
             <div className={styles.scroll}>
               {mode === "hospital" && selectedId ? (
                 <HospitalDetail
@@ -560,6 +581,14 @@ function Board({ results, source, locations, orders: serverOrders, session, demo
                 <EventsSheet
                   onClose={closeDetail}
                   locations={locations?.hospitals ?? []}
+                  onChanged={() => {
+                    router.refresh();
+                  }}
+                />
+              ) : null}
+              {mode === "stock" ? (
+                <StockSheet
+                  onClose={closeDetail}
                   onChanged={() => {
                     router.refresh();
                   }}

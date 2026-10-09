@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export type UrlPatch = Partial<Record<"hospital" | "tab" | "view" | "order" | "cart" | "logs" | "events", string | null>>;
+export type UrlPatch = Partial<Record<"hospital" | "tab" | "view" | "order" | "cart" | "logs" | "events" | "stock", string | null>>;
 
 /**
  * The URL is the source of truth for selection and views (?hospital, ?tab,
@@ -38,6 +38,7 @@ export function useUrlState() {
     cart: params.get("cart"),
     logs: params.get("logs"),
     events: params.get("events"),
+    stock: params.get("stock"),
     update,
   };
 }

@@ -20,6 +20,8 @@ export interface DashboardCtx {
   orders: Order[] | null;
   orderFor: (t: { fromHospital: string; toHospital: string; medicineId: string }) => TransferOrderMatch | null;
   openCart: () => void;
+  /** Open the manual stock entry sheet, optionally pre-selecting a hospital. */
+  openStock: (hospitalId?: string) => void;
   track: (orderId: string) => void;
   routes: Record<string, RouteState>;
 }

@@ -26,6 +26,8 @@ interface Props {
   logsOpen: boolean;
   onEvents: () => void;
   eventsOpen: boolean;
+  onStock: () => void;
+  stockOpen: boolean;
 }
 
 function roleLabel(role: Props["role"], own: string | null, hospitals: Props["hospitals"]) {
@@ -172,6 +174,9 @@ export function TopBar(p: Props) {
         <button type="button" className={styles.outlineButton} onClick={p.onEvents} aria-pressed={p.eventsOpen} data-testid="events-button">
           Events
         </button>
+        <button type="button" className={styles.outlineButton} onClick={p.onStock} aria-pressed={p.stockOpen} data-testid="stock-button">
+          Enter stock
+        </button>
         <button type="button" className={styles.outlineButton} onClick={p.onRefresh} disabled={p.refreshing} data-testid="refresh-button">
           <Glyph name="refresh" />
           {p.refreshing ? "Refreshing" : "Refresh"}
@@ -209,6 +214,9 @@ export function TopBar(p: Props) {
               </button>
               <button type="button" role="menuitem" className={styles.menuItem} onClick={() => { setMenu(null); p.onEvents(); }}>
                 Local events
+              </button>
+              <button type="button" role="menuitem" className={styles.menuItem} onClick={() => { setMenu(null); p.onStock(); }}>
+                Enter stock
               </button>
               <div className={styles.menuRule} />
               <div className={styles.menuRow}>{signOutForm}</div>
