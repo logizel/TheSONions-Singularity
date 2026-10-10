@@ -388,7 +388,7 @@ TheSONions:
 - Jizel Prince D'Souza ([logizel](https://github.com/logizel))
 - Jovian Wilson Simon ([velo4705](https://github.com/velo4705))
 - Anirudh Rao B ([ANI-CPU-TECH](https://github.com/ANI-CPU-tech))
-- Likith M Shetty ([likhith992](https://github.com/likhith992))
+- Likhith M Shetty ([likhith992](https://github.com/likhith992))
 
 ## License
 
